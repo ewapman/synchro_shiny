@@ -1,0 +1,17 @@
+---
+title: "line_about"
+author: "Emily Wapman"
+date: "2026-07-30"
+output: html_document
+---
+
+#### **How does the relative abundance of an indicator organism change over time?** 
+
+Because the exact number of organisms cannot be determined from this eDNA sampling data, relative abundance is calculated to give an idea of how common an organism's DNA is within a sample in comparison to other organisms. 
+
+The graph shows the relative abundance of the selected organism each season. **For example, in spring 2025, the selected organism made up X% of all samples that season.**
+
+
+
+
+

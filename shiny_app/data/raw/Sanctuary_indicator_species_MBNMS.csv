@@ -1,0 +1,99 @@
+Habitat,Common name,Scientific Name 
+Kelp Forest,Undaria pinnatifida,Undaria pinnatifida
+Kelp Forest,Sargassum horneri ,Sargassum horneri 
+Kelp Forest,Red Abalone,Haliotis rufescens
+Kelp Forest,Pinto Abalone,Haliotis kamtschatkana
+Kelp Forest,Blue rockfish,Sebastes mystinus
+Kelp Forest,Lingcod,Ophiodon elongatus
+Kelp Forest,Kelp rockfish,Sebastes atrovirens
+Kelp Forest,Kelp greenling,Hexagrammos decagrammus
+"Kelp Forest, Deep Sea",All rockfish,Sebastes spp.
+Kelp Forest,Winged kelp,Pterygophora californica
+Kelp Forest,Setchell’s kelp,Laminaria setchellii
+Kelp Forest,Coralline algae,Corallinales
+Kelp Forest,Fleshy red algae,Rhodophyta
+Kelp Forest,Sunflower stars,Pycnopodia helianthoides
+Kelp Forest,Giant spined stars,Pisaster giganteus
+Kelp Forest,Red urchins,Mesocentrotus franciscanus
+Kelp Forest,Purple urchins,Strongylocentrotus purpuratus
+Kelp Forest,All urchins,Echinoidea
+Kelp Forest,Giant kelp ,Macrocystis pyrifera
+Kelp Forest,Bull kelp,Nereocystis luetkeana
+Deep Sea,All sharks and rays,Chondrichthyes spp.
+Deep Sea,Tanner Crab,Chionoecetes tanneri
+Deep Sea,Dungeness Crab,Metacarcinus magister
+Deep Sea,Pacific Hake,Merluccius productus
+Deep Sea,Sablefish,Anoplopoma fimbria
+Deep Sea,Lingcod,Ophiodon elongatus
+Deep Sea,Pacific sanddab,Citharichthys sordidus
+Deep Sea,Petrale sole,Eopsetta jordani
+Deep Sea,Dover sole,Microstomus pacificus
+Deep Sea,English sole,Parophrys vetulus
+Deep Sea,Bocaccio,Sebastes paucispinis
+Deep Sea,Chilipepper,Sebastes goodei
+Deep Sea,Splitnose rockfish,Sebastes diploproa
+Deep Sea,Shortspine Thornyhead,Sebastolobus alascanus
+Deep Sea,Longspine Thornyhead,Sebastolobus altivelis
+Deep Sea,Sunflower sea star,Pycnopodia helianthoides
+Rocky Shore,Sea palm,Postelsia palmaeformis
+Rocky Shore,Surfgrass,Phyllospadix spp.
+Rocky Shore,Pisaster ochraceus,Pisaster ochraceus
+Rocky Shore,Mytilus californianus,Mytilus californianus
+Rocky Shore,Lottia gigantea,Lottia gigantea
+Rocky Shore,Golden rockweed,Silvetia compressa
+Rocky Shore,Acorn barnacles,Balanomorpha
+Rocky Shore,Black oystercatcher,Haematopus bachmani
+Rocky Shore,Caulacanthus okamurae,Caulacanthus okamurae
+Rocky Shore,Sargassum muticum,Sargassum muticum
+Rocky Shore,Watersipora subtorquata,Watersipora subtorquata
+Estuary,Harbor seal,Phoca vitulina
+Estuary,European green crab,Carcinus maenas
+Estuary,Yellow shore crab,Hemigrapsus oregonensis
+Estuary,Pacific gaper,Tresus nuttallii
+Estuary,Fat innkeeper worm,Urechis unicinctus
+Estuary,Washington clam,Saxidomus nuttalli 
+Estuary,Shorebirds,Charadriiformes
+Estuary,Waterfowl,Anseriformes
+Estuary,Herons and egrets,Ardea
+Estuary,Southern sea otter,Enhydra lutris
+Estuary,Flatfish,Pleuronectiformes
+Estuary,Olympia oyster,Ostrea lurida
+Open Ocean,Seals,Phocidae
+Open Ocean,Sea lions ,Otariidae
+Open Ocean,Krill,Euphausiacea
+Open Ocean,Market squid,Doryteuthis opalescens
+Open Ocean,Lanternfish,Myctophidae
+Open Ocean/Pelagic,Northern anchovy,Engraulis mordax
+Open Ocean/Pelagic,Pacific sardine,Sardinops sagax
+Open Ocean/ Rocky Reef,Rockfish,Sebastes spp.
+Open Ocean,Sanddabs,Citharichthys spp.
+Open Ocean,Pacific hake,Merluccius productus
+Open Ocean/Pelagic,Humpback whale,Megaptera novaeangliae
+Open Ocean/Pelagic,Blue whale,Balaenoptera musculus
+Open Ocean/Coastal Migratory,Gray whale,Eschrichtius robustus
+Open Ocean,Fin whale,Balaenoptera physalus
+Open Ocean,Sooty Shearwater,Puffinus griseus
+Open Ocean,Common Murre,Uria aalge
+Pelagic,Cassin’s Auklet,Ptychoramphus aleuticus
+Pelagic,Black-footed Albatross,Phoebastria nigripes
+Coastal,California Sea Lion,Zalophus californianus
+Shelf,Canary Rockfish,Sebastes pinniger
+Slope,Yelloweye Rockfish,Sebastes ruberrimus
+Rocky Reef,Black Rockfish,Sebastes melanops
+Rocky Reef,Cabezon,Scorpaenichthys marmoratus
+Nearshore Rocky,Striped Surfperch,Embiotoca lateralis
+Kelp Forest,Senorita,Halichoeres californicus
+Kelp Forest,Tubesnout,Aulorhynchus flavidus
+Rocky Subtidal,Southern Sea Palm,Eisenia arborea
+Rocky Subtidal,Chainbladder Kelp,Stephanocystis osmundacea
+Rocky Subtidal,Stalked Kelp,Pterygophora californica
+Subtidal,Giant Pink Sea Star,Pisaster brevispinus
+Rocky Subtidal,White-Spotted Anemone,Urticina eques
+Rocky Subtidal,Starburst Anemone,Anthopleura sola
+Rocky Reef,Orange Puffball Sponge,Tethya californiana
+Rocky Reef,Bat Sea Star,Patiria miniata
+Coastal,Brandt’s Cormorant,Phalacrocorax penicillatus
+Benthic,Pacific Sanddab,Citharichthys sordidus
+,HAB species (Diatoms),Pseudo-nitzschia spp.
+,HAB species (Dinoflagellates),Alexandrium spp.
+,HAB species (Dinoflagellates),Lingulaulax polyedra 

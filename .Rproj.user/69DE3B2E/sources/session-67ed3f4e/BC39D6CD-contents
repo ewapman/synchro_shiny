@@ -1,0 +1,29 @@
+---
+title: "dna_background"
+author: "Emily Wapman"
+date: "2026-07-28"
+output: html_document
+---
+
+### What is DNA?
+
+DNA is a molecule found in an organism’s cells that provides instructions for development. DNA molecules consist of a sequence of building blocks, or nucleotides, abbreviated A, C, T, or G. Each organism’s nucleotides are arranged in a unique sequence.
+
+### What is eDNA?
+
+Environmental DNA (eDNA) refers to the DNA that is found naturally in the environment as organisms shed cells, hair, feces, and mucus. Scientists can extract DNA from soil, water, or air samples, analyze the unique nucleotide sequences, and identify the organisms in the study area.
+
+### What can eDNA tell us?
+
+eDNA can tell us whether an organism is present or absent and give an idea of community biodiversity.
+
+### What can eDNA *not* tell us?
+
+For eDNA sequenced for a specific gene, it can be difficult to show: 
+- The exact number of organisms present
+- If the organisms are alive or dead
+- The age of an organism
+- The exact location of an organism
+- The sex of an organism
+
+eDNA can also have false negatives, meaning an organism could be present in the environment even if its DNA is not detected in a sample.
