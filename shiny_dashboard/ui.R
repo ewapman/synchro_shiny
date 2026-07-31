@@ -104,7 +104,7 @@ body <- dashboardBody(
                                    
                                  ),
                                  
-                                 headerPanel(""),
+                                  headerPanel(""),
                                  
                                  # Start fluidRow inputs ----
                                  fluidRow(
@@ -193,11 +193,22 @@ body <- dashboardBody(
                                        
                                        headerPanel(""),
                                        headerPanel(""),
-                                       girafeOutput(outputId = "depth_plot", height = "600px")
+                                       girafeOutput(outputId = "depth_plot", height = "700px")
                                    )
                                    
                                    
-                                 ) # End - depth graph (all taxa) fluid row
+                                 ), # End - depth graph (all taxa) fluid row
+                                 
+                                 headerPanel(""),
+                                 headerPanel(""),
+                                 
+                                 # Start fluid row bathymetry plot
+                                 fluidRow(
+                                   box(width = 3),
+                                   box(width = 9,
+                                       plotlyOutput(outputId = "bathymetry_plot", height = "500px"))
+                                   
+                                 )
                                  
                                  
                         ) # End map tabPanel

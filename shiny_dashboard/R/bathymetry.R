@@ -18,7 +18,7 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
         depth > 0 & depth <= max_depth_below_150, chl_max_median, depth) ) 
   
   bath_summary <- bath |>
-    filter(Season == season_fn ) |> # REACTIVE: This will be reactive + loop through the different season selections
+    filter(Season %in% season_fn ) |> # REACTIVE: This will be reactive + loop through the different season selections
     filter(map_label == species_fn) |> # REACTIVE: This will be reactive and depend on species input
     group_by(Station, depth_plot) |>  # Want number at each station and at each depth
     summarize(detections = n(), .groups = "drop") |>
@@ -120,7 +120,7 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
       x = as.numeric(bath_plot$distance),
       y = -as.numeric(bath_plot$depth_plot),  
       marker = list(
-        color = as.numeric(lantern_plot$detections),
+        color = as.numeric(bath_plot$detections),
         colorscale = list(c(0, "#FFF7BC"), c(0.5, "#FF6347"), c(1, "#8B0000")),
         showscale = TRUE,
         size = 10, 

@@ -298,33 +298,33 @@ server <- function(input, output, session) {
   
   
   # Render bathymetry plot -------------------------------------------------------
-  # output$bathymetry_plot <- renderPlotly({
-  #   
-  #   req(input$season_input)
-  #   
-  #   if(is.null(input$season_input)) {
-  #     return(
-  #       plot_ly() %>%
-  #         layout(
-  #           annotations = list(
-  #             text = "Select a season(s)",
-  #             xref = "paper",
-  #             yref = "paper",
-  #             x = 0.5,
-  #             y = 0.5,
-  #             showarrow = FALSE,
-  #             font = list(size = 16, color = "gray")
-  #           ),
-  #           xaxis = list(visible = FALSE),
-  #           yaxis = list(visible = FALSE)
-  #         )
-  #     )
-  #   }
-  #   
-  #   
-  #   bath_graph(map_data, input$season_input, input$species_input) 
-  #   
-  # })
+  output$bathymetry_plot <- renderPlotly({
+
+    req(input$season_input)
+
+    # if(is.null(input$season_input)) {
+    #   return(
+    #     plot_ly() %>%
+    #       layout(
+    #         annotations = list(
+    #           text = "Select a season(s)",
+    #           xref = "paper",
+    #           yref = "paper",
+    #           x = 0.5,
+    #           y = 0.5,
+    #           showarrow = FALSE,
+    #           font = list(size = 16, color = "gray")
+    #         ),
+    #         xaxis = list(visible = FALSE),
+    #         yaxis = list(visible = FALSE)
+    #       )
+    #   )
+    # }
+
+
+    bath_graph(map_data, input$season_input, input$species_input)
+
+  })
   
   
 } # End server
