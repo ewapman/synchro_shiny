@@ -1,0 +1,14 @@
+---
+title: "depth_about"
+author: "Emily Wapman"
+date: "2026-07-31"
+output: html_document
+---
+
+### How do indicator taxa detections change over depth?
+
+eDNA surveys can be a useful method for detecting organisms deeper in the water column without deploying Remotely Operated Vehicles (ROVs).
+
+The graph shows the relative abundance of each organism detected during the selected season(s) at each depth. **For example, at 300m, each organism made up X% of all samples at that depth.** Larger circles indicate a larger relative abundance. Hover over a circle to view details. 
+
+Selecting a unique taxa at the top of the page highlights the data points in <span style="color: darkorange;">orange</span>. Toggle seasons on and off above. 

@@ -137,6 +137,7 @@ body <- dashboardBody(
                                  headerPanel(""),
                                  headerPanel(""),
                                  
+                                 # START - fluid row line graph
                                  fluidRow(
                                    box(width = 4,
                                        includeMarkdown("text/line_about.Rmd")
@@ -147,8 +148,18 @@ body <- dashboardBody(
                                         girafeOutput(outputId = "species_line_plot", height = "500px")
                                    )
                                    
-                                 ), # End fluidRow
+                                 ), # End fluidRow line graph
                                  
+                                 headerPanel(""),
+                                 headerPanel(""),
+                                 # 
+                                 # # START - fluid row depth about
+                                 fluidRow(
+                                   box(width = 12,
+                                       includeMarkdown("text/depth_about.Rmd")
+                                   )
+                                   ), # End fluid row depth about
+                                 # 
                                  headerPanel(""),
                                  
                                  # START - depth graph (all taxa) fluid row
