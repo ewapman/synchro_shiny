@@ -14,6 +14,7 @@ library(stringr)
 library(marmap)
 library(shinydashboard)
 library(bslib)
+library(ggtext)
 
 
 # Import data - rds from data processing qmd ---- CHANGE THIS, DONT USE HERE

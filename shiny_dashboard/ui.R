@@ -127,7 +127,7 @@ body <- dashboardBody(
                                    ),
                                    column(4,
                                           wellPanel(
-                                            h5(strong("Taxonomic Composition")),
+                                            h4(strong("Taxonomic Composition")),
                                             plotlyOutput("species_bar_plot", height = "500px")
                                           )
                                    )
@@ -150,18 +150,19 @@ body <- dashboardBody(
                                  ), # End fluidRow
                                  
                                  headerPanel(""),
-                                 headerPanel(""),
                                  
                                  # START - depth graph (all taxa) fluid row
                                  fluidRow(
-                                   box(width = 6,
-                                       girafeOutput(outputId = "depth_plot", height = "500px")
+                                   
+                                
+                                   box(width = 12,
+                                       h4(strong("Relative abundance of taxa at each depth")),
+                                       
+                                       headerPanel(""),
+                                       headerPanel(""),
+                                       girafeOutput(outputId = "depth_plot", height = "600px")
                                    )
                                    
-                                   # box( width = 6,
-                                   #      
-                                   #      plotlyOutput(outputId = "bathymetry_plot", height = "500px")
-                                   # )
                                    
                                  ) # End - depth graph (all taxa) fluid row
                                  

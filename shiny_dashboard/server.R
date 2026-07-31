@@ -274,6 +274,8 @@ server <- function(input, output, session) {
     
     req(input$season_input)
     
+
+    
     # If no season is selected, have empty plot and message to select a season
     
     if(is.null(input$season_input)) {

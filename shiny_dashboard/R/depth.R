@@ -41,22 +41,23 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
   
   # Calculate average depth per species (weighted by abundance)
   species_order <- depth_data |>
-    group_by(map_label) |>
+    group_by(map_label_abb) |>
     summarize(avg_depth = weighted.mean(depth_plot, sp_depth), .groups = "drop") |>
     arrange(avg_depth) |>  # Surface species first
-    pull(map_label)
+    pull(map_label_abb)
   
   # Convert to factor with this order
   depth_data <- depth_data |>
-    mutate(map_label = factor(map_label, levels = species_order))
+    mutate(map_label_abb = factor(map_label_abb, levels = species_order))
   
   
   depth_data$depth_plot <- as.numeric(depth_data$depth_plot)
   
+  # Create list of selected seasons
+  season_list <- paste(season_fn, collapse = ", ")
+  
   # Create plot 
 
-  
-  
   p <- ggplot(depth_data, aes(x = map_label_abb, y = depth_plot, size = relative_abundance)) +
     
     annotate("rect",
@@ -69,19 +70,13 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
     
     
     geom_point_interactive(shape = 21,
-                           alpha = 0.5, 
+                           alpha = 0.7, 
                            color = "black",
                            stroke = 1,
-                           # aes(
-                           #   fill = if_else(
-                           #     map_label == "Pyrosoma atlanticum",  # HARDCODE a real species name
-                           #     "red",
-                           #     "blue"
-                           #   ),
                              aes(
                                fill = if_else(
                                  map_label == species_fn & species_fn != "All species",
-                                 "red", "darkblue"),
+                                 "darkorange", "darkblue"),
                              tooltip = paste0(
                                map_label, "\n",
                                "Depth: ", depth_label, "m\n",
@@ -91,27 +86,28 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
                                        sprintf("%.2f%%", relative_abundance)))))+
     scale_fill_identity() +
     scale_size(range = c(1, 12), name="Relative Abundance") +
-    labs(x = "Indicator Species", 
+    labs(x = "Indicator Taxa", 
          y = "Depth (m)",
-         title = paste0("Relative abundance of species at each depth", season_fn),
+         title = paste0("Seasons selected: ", season_list),
          subtitle = paste0("Green zone = Deep Chlorophyll Max (", min_depth, "-", max_depth_below_150, ")")) +
-    theme_bw(base_size = 14) +
+    theme_bw() +
     scale_y_reverse(
       breaks = c(0, max_depth_below_150, 150, 300),
       limits = c(300, 0)) +
-    # scale_y_break(c(-20, -150), scales = 0.5) +  # Break between 20-150m
-    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+    theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
           legend.position = "none") +
     theme(axis.title.y = element_text(
-      margin = margin(r = 20),
+      margin = margin(r = 20, l = 60),
       vjust = 2),
-      plot.subtitle = element_text(color = "darkgreen"),
+      plot.title = element_text(size = 18),
+      plot.subtitle = element_text(color = "darkgreen", size = 16),
+      axis.title = element_text(size = 16),
+      axis.text = element_text(size = 14),
       axis.title.x = element_text(
         margin = margin(t = 20)
       )
     ) +
     theme(
-      #panel.grid.major.x = element_blank(),
       panel.grid.major.y = element_line(color = "gray90"),  # Keep major gridlines
       panel.grid.minor.y = element_blank(),  # Remove minor gridlines
       panel.grid.major.x = element_line(linewidth = 0.4)
@@ -121,7 +117,7 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
   
   
   girafe(ggobj = p,
-         width_svg = 8,
+         width_svg = 18,
          height_svg = 11,
          options = list(
            opts_hover(css = "fill:orange;stroke:black;"),
@@ -129,3 +125,4 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
          ))
   
 }
+
