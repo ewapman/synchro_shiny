@@ -84,45 +84,67 @@ body <- dashboardBody(
                                    
                                  ),
                                  
+                                 # Add space
                                  headerPanel(""),
                                  headerPanel(""),
                                  
-                                 # Start fluidRow ----
+                                 # Start summary fluid row ----
+                                 fluidRow(
+                                   
+                                   column(
+                                     width = 4,
+                                     offset = 2,
+                                     valueBoxOutput("total_count", width = NULL)
+                                   ),
+                                   
+                                   column(
+                                     width = 4,
+                                     valueBoxOutput("indicator_count", width = NULL)
+                                   ),
+                                   
+                                 ),
+                                 
+                                 headerPanel(""),
+                                 
+                                 # Start fluidRow inputs ----
                                  fluidRow(
                                    
                                    # Start picker column ----
                                    column( 
-                                     width = 3,
+                                     width = 4,
                                      # Drop down input: select species
                                      selectInput(
                                        inputId = "species_input",
                                        label = "Indicator taxa:",
-                                       choices = NULL ),
+                                       choices = NULL )),
                                      
                                      # Dropdown to select date 
+                                   column(
+                                     width = 4,
                                      pickerInput(
                                        inputId = "season_input",
                                        label = "Season:",
                                        choices = NULL,
                                        multiple = TRUE,
                                        options = pickerOptions(actionsBox = TRUE)
-                                     ), 
+                                     )), 
                                      
                                      # Select depth range
-                                     pickerInput(
+                                    column(
+                                      width = 4,
+                                   pickerInput(
                                        inputId = "depth_map_input",
                                        label = "Environmental data depth:",
                                        choices = NULL
-                                     ),
+                                     ))
+                                   ), # End fluid row inputs
                                      
-                                     valueBoxOutput("total_count", width = NULL),
-                                     valueBoxOutput("indicator_count", width = NULL)
-                                     
-                                     
-                                   ),
+                                
+
                                    
                                    # Map output ----
-                                   column(5, 
+                                 fluidRow(
+                                   column(8, 
                                           leafletOutput("indicator_sp_map", height = "600px")
                                    ),
                                    column(4,
