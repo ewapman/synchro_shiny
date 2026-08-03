@@ -5,8 +5,8 @@ date: "2026-07-31"
 output: html_document
 ---
 
-### How do indicator taxa detections change over depth and sampling points? 
+### **How do indicator taxa detections change over depth and across the transect?** 
 
-The graph shows the number of detections at each station and depth for the selected taxa and season(s).The bathymetry shows the depth profile of Monterey Bay along the transect ranging from Elkhorn Slough (ES) to the offshore wind station (OSWS). 
+The graph shows the number of detections at each station and depth for the selected taxa and season(s). The bathymetry shows the depth profile of Monterey Bay along the transect ranging from Elkhorn Slough (ES) to the offshore wind station (OSWS). 
 
 *Select a taxa and season(s) at the top of the page. Hover over points for details.*

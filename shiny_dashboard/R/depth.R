@@ -5,7 +5,7 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
   
   
   # Filter data - relative abundance at each depth
-  depth_data <- map_data |> 
+  depth_data <- data_fn |> 
     select(map_label, depth, abundance, Season) |> 
     filter(Season %in% season_fn) |> 
     mutate( # Do this to combine all chlorophyll max obs

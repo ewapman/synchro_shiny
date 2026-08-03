@@ -205,12 +205,15 @@ body <- dashboardBody(
                                  
                                  # Start fluid row bathymetry plot
                                  fluidRow(
-                                   box(width = 3,
-                                       includeMarkdown("text/bathymetry_about.Rmd")),
-                                   box(width = 9,
+                                   box(width = 12,
+                                       includeMarkdown("text/bathymetry_about.Rmd"))
+                                   ), # End fluid row bathymetry_about.rmd
+                                 fluidRow(
+                                   box(width = 12,
+                                       h4(strong("Number of detections at each depth and station")),
                                        plotlyOutput(outputId = "bathymetry_plot", height = "500px"))
                                    
-                                 )
+                                 ) # End fluid row bathymetry plot
                                  
                                  
                         ) # End map tabPanel

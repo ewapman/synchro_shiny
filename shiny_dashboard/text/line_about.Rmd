@@ -5,7 +5,7 @@ date: "2026-07-30"
 output: html_document
 ---
 
-#### **How does the relative abundance of an indicator organism change over time?** 
+### **How does the relative abundance of an indicator organism change over time?** 
 
 Because the exact number of organisms cannot be determined from this eDNA sampling data, relative abundance is calculated to give an idea of how common an organism's DNA is within a sample in comparison to other organisms. 
 
