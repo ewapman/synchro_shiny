@@ -83,7 +83,8 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
   bath_plot <- bath_summary |> 
     select(Station, detections, depth_plot, depth_label) |> 
     left_join(station_distances, by = c("Station" = "station")) |> 
-    mutate(depth = as.numeric(as.character(depth_plot)))
+    mutate(depth = as.numeric(as.character(depth_plot)),
+           distance = if_else(Station == "Elkhorn Slough", 0, distance)) 
   
   
   # Create annotations
