@@ -71,7 +71,7 @@ ui <- navbarPage(
               ),
               column(4,
                      # conditionalPanel(
-                     #   condition = "input.indicator_sp_map_marker_click && input.species_input == 'All species'",
+                     #   condition = "input.indicator_sp_map_marker_click && input.species_input == 'All taxa'",
                      wellPanel(
                        h5(strong("Species Composition")),
                        plotlyOutput("species_bar_plot", height = "650px")

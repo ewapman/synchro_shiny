@@ -17,17 +17,31 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
       depth_plot = if_else(
         depth > 0 & depth <= max_depth_below_150, chl_max_median, depth) ) 
   
-  bath_summary <- bath |>
-    filter(Season %in% season_fn ) |> # REACTIVE: This will be reactive + loop through the different season selections
-    filter(map_label == species_fn) |> # REACTIVE: This will be reactive and depend on species input
-    group_by(Station, depth_plot) |>  # Want number at each station and at each depth
-    summarize(detections = n(), .groups = "drop") |>
-    mutate(
-      depth_label = if_else(
-        depth_plot == chl_max_median, "Chlorophyll Max", as.character(depth_plot)
-      )
-    )
   
+  # Two options: All taxa or unique taxa
+  if(species_fn == "All taxa"){
+    bath_summary <- bath |>
+      filter(Season %in% season_fn ) |> # REACTIVE: This will be reactive + loop through the different season selections
+      group_by(Station, depth_plot) |>  # Want number at each station and at each depth
+      summarize(detections = n(), .groups = "drop") |>
+      mutate(
+        depth_label = if_else(
+          depth_plot == chl_max_median, "Chlorophyll Max", as.character(depth_plot)
+        )
+      )
+  } else {
+    bath_summary <- bath |>
+      filter(Season %in% season_fn ) |> # REACTIVE: This will be reactive + loop through the different season selections
+      filter(map_label == species_fn) |> # REACTIVE: This will be reactive and depend on species input
+      group_by(Station, depth_plot) |>  # Want number at each station and at each depth
+      summarize(detections = n(), .groups = "drop") |>
+      mutate(
+        depth_label = if_else(
+          depth_plot == chl_max_median, "Chlorophyll Max", as.character(depth_plot)
+        )
+      )
+  }
+
   
   # Get station coords: average because some have 2
   stations <- bath |> 
@@ -161,7 +175,7 @@ if(nrow(bath_plot) > 0) {
     # Otherwise do the normal colorscale
     p <-p |> 
       add_markers(
-        x = as.numeric(bath_plot$distance),
+        x = jitter(as.numeric(bath_plot$distance), amount = 0.5),
         y = -as.numeric(bath_plot$depth_plot),  
         marker = list(
           color = as.numeric(bath_plot$detections),
@@ -195,13 +209,16 @@ if(nrow(bath_plot) > 0) {
   
 }  
 
+# Create list of selected seasons
+season_list <- paste(season_fn, collapse = ", ")
+
 # Add layout
 
 p <- p |> 
     layout(
       font = list(family = "Arial, sans-serif", size = 12),
       title = list(
-        #text = "Detections of myctophidae (lampfish and lanternfish)",
+        text = paste0("Taxa selected: ", species_fn, "\n", "Seasons selected: ", season_list),
         x = 0.1
       ),
       
@@ -212,7 +229,7 @@ p <- p |>
         range = c(-3000, 0),
         fixedrange = FALSE
       ),
-      margin = list(t = 60), # top margin
+      margin = list(t = 100), # top margin
       annotations = annotations_list,
       dragmode = 'zoom',
       hovermode = 'closest'

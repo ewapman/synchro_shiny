@@ -1,7 +1,7 @@
 barchart <- function(data_fn, species_fn, season_fn, clicked_lat, clicked_lon){
   
   
-  if(species_fn == "All species") { 
+  if(species_fn == "All taxa") { 
     
     # Filter data:
     bar_plot_data <- data_fn |> 

@@ -13,7 +13,7 @@ server <- function(input, output, session) {
     
     
     # Filter data based on species selection
-    if(species_selection == "All species") {
+    if(species_selection == "All taxa") {
       filtered_data <- map_data # no filtering
     }
     else {
@@ -55,7 +55,7 @@ server <- function(input, output, session) {
     all_depths <- c("Surface (0-20m)", "Subsurface (>20m)")
     
     # Filter data based on species and season
-    if(species_selection == "All species") {
+    if(species_selection == "All taxa") {
       filtered_data <- map_data |>
         filter(Season %in% season_selection)
     } else {
@@ -102,7 +102,7 @@ server <- function(input, output, session) {
   updateSelectInput(
     session, 
     "species_input",
-    choices = c("All species", sort(unique(map_data$map_label)))
+    choices = c("All taxa", sort(unique(map_data$map_label)))
   )
   
   
@@ -120,11 +120,11 @@ server <- function(input, output, session) {
     choices = unique(map_data$map_label))
   
   
-  # Date selection options: call function originally for All species option
-  update_season_picker("All species")
+  # Date selection options: call function originally for All taxa option
+  update_season_picker("All taxa")
   
-  # Depth selection: call function originally for All species option
-  update_depth_picker("All species", "Spring 2025")
+  # Depth selection: call function originally for All taxa option
+  update_depth_picker("All taxa", "Spring 2025")
   
   # Update dates when the species is changed
   observeEvent(input$species_input, {
@@ -146,7 +146,7 @@ server <- function(input, output, session) {
     
     
     #-------------------- Plot ---------------------------#
-    if(input$species_input == "All species") {
+    if(input$species_input == "All taxa") {
       # Subset environmental data
       envtl_data <- map_data |> 
         filter(Season %in% input$season_input) |>  # All selected seasons
@@ -182,7 +182,7 @@ server <- function(input, output, session) {
       # Define palette ---- SHOULD THIS BE HERE OR IN GLOBAL? (Also might not need palette )
       pal_1 <- colorNumeric(palette = "YlOrRd", domain = leaflet_data_all$indicator_count)
       
-      # Plot all species ----
+      # Plot All taxa ----
       leaflet(leaflet_data_all) |>
         addProviderTiles(providers$Esri.OceanBasemap) |>
         #setView(lng = -122.16, lat = 36.74, zoom = 10) |>
@@ -290,7 +290,7 @@ server <- function(input, output, session) {
       
       #}) # End second reactive
       
-      #Not all species have observations for a given date -- check to avoid errors
+      #Not All taxa have observations for a given date -- check to avoid errors
       if(nrow(leaflet_data_subset) == 0) {
         return(
           leaflet() |>
@@ -404,7 +404,7 @@ server <- function(input, output, session) {
     
     
     
-    if(input$species_input == "All species") { # Only want for all species selection
+    if(input$species_input == "All taxa") { # Only want for All taxa selection
       
       clicked <- input$indicator_sp_map_marker_click
       # Filter data:

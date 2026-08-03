@@ -1,6 +1,6 @@
 leaflet_map <- function(data_fn, season_fn, species_fn, depth_fn) {
   
-  if(species_fn == "All species") {
+  if(species_fn == "All taxa") {
     
     # Subset environmental data to surface and subsurface
     envtl_data <- data_fn |> 
@@ -36,7 +36,7 @@ leaflet_map <- function(data_fn, season_fn, species_fn, depth_fn) {
     # Define palette ---- color by number of indicator taxa detected
     pal_1 <- colorNumeric(palette = "YlOrRd", domain = leaflet_data_all$indicator_count)
     
-    # Plot all species ----
+    # Plot All taxa ----
     
     
     leaflet(leaflet_data_all) |>
@@ -141,7 +141,7 @@ leaflet_map <- function(data_fn, season_fn, species_fn, depth_fn) {
     
     
     
-    # Not all species have observations for a given date -- check to avoid errors
+    # Not All taxa have observations for a given date -- check to avoid errors
     if(nrow(leaflet_data_subset) == 0) {
       return(
         leaflet() |>

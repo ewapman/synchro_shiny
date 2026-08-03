@@ -10,28 +10,28 @@ server <- function(input, output, session) {
     
     # Get all possible seasons
     all_seasons <- sort(unique(map_data$Season))
-    print(paste("All seasons:", paste(all_seasons, collapse = ", ")))
+    
     
     # Filter data based on species selection
-    if(species_selection == "All species") {
+    if(species_selection == "All taxa") {
       filtered_data <- map_data # no filtering
     }
     else {
       filtered_data <- map_data |> # filter to species selected
         filter(map_label == species_selection)
     }
-    print(paste("Filtered data rows:", nrow(filtered_data)))
+    
     
     # Find dates that have observations in the filtered data
     seasons_with_data <- filtered_data |>
       pull(Season) |> # pull to extract single column and put into list (drop df structure)
       unique() |> # only unique seasons
       sort() # order seasons
-    print(paste("Seasons with data:", paste(seasons_with_data, collapse = ", ")))
+   
     
     # Determine which dates to disable
     seasons_to_disable <- !all_seasons %in% seasons_with_data # extract the dates in all dates that don't have data
-    print(paste("Seasons to disable:", paste(all_seasons[seasons_to_disable], collapse = ", ")))
+    
     
     # Update the picker
     updatePickerInput(
@@ -57,7 +57,7 @@ server <- function(input, output, session) {
     all_depths <- c("Surface (0-20m)", "Subsurface (>20m)")
     
     # Filter data based on species and season
-    if(species_selection == "All species") {
+    if(species_selection == "All taxa") {
       filtered_data <- map_data |>
         filter(Season %in% season_selection)
     } else {
@@ -106,7 +106,7 @@ server <- function(input, output, session) {
   updateSelectInput(
     session,
     "species_input",
-    choices = c("All species", sort(unique(map_data$map_label)))
+    choices = c("All taxa", sort(unique(map_data$map_label)))
   )
   
   
@@ -124,11 +124,11 @@ server <- function(input, output, session) {
     choices = unique(map_data$map_label))
   
   
-  # Date selection options: call function originally for All species option
-  update_season_picker("All species")
+  # Date selection options: call function originally for All taxa option
+  update_season_picker("All taxa")
   
-  # Depth selection: call function originally for All species option
-  update_depth_picker("All species", "Spring 2025")
+  # Depth selection: call function originally for All taxa option
+  update_depth_picker("All taxa", "Spring 2025")
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ##                           Reactive updates
@@ -246,7 +246,7 @@ server <- function(input, output, session) {
     
     req(input$species_input)
     
-    if(input$species_input == "All species"){
+    if(input$species_input == "All taxa"){
       return(
         girafe(
           ggobj = ggplot() +
@@ -316,24 +316,24 @@ server <- function(input, output, session) {
       )
     }
     
-    if(input$species_input == "All species") {
-      return(
-        plot_ly() %>%
-          layout(
-            annotations = list(
-              text = "Select a taxa",
-              xref = "paper",
-              yref = "paper",
-              x = 0.5,
-              y = 0.5,
-              showarrow = FALSE,
-              font = list(size = 16, color = "gray")
-            ),
-            xaxis = list(visible = FALSE),
-            yaxis = list(visible = FALSE)
-          )
-      )
-    }
+    # if(input$species_input == "All taxa") {
+    #   return(
+    #     plot_ly() %>%
+    #       layout(
+    #         annotations = list(
+    #           text = "Select a taxa",
+    #           xref = "paper",
+    #           yref = "paper",
+    #           x = 0.5,
+    #           y = 0.5,
+    #           showarrow = FALSE,
+    #           font = list(size = 16, color = "gray")
+    #         ),
+    #         xaxis = list(visible = FALSE),
+    #         yaxis = list(visible = FALSE)
+    #       )
+    #   )
+    # }
 
 
     bath_graph(map_data, input$season_input, input$species_input)

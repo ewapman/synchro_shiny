@@ -75,7 +75,7 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
                            stroke = 1,
                              aes(
                                fill = if_else(
-                                 map_label == species_fn & species_fn != "All species",
+                                 map_label == species_fn & species_fn != "All taxa",
                                  "darkorange", "darkblue"),
                              tooltip = paste0(
                                map_label, "\n",
