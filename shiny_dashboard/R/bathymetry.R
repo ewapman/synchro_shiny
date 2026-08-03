@@ -93,8 +93,13 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
   })
   
   
-  # Create plotly 
-  plot_ly() |> 
+  # Fix min and max values, otherwise taxa with only one observation do not follow colorscale
+  # Force a range even for single values
+  min_det <- min(bath_plot$detections)
+  max_det <- max(bath_plot$detections)
+
+  # Create plotly basemap 
+p <- plot_ly() |> 
     # Bathymetry fill (tan area)
     add_polygons(
       x = c(transect_df$dist.km, rev(transect_df$dist.km)),
@@ -113,27 +118,86 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
       line = list(width = 0),
       hoverinfo = 'none',
       showlegend = FALSE
-    ) |> 
+    ) 
+
+# Add markers if there is data for that organism & season
+if(nrow(bath_plot) > 0) {
+  
+  # Check if there is only one observation:
+  single_obs <- (max_det == min_det)
+  
+  # If there is only a single observation, set to the lower color
+  if(single_obs) {
+    # Single observation - use fixed red color
+    p <- p |> 
+      add_markers(
+        x = as.numeric(bath_plot$distance),
+        y = -as.numeric(bath_plot$depth_plot),  
+        marker = list(
+          color = "#FFF7BC",  # Fixed tomato red color
+          showscale = TRUE,   # Show the colorbar
+          size = 10, 
+          opacity = 0.8,
+          line = list(color = 'black', width = 1),
+          colorbar = list(
+            title = "Detections",
+            tickmode = "array",
+            tickvals = c(0.9),  # Single tick in the middle
+            ticktext = c(as.character(min_det)),  # Shows "1" or whatever the value is
+            ticklabelposition = "outside top" 
+            
+          ),
+          # Create a dummy colorscale so the bar shows the right color
+          colorscale = list(c(0, "#FFF7BC"), c(1, "#FFF7BC")),  # All red
+          cmin = 0,
+          cmax = 1
+        ),
+        hovertemplate = paste0("Depth: ", bath_plot$depth_label, "<br>",
+                               "Detections: ", bath_plot$detections,
+                               "<extra></extra>")
+      )
+  } else {
     
-    # Lanternfish markers - NEGATE the depth values
-    add_markers(
-      x = as.numeric(bath_plot$distance),
-      y = -as.numeric(bath_plot$depth_plot),  
-      marker = list(
-        color = as.numeric(bath_plot$detections),
-        colorscale = list(c(0, "#FFF7BC"), c(0.5, "#FF6347"), c(1, "#8B0000")),
-        showscale = TRUE,
-        size = 10, 
-        opacity = 0.8,
-        line = list(color = 'black', width = 1), 
-        colorbar = list(title = "Detections")
+    # Otherwise do the normal colorscale
+    p <-p |> 
+      add_markers(
+        x = as.numeric(bath_plot$distance),
+        y = -as.numeric(bath_plot$depth_plot),  
+        marker = list(
+          color = as.numeric(bath_plot$detections),
+          colorscale = list(c(0, "#FFF7BC"), c(0.5, "#FF6347"), c(1, "#8B0000")),
+          showscale = TRUE,
+          size = 10, 
+          opacity = 0.8,
+          line = list(color = 'black', width = 1), 
+          colorbar = list(title = "Detections")
+        ),
+        hovertemplate = paste0("Depth: ", bath_plot$depth_label, "<br>",
+                               "Detections: ", bath_plot$detections,
+                               "<extra></extra>")
         
-      ),
-      hovertemplate = paste0("Depth: ", bath_plot$depth_label, "<br>",
-                             "Detections: ", bath_plot$detections,
-                             "<extra></extra>")
-      
-    ) |> 
+      )
+    
+    
+  }
+  
+} else {
+  
+  # Empty plot with annotation 
+  p <- p |>
+    add_annotations(
+      text = paste("No data for", species_fn, "in selected season(s)"),
+      x = 0.5, y = 0.5,
+      xref = "paper", yref = "paper",
+      showarrow = FALSE,
+      font = list(size = 14, color = "gray50")
+    )
+  
+}  
+
+# Add layout
+
+p <- p |> 
     layout(
       font = list(family = "Arial, sans-serif", size = 12),
       title = list(
@@ -158,3 +222,4 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
            displayModeBar = TRUE)
   
 } # End function
+

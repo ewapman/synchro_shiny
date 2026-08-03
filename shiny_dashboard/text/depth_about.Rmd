@@ -9,6 +9,6 @@ output: html_document
 
 eDNA surveys can be a useful method for detecting organisms deeper in the water column without deploying Remotely Operated Vehicles (ROVs).
 
-The graph shows the relative abundance of each organism detected during the selected season(s) at each depth. **For example, at 300m, each organism made up X% of all samples at that depth.** Larger circles indicate a larger relative abundance. Hover over a circle to view details. 
+The graph shows the relative abundance of each organism detected during the selected season(s) at each depth. **For example, at 300m, each organism made up X% of all samples at that depth.** Larger circles indicate a larger relative abundance. 
 
-Selecting a unique taxa at the top of the page highlights the data points in <span style="color: darkorange;">orange</span>. Toggle seasons on and off above. 
+Hover over a circle to view details. Selecting a unique taxa at the top of the page highlights the data points in <span style="color: darkorange;">orange</span>. Toggle seasons on and off above. 

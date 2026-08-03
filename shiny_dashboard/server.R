@@ -271,11 +271,7 @@ server <- function(input, output, session) {
   
   # Render depth plot ------------------------------------------------------------
   output$depth_plot <- renderGirafe({
-    
-    req(input$season_input)
-    
 
-    
     # If no season is selected, have empty plot and message to select a season
     
     if(is.null(input$season_input)) {
@@ -283,11 +279,11 @@ server <- function(input, output, session) {
         girafe(
           ggobj = ggplot() +
             annotate("text", x = 0.5, y = 0.5,
-                     label = "Select season(s)",
+                     label = "Select a season(s)",
                      size = 6, color = "gray50") +
             theme_void(),
           width_svg = 8,
-          height_svg = 11
+          height_svg = 5
         )
       )
     }
@@ -300,26 +296,44 @@ server <- function(input, output, session) {
   # Render bathymetry plot -------------------------------------------------------
   output$bathymetry_plot <- renderPlotly({
 
-    req(input$season_input)
 
-    # if(is.null(input$season_input)) {
-    #   return(
-    #     plot_ly() %>%
-    #       layout(
-    #         annotations = list(
-    #           text = "Select a season(s)",
-    #           xref = "paper",
-    #           yref = "paper",
-    #           x = 0.5,
-    #           y = 0.5,
-    #           showarrow = FALSE,
-    #           font = list(size = 16, color = "gray")
-    #         ),
-    #         xaxis = list(visible = FALSE),
-    #         yaxis = list(visible = FALSE)
-    #       )
-    #   )
-    # }
+    if(is.null(input$season_input)) {
+      return(
+        plot_ly() %>%
+          layout(
+            annotations = list(
+              text = "Select a season(s)",
+              xref = "paper",
+              yref = "paper",
+              x = 0.5,
+              y = 0.5,
+              showarrow = FALSE,
+              font = list(size = 16, color = "gray")
+            ),
+            xaxis = list(visible = FALSE),
+            yaxis = list(visible = FALSE)
+          )
+      )
+    }
+    
+    if(input$species_input == "All species") {
+      return(
+        plot_ly() %>%
+          layout(
+            annotations = list(
+              text = "Select a taxa",
+              xref = "paper",
+              yref = "paper",
+              x = 0.5,
+              y = 0.5,
+              showarrow = FALSE,
+              font = list(size = 16, color = "gray")
+            ),
+            xaxis = list(visible = FALSE),
+            yaxis = list(visible = FALSE)
+          )
+      )
+    }
 
 
     bath_graph(map_data, input$season_input, input$species_input)
