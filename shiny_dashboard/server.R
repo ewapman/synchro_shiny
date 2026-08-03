@@ -315,26 +315,6 @@ server <- function(input, output, session) {
           )
       )
     }
-    
-    # if(input$species_input == "All taxa") {
-    #   return(
-    #     plot_ly() %>%
-    #       layout(
-    #         annotations = list(
-    #           text = "Select a taxa",
-    #           xref = "paper",
-    #           yref = "paper",
-    #           x = 0.5,
-    #           y = 0.5,
-    #           showarrow = FALSE,
-    #           font = list(size = 16, color = "gray")
-    #         ),
-    #         xaxis = list(visible = FALSE),
-    #         yaxis = list(visible = FALSE)
-    #       )
-    #   )
-    # }
-
 
     bath_graph(map_data, input$season_input, input$species_input)
 

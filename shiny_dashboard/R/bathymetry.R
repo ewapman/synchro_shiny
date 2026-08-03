@@ -218,7 +218,7 @@ p <- p |>
     layout(
       font = list(family = "Arial, sans-serif", size = 12),
       title = list(
-        text = paste0("Taxa selected: ", species_fn, "\n", "Seasons selected: ", season_list),
+        text = paste0("Number of detections of: ", species_fn, "\n", "Seasons selected: ", season_list),
         x = 0.1
       ),
       

@@ -11,7 +11,7 @@ Because the exact number of organisms cannot be determined from this eDNA sampli
 
 The graph shows the relative abundance of the selected organism each season. **For example, in spring 2025, the selected organism made up X% of all samples that season.**
 
-
+*Select a taxa and season(s) at the top of the page. Hover over points for details.*
 
 
 

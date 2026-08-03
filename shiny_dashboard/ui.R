@@ -205,7 +205,8 @@ body <- dashboardBody(
                                  
                                  # Start fluid row bathymetry plot
                                  fluidRow(
-                                   box(width = 3),
+                                   box(width = 3,
+                                       includeMarkdown("text/bathymetry_about.Rmd")),
                                    box(width = 9,
                                        plotlyOutput(outputId = "bathymetry_plot", height = "500px"))
                                    
