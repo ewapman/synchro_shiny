@@ -21,9 +21,6 @@ sidebar <- dashboardSidebar(
     id = "tabs",
     menuItem(text = "Welcome", tabName = "welcome", icon = icon("star")),
     menuItem(text = "Dashboard", tabName = "dashboard", icon = icon("chart-line"))
-    # menuItem(text = "Depth", tabName = "depth", icon = icon("ship")),
-    # menuItem(text = "Seasonal change", tabName = "season", icon = icon("leaf")),
-    # menuItem(text = "Depth case study", tabName = "depth_lantern", icon = icon("fish"))
     
   ) # END sidebarMenu
   
@@ -41,8 +38,9 @@ body <- dashboardBody(
     
     # ......................START welcome tabItem ..............................
     tabItem(tabName = "welcome",
+            width = 12,
             tags$img(class = "banner", src = "media/synchro_boat.png",
-                     alt = "A landscape photo of a golden field of grass that stretches towards rolling dark green/brown hills. The sun is rising over the hilltops to the left and the sky is clear. A narrow trail weaves down the center. In the foreground, there are a few bent metal posts with barbed wire streteched between them. In front of the fence, there is a crooked metal sign reading 'Camuesa Connector Trail'."),
+                     alt = "A photo of sea water bags being filtered for eDNA on a boat."),
             
             # START fluidRow with DNA intro box ----
             fluidRow(
@@ -167,7 +165,7 @@ body <- dashboardBody(
                                    
                                    box( width = 8,
                                         
-                                        girafeOutput(outputId = "species_line_plot", height = "500px")
+                                        girafeOutput(outputId = "species_line_plot", height = "400px")
                                    )
                                    
                                  ), # End fluidRow line graph

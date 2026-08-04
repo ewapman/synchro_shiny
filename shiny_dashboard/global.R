@@ -23,10 +23,6 @@ full_taxa <- readRDS(here("shiny_dashboard", "data", "processed", "full_taxa.rds
 
 
 
-# Create palette ----
-# n_species <- length(unique(map_data$map_label))
-# all_sp <- sort(unique(map_data$map_label))
-
 # Get bathymetry ----
 
 # Bathymetry ----------------- MOVE TO GLOBAL ----------------------
@@ -106,7 +102,7 @@ transect_df <- as.data.frame(transect_data) |>
 # How rare/common? --> 
 
 # Plot -- show number of detections at each depth each season 
-
+# 
 # lantern <- map_data |>
 #   filter(grepl("lampfish|lanternfish", common_name, ignore.case = TRUE)) |>
 #   select(map_label, depth, abundance, Season, sample_id, Latitude, Longitude, upload_time, sampling.date, Family, Genus) |>
@@ -605,8 +601,8 @@ transect_df <- as.data.frame(transect_data) |>
 #                    radius = 6)
 # 
 # 
-# # Static map ---
-# # 1. Load required libraries
+# Static map ---
+# 1. Load required libraries
 # library(ggplot2)
 # library(maps)
 # library(ggOceanMaps)
@@ -617,29 +613,29 @@ transect_df <- as.data.frame(transect_data) |>
 # # 4. Build the plot and zoom into Monterey Bay coordinates
 # # county lines
 # map <- ggplot() +
-#   geom_polygon(data = ca_county, aes(x = long, y = lat, group = group), 
+#   geom_polygon(data = ca_county, aes(x = long, y = lat, group = group),
 #                fill = "antiquewhite", color = "gray60") +
 #   # Plot the coordinates
-#   
-#   geom_point(data = stations, aes(x = Longitude, y = Latitude), 
+# 
+#   geom_point(data = stations, aes(x = Longitude, y = Latitude),
 #              color = "#EF4444", size = 3) +
 #   # Add labels to the points
-#   geom_text(data = stations, aes(x = Longitude, y = Latitude, label = station_label), 
+#   geom_text(data = stations, aes(x = Longitude, y = Latitude, label = station_label),
 #             vjust = -1, fontface = "bold") +
 #   # Crop map to Monterey Bay boundaries
 #   coord_quickmap(xlim = c(-122.6, -121.5), ylim = c(36.4, 37.1)) +
 #   # Clean up the background
-#   labs(title = "Study Transect", x = "Longitude", y = "Latitude") +
+#   labs(x = "Longitude", y = "Latitude") +
 # 
-#   
+# 
 #   theme(
 #     panel.background = element_rect(fill = "lightblue"),
 #     panel.grid.major = element_blank(),
 #     panel.grid.minor = element_blank()
 #   )
 # 
-# ggsave(filename = "study_map.jpeg", plot = map)
-# 
+# ggsave(filename = "media/study_map.jpeg", plot = map)
+
 # 
 # #   ##########################################################################
 # ########################### Species stacked bar graph ########################
