@@ -61,7 +61,35 @@ body <- dashboardBody(
                   includeMarkdown("text/synchro_about.Rmd")
               ) # END intro box
               
-            ) # End fluid row
+            ), # End fluid row
+            # 
+            fluidRow(
+              tags$div(
+                style = "text-align: center;",
+              tags$img(class = "banner", src = "media/methods.png",
+                       #alt = "A photo of sea water bags being filtered for eDNA on a boat.",
+                       style = "max-width: 90%; height: auto; display: block; margin: 0 auto;"),
+              tags$figcaption(
+                style = "font-style: italic; color: #555555; margin-top: 8px; font-size: 14px; margin-left: 30px;",
+                "Diagram of sampling methods from Elkhorn Slough (right) to the offshore wind station (left)."
+              )
+              )
+            ),
+            
+            headerPanel(""),
+            
+            fluidRow(
+              tags$div(
+                style = "text-align: center;",
+                tags$img(class = "banner", src = "media/study_map.jpeg",
+                       #alt = "A photo of sea water bags being filtered for eDNA on a boat.",
+                       style = "max-width: 50%; height: auto; display: block; margin: 0 auto;"),
+                tags$figcaption(
+                  style = "font-style: italic; color: #555555; margin-top: 8px; font-size: 14px;",
+                  "Map of study transect."
+              ))
+              
+            )
             
     ), # END welcome tabItem
     
