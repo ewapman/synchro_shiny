@@ -158,9 +158,10 @@ leaflet_map <- function(data_fn, season_fn, species_fn, depth_fn) {
     actual_min <- min(leaflet_data_subset$sp_count, na.rm = TRUE)
     actual_max <- max(leaflet_data_subset$sp_count, na.rm = TRUE)
     
+    
     range_width <- actual_max - actual_min
     min_range_width <- 4  # Adjust this value as needed
-    
+
     if(range_width < min_range_width) {
       # Expand range to minimum width
       domain_min <- 1
@@ -171,15 +172,24 @@ leaflet_map <- function(data_fn, season_fn, species_fn, depth_fn) {
       domain_max <- as.integer(actual_max)
     }
     
+
     pal_2 <- colorNumeric(palette = "YlOrRd", domain = c(domain_min, domain_max))
     
+    # Jitter points to avoid direct overlap
+    
+    leaflet_data_subset <- leaflet_data_subset |>
+      arrange(sp_count) |>
+      mutate(
+        Longitude_jitter = jitter(Longitude, amount = 0.01),  # Adjust amount as needed
+        Latitude_jitter = jitter(Latitude, amount = 0.01)
+      )
     
     # Plot species subset ----
     leaflet(leaflet_data_subset) |>
       addProviderTiles(providers$Esri.OceanBasemap) |>
       #setView(lng = -122.16, lat = 36.74, zoom = 10) |>
       addCircleMarkers(
-        ~Longitude, ~Latitude,
+        ~Longitude_jitter, ~Latitude_jitter,
         #radius = ~sp_count,
         color = ~pal_2(sp_count),
         fillOpacity = 0.8,
