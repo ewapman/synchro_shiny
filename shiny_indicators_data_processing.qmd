@@ -15,9 +15,9 @@ library(here)
 library(tidyverse)
 library(taxize)
 
-sample_data_raw <- read_csv(here("indicator_sp_shiny/data/raw", "Synchro_fish_mammals_full.csv"), skip = 1)
+sample_data_raw <- read_csv(here("shiny_dashboard/data/raw", "Synchro_fish_mammals_full.csv"), skip = 1)
 
-metadata_raw <- read_csv(here("indicator_sp_shiny/data/raw", "eDNAsample_inventory_allcombined_20260624.csv"))
+metadata_raw <- read_csv(here("shiny_dashboard/data/raw", "eDNAsample_inventory_allcombined_20260624.csv"))
 
 ```
 
@@ -371,13 +371,15 @@ phyloseq::tax_table(ps_decontam) <- phyloseq::tax_table(tax_matrix)
 phyloseq::tax_table(ps_decontam)[1:5, ]
 
 ```
+
 Save psdecontam data as RDS file -- all detections
+
 ```{r}
 # Extract taxonomy table (just need # of detections for now)
 taxa_full_df <- as.data.frame(tax_table(ps_decontam))
 
 
-saveRDS(taxa_full_df, here("indicator_sp_shiny", "data", "processed", "full_taxa.rds"))
+saveRDS(taxa_full_df, here("shiny_dashboard", "data", "processed", "full_taxa.rds"))
 
 
 ```
@@ -386,7 +388,7 @@ saveRDS(taxa_full_df, here("indicator_sp_shiny", "data", "processed", "full_taxa
 
 ```{r}
 library(janitor)
-indicators <- read_csv(here("indicator_sp_shiny/data/raw", "Sanctuary_indicator_species_MBNMS.csv")) |> 
+indicators <- read_csv(here("shiny_dashboard/data/raw", "Sanctuary_indicator_species_MBNMS.csv")) |> 
   clean_names()
 
 ```
@@ -511,6 +513,7 @@ tax_table(ps_decontam) <- tax_table(as.matrix(tax_joined_indicators))
 ```
 
 ### Get data ready for plotting and save as RDS object for shiny app
+
 ```{r}
 # First get otu table from phyloseq
 otu_df <- otu_table(ps_decontam) |> 
@@ -555,12 +558,14 @@ shiny_data <- shiny_data |>
 
 
 ```
+
 Add temperature data and time --- potentially change qmd earlier to account for new dataset format
+
 ```{r}
 # Join
 # meta_temp <- read_csv(here("indicator_sp_shiny/data/raw", "all_metadata_CTD_with_temp.csv"))
 
-meta_temp_time <- read_csv(here("indicator_sp_shiny/data/raw", "all_metadata_CTD_time.csv"))
+meta_temp_time <- read_csv(here("shiny_dashboard/data/raw", "all_metadata_CTD_time.csv"))
 # Check for duplicate SampleIDs in meta_temp_time
 
 
@@ -575,8 +580,8 @@ shiny_data <- shiny_data %>%
 
 ```
 
+Add common names - using indicator list and filling in NA's manually
 
-Add common names - using indicator list and filling in NA's manually 
 ```{r}
 # Unique taxa - match species
 taxa_list <- unique(shiny_data$map_label) |> 
@@ -668,10 +673,99 @@ shiny_data <- shiny_data |>
   mutate(upload_time = format(system_upload_time, "%H:%M:%S"))
 
 # Save as an RDS to use in shiny app
-saveRDS(shiny_data, here("indicator_sp_shiny", "data", "processed", "shiny_data.rds"))
+saveRDS(shiny_data, here("shiny_dashboard", "data", "processed", "shiny_data.rds"))
 
 
   
 ```
 
+# Preprocess bathymetry data
 
+```{r}
+# Bathymetry ----------------- MOVE TO GLOBAL ----------------------
+
+# Get start and end points for bathymetry 
+start_lon <- shiny_data |> 
+  filter(Station == "Elkhorn Slough") |> 
+  pull(Longitude) |> 
+  mean()
+
+start_lat <- shiny_data |> 
+  filter(Station == "Elkhorn Slough") |> 
+  pull(Latitude) |> 
+  mean()
+
+end_lon <- shiny_data |>
+  filter(grepl("OSWS", sample_id)) |>
+  pull(Longitude) |>
+  first()
+
+end_lat <- shiny_data |>
+  filter(grepl("OSWS", sample_id)) |>
+  pull(Latitude) |>
+  first()
+
+library(marmap)
+# Add a small buffer so the points aren't on the edge
+lon_min <- min(c(start_lon, end_lon)) - 0.1
+lon_max <- max(c(start_lon, end_lon)) + 0.1
+lat_min <- min(c(start_lat, end_lat)) - 0.1
+lat_max <- max(c(start_lat, end_lat)) + 0.1
+
+# Download the background bathymetry map using the bounding box
+monterey_map <- getNOAA.bathy(lon1 = lon_min, 
+                              lon2 = lon_max,
+                              lat1 = lat_min, 
+                              lat2 = lat_max, 
+                              resolution = 1)
+
+# Get transect
+transect_data <- get.transect(monterey_map,
+                              x1 = start_lon,
+                              y1 = start_lat,
+                              x2 = end_lon,
+                              y2 = end_lat,
+                              distance = TRUE)
+
+
+saveRDS(monterey_map, here("shiny_dashboard", "data", "processed", "monterey_map.rds"))
+saveRDS(transect_data, here("shiny_dashboard", "data", "processed", "transect_data.rds"))
+
+
+
+ # Calculate distance along transect for each station
+
+stations_temp <- shiny_data |> 
+    group_by(Station) |> 
+    summarize(
+      Latitude = mean(Latitude, na.rm = TRUE),
+      Longitude = mean(Longitude, na.rm = TRUE)
+    ) |> 
+    # add_row(Station = "ES", Latitude = start_lat, Longitude = start_lon) |> 
+    arrange(Longitude) |>  # Order from west to east
+    mutate(
+      Station = if_else(Station == "Elkhorn Slough", "ES", Station)
+    )
+
+  station_distances <- data.frame(
+    station = character(),
+    distance = numeric(),
+    stringsAsFactors = FALSE
+  )
+  
+  for(i in 1:nrow(stations_temp)) {
+    # Get transect to each station from start point
+    temp_transect <- get.transect(monterey_map,
+                                  x1 = start_lon,
+                                  y1 = start_lat,
+                                  x2 = stations_temp$Longitude[i],
+                                  y2 = stations_temp$Latitude[i],
+                                  distance = TRUE)
+    
+    station_distances <- rbind(station_distances,
+                               data.frame(station = stations_temp$Station[i],
+                                          distance = max(temp_transect$dist)))
+  }
+
+saveRDS(station_distances, "shiny_dashboard/data/processed/station_distances.rds")
+```

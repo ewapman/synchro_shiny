@@ -1,0 +1,7 @@
+rsconnect/
+.Rprofile
+.dcf
+install.R
+.Rproj.user/
+*.Rproj
+.DS_Store

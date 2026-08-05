@@ -3,7 +3,6 @@
 
 # Load Libraries 
 library(shiny)
-library(tidyr)
 library(dplyr)
 library(ggplot2)
 library(shinyWidgets) 
@@ -37,22 +36,22 @@ transect_df <- as.data.frame(transect_data) |>
 
 # Starting points
 
-start_lon <- map_data |> 
+start_lon <- shiny_data |> 
   filter(Station == "Elkhorn Slough") |> 
   pull(Longitude) |> 
   mean()
 
-start_lat <- map_data |> 
+start_lat <- shiny_data |> 
   filter(Station == "Elkhorn Slough") |> 
   pull(Latitude) |> 
   mean()
 
-end_lon <- map_data |>
+end_lon <- shiny_data |>
   filter(grepl("OSWS", sample_id)) |>
   pull(Longitude) |>
   first()
 
-end_lat <- map_data |>
+end_lat <- shiny_data |>
   filter(grepl("OSWS", sample_id)) |>
   pull(Latitude) |>
   first()
