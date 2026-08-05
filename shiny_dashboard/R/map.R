@@ -49,11 +49,35 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
             mode = "markers",
             source = "indicator_map", 
             marker = list(
-              size = 10,
+              size = 15,
               color = ~indicator_count,
               colorscale = "YlOrRd",
+              reversescale = TRUE,
               showscale = TRUE,
-              colorbar = list(title = "Unique<br>Species"),
+              colorbar = list(
+                title = "Unique<br>Species",
+                orientation = "h",
+                x = 0,
+                xanchor = "left",
+                y = 0,
+                len = 0.4,
+                thickness = 15,
+                bgcolor = "rgba(255,255,255,0)",  # ← Transparent background
+                borderwidth = 0,                   # ← No border
+                outlinewidth = 0,
+                tickmode = "array",                    # ← Add this
+                tickvals = seq(
+                  min(leaflet_data_all$indicator_count, na.rm = TRUE),
+                  max(leaflet_data_all$indicator_count, na.rm = TRUE),
+                  length.out = 5
+                ),
+                ticktext = round(seq(
+                  min(leaflet_data_all$indicator_count, na.rm = TRUE),
+                  max(leaflet_data_all$indicator_count, na.rm = TRUE),
+                  length.out = 5
+                )),
+                tickfont = list(size = 10)),             # ← Font size),                   # ← Explicitly no outline),
+              
               opacity = 0.8,
               line = list(color = 'white', width = 1)
             ),
@@ -74,7 +98,7 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
       layout(
         mapbox = list(
           style = "white-bg",
-          zoom = 9.5,
+          zoom = 8,
           center = list(lon = -122.16, lat = 36.74),
           layers = list(list(
             below = 'traces',
@@ -286,11 +310,26 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
             mode = "markers",
             source = "indicator_map", 
             marker = list(
-              size = 10,
+              size = 15,
               color = ~sp_count,
               colorscale = "YlOrRd",
+              reversescale = TRUE,
               showscale = TRUE,
-              colorbar = list(title = "Detections"),
+              colorbar = list(title = "Detections", 
+                              orientation = "h",
+                              x = 0,              # ← Left side (was 0.5)
+                              xanchor = "left",   # ← Anchor to left (was center)
+                              y = 0,              # ← Bottom
+                              yanchor = "bottom",
+                              len = 0.4,
+                              thickness = 15,
+                              bgcolor = "rgba(255,255,255,0)",  # ← Transparent background
+                              borderwidth = 0,                   # ← No border
+                              outlinewidth = 0,
+                              tickmode = "array",                    # ← Add this
+                              tickvals = seq(domain_min, domain_max, length.out = 5),  # ← 5 evenly spaced ticks
+                              ticktext = round(seq(domain_min, domain_max, length.out = 5)),
+                              tickfont = list(size = 10)),             # ← Font size),                   # ← Explicitly no outline),
               opacity = 0.8,
               line = list(color = 'white', width = 1),
               cmin = domain_min,
@@ -315,7 +354,7 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
       layout(
         mapbox = list(
           style = "white-bg",
-          zoom = 9.5,
+          zoom = 8,
           center = list(lon = -122.16, lat = 36.74),
           layers = list(list(
             below = 'traces',
