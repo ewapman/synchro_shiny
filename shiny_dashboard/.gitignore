@@ -2,6 +2,6 @@ rsconnect/
 .Rprofile
 .dcf
 install.R
+.DS_Store
 .Rproj.user/
 *.Rproj
-.DS_Store
