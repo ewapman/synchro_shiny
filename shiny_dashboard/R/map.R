@@ -176,12 +176,23 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
     if(length(seasons_to_use) == 0) {
       return(
         plot_ly() |>
+          add_trace(
+            type = "scattermapbox",  # ← ADD THIS
+            lat = c(36.74),
+            lon = c(-122.16),
+            mode = "markers",
+            marker = list(opacity = 0)
+          ) |>
           layout(
-            title = "No data for this species in selected seasons",
             mapbox = list(
               style = "white-bg",
-              zoom = 9.5,
+              zoom = 8,
               center = list(lon = -122.16, lat = 36.74)
+            ),
+            annotations = list(
+              text = "No data for this species in selected seasons",
+              showarrow = FALSE,
+              font = list(size = 16, color = "gray")
             )
           )
       )
@@ -244,12 +255,23 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
     if(nrow(leaflet_data_subset) == 0) {
       return(
         plot_ly() |>
+          add_trace(
+            type = "scattermapbox",  # ← ADD THIS
+            lat = c(36.74),
+            lon = c(-122.16),
+            mode = "markers",
+            marker = list(opacity = 0)
+          ) |>
           layout(
-            title = "No data for this species and date",
             mapbox = list(
               style = "white-bg",
-              zoom = 9.5,
+              zoom = 8,
               center = list(lon = -122.16, lat = 36.74)
+            ),
+            annotations = list(
+              text = "No data for this species and date",
+              showarrow = FALSE,
+              font = list(size = 16, color = "gray")
             )
           )
       )
@@ -284,6 +306,15 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
       domain_max <- as.integer(actual_max)
     }
     
+    # Fix for single values - make them appear light
+    if(actual_min == actual_max) {
+      plot_min <- actual_min
+      plot_max <- actual_min + 10  # Creates range so single value is light
+    } else {
+      plot_min <- domain_min
+      plot_max <- domain_max
+    }
+    
 
     #pal_2 <- colorNumeric(palette = "YlOrRd", domain = c(domain_min, domain_max))
     
@@ -300,6 +331,8 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
       
     
     # Plot species subset ----
+    # Check if there's only 1 row of data
+    single_point <- nrow(leaflet_data_subset) == 1
     
     p <- plot_ly(leaflet_data_subset,
             lat = ~Latitude,
@@ -309,31 +342,46 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
             type = "scattermapbox",
             mode = "markers",
             source = "indicator_map", 
+           
+            
             marker = list(
               size = 15,
-              color = ~sp_count,
-              colorscale = "YlOrRd",
-              reversescale = TRUE,
+              color = if(single_point && actual_min == actual_max) "#FFFFCC" else ~sp_count,  # ← Force color for single point
+              colorscale = if(actual_min == actual_max) list(c(0, "#FFFFCC"), c(1, "#FFFFCC")) else "YlOrRd",
+              reversescale = if(actual_min == actual_max) FALSE else TRUE,
               showscale = TRUE,
-              colorbar = list(title = "Detections", 
-                              orientation = "h",
-                              x = 0,              # ← Left side (was 0.5)
-                              xanchor = "left",   # ← Anchor to left (was center)
-                              y = 0,              # ← Bottom
-                              yanchor = "bottom",
-                              len = 0.4,
-                              thickness = 15,
-                              bgcolor = "rgba(255,255,255,0)",  # ← Transparent background
-                              borderwidth = 0,                   # ← No border
-                              outlinewidth = 0,
-                              tickmode = "array",                    # ← Add this
-                              tickvals = seq(domain_min, domain_max, length.out = 5),  # ← 5 evenly spaced ticks
-                              ticktext = round(seq(domain_min, domain_max, length.out = 5)),
-                              tickfont = list(size = 10)),             # ← Font size),                   # ← Explicitly no outline),
+              cauto = FALSE,
+              colorbar = list(
+                title = "Detections", 
+                orientation = "h",
+                x = 0,
+                xanchor = "left",
+                y = 0,
+                yanchor = "bottom",
+                len = 0.4,
+                thickness = 15,
+                bgcolor = "rgba(255,255,255,0)",
+                borderwidth = 0,
+                outlinewidth = 0,
+                tickmode = "array",
+                tickvals = if(actual_min == actual_max) {
+                  c(actual_min)
+                } else {
+                  pretty(c(domain_min, domain_max), n = 3)
+                },
+                ticktext = if(actual_min == actual_max) {
+                  c(as.character(actual_min))
+                } else {
+                  as.character(pretty(c(domain_min, domain_max), n = 3))
+                },
+                tickfont = list(size = 10),
+                tick0 = if(actual_min == actual_max) actual_min else NULL,
+                dtick = if(actual_min == actual_max) 1 else NULL
+              ),                             
               opacity = 0.8,
               line = list(color = 'white', width = 1),
-              cmin = domain_min,
-              cmax = domain_max
+              cmin = if(actual_min == actual_max) actual_min else domain_min,
+              cmax = if(actual_min == actual_max) actual_min else domain_max
             ),
             hovertext = ~paste0(
               "<b>Species:</b> ", map_label, "<br>",

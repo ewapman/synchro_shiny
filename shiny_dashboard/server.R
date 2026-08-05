@@ -193,7 +193,7 @@ server <- function(input, output, session) {
   
   # Render map plot --------------------------------------------------------------
   
-  output$indicator_sp_map <- renderLeaflet({
+  output$indicator_sp_map <- renderPlotly({
     
     req(input$season_input, input$species_input, input$depth_map_input)
     

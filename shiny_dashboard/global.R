@@ -8,16 +8,14 @@ library(dplyr)
 library(ggplot2)
 library(shinyWidgets) 
 library(forcats)
-#library(leaflet)
 library(plotly)
 library(ggiraph)
 library(RColorBrewer)
-#library(leaflegend)
 library(stringr)
 library(shinydashboard)
 library(bslib)
 library(ggtext)
-
+library(shinycssloaders)
 
 # Import data - rds from data processing qmd ---- CHANGE THIS, DONT USE HERE
 # map_data <- readRDS(here("shiny_dashboard", "data", "processed", "shiny_data.rds"))

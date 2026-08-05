@@ -171,8 +171,12 @@ body <- dashboardBody(
                                    
                                    # Map output ----
                                  fluidRow(
-                                   column(8, 
-                                          plotlyOutput("indicator_sp_map", height = "600px")
+                                   column(8,
+                                         # withSpinner(
+                                          plotlyOutput("indicator_sp_map", height = "600px"),
+                                          type = 4, 
+                                          color = "#3da48c"
+                                          #)
                                    ),
                                    column(4,
                                           wellPanel(
