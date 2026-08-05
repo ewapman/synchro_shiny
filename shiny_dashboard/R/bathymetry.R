@@ -227,7 +227,7 @@ p <- p |>
                    fixedrange = FALSE),
       yaxis = list(
         title = "Depth (m)",
-        range = c(-3000, 0),
+        range = c(-3000, 50),
         fixedrange = FALSE
       ),
       margin = list(t = 100), # top margin

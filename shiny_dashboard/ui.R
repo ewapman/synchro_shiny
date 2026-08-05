@@ -116,22 +116,22 @@ body <- dashboardBody(
                                  headerPanel(""),
                                  
                                  # Start summary fluid row ----
-                                 fluidRow(
-                                   
-                                   column(
-                                     width = 4,
-                                     offset = 2,
-                                     valueBoxOutput("total_count", width = NULL)
-                                   ),
-                                   
-                                   column(
-                                     width = 4,
-                                     valueBoxOutput("indicator_count", width = NULL)
-                                   ),
-                                   
-                                 ),
-                                 
-                                  headerPanel(""),
+                                 # fluidRow(
+                                 #   
+                                 #   column(
+                                 #     width = 4,
+                                 #     offset = 2,
+                                 #     valueBoxOutput("total_count", width = NULL)
+                                 #   ),
+                                 #   
+                                 #   column(
+                                 #     width = 4,
+                                 #     valueBoxOutput("indicator_count", width = NULL)
+                                 #   ),
+                                 #   
+                                 # ),
+                                 # 
+                                 #  headerPanel(""),
                                  
                                  # Start fluidRow inputs ----
                                  fluidRow(
