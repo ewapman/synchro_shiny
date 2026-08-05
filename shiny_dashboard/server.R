@@ -151,8 +151,30 @@ server <- function(input, output, session) {
   clicked_point <- reactiveVal(NULL)
   
   # When map marker is clicked, save it
-  observeEvent(input$indicator_sp_map_marker_click, {
-    clicked_point(input$indicator_sp_map_marker_click)
+  # observeEvent(input$indicator_sp_map_marker_click, {
+  #   clicked_point(input$indicator_sp_map_marker_click)
+  # })
+  
+  # When map marker is clicked, save it
+  observeEvent(event_data("plotly_click", source = "indicator_map"), {
+    
+    click <- event_data("plotly_click", source = "indicator_map")
+    
+    if(!is.null(click) && !is.null(click$customdata)) {
+      
+      # Split the customdata
+      coords <- strsplit(click$customdata, "\\|")[[1]]
+      clicked_lat <- as.numeric(coords[1])
+      clicked_lon <- as.numeric(coords[2])
+      
+      cat("Clicked lat:", clicked_lat, "\n")
+      cat("Clicked lon:", clicked_lon, "\n")
+      
+      clicked_point(list(
+        lat = clicked_lat,
+        lng = clicked_lon
+      ))
+    }
   })
   
   # When species changes, clear the clicked point
@@ -171,11 +193,11 @@ server <- function(input, output, session) {
   
   # Render map plot --------------------------------------------------------------
   
-  output$indicator_sp_map <- renderLeaflet({
+  output$indicator_sp_map <- renderPlotly({
     
     req(input$season_input, input$species_input, input$depth_map_input)
     
-    leaflet_map(
+    plotly_map(
       data_fn = map_data,
       season_fn = input$season_input,
       species_fn = input$species_input,

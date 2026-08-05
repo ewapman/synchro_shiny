@@ -172,7 +172,7 @@ body <- dashboardBody(
                                    # Map output ----
                                  fluidRow(
                                    column(8, 
-                                          leafletOutput("indicator_sp_map", height = "600px")
+                                          plotlyOutput("indicator_sp_map", height = "600px")
                                    ),
                                    column(4,
                                           wellPanel(
