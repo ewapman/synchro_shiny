@@ -160,8 +160,9 @@ body <- dashboardBody(
                                     column(
                                       width = 4,
                                    pickerInput(
-                                       inputId = "depth_map_input",
-                                       label = "Environmental data depth:",
+                                       inputId = "depth_input",
+                                       label = "Depth:",
+                                       multiple = TRUE,
                                        choices = NULL
                                      ))
                                    ), # End fluid row inputs

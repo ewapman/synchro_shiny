@@ -55,30 +55,46 @@ server <- function(input, output, session) {
   # Depth grey out -------------------------------------------------------------
   update_depth_picker <- function(species_selection, season_selection) {
     
-    # All possible depth options
-    all_depths <- c("Surface (0-20m)", "Subsurface (>20m)")
+    # Get all possible depth values from the data
+    all_depths <- c("0", "DCM", "150", "300")
     
-    # Filter data based on species and season
+    # FOR "ALL TAXA": Disable all depth options
     if(species_selection == "All taxa") {
-      filtered_data <- map_data |>
-        filter(Season %in% season_selection)
-    } else {
-      filtered_data <- map_data |>
-        filter(map_label == species_selection,
-               Season %in% season_selection)
+      updatePickerInput(
+        session,
+        "depth_input",
+        choices = all_depths,
+        selected = all_depths,  # Select all by default
+        choicesOpt = list(
+          disabled = rep(TRUE, length(all_depths)),  # Disable all
+          style = rep("color: #ccc;", length(all_depths))
+        )
+      )
+      return()  # Exit early
     }
     
-    # Check which depths have data
-    filtered_data <- filtered_data |>
-      mutate(depth = as.numeric(as.character(depth))) |>
-      filter(!is.na(depth))
+    # FOR SINGLE SPECIES: Grey out depths without data for that species + season
+    filtered_data <- map_data |>
+      filter(
+        map_label == species_selection,
+        Season %in% season_selection
+      ) |>
+      mutate(
+        depth_cat = case_when(
+          depth == 0 ~ "0",
+          depth > 0 & depth < 150 ~ "DCM",
+          depth == 150 ~ "150",
+          depth == 300 ~ "300",
+          TRUE ~ as.character(depth)
+        )
+      )
     
-    has_shallow <- any(filtered_data$depth <= 20, na.rm = TRUE)
-    has_deep <- any(filtered_data$depth > 20, na.rm = TRUE)
     
-    depths_with_data <- c()
-    if(has_shallow) depths_with_data <- c(depths_with_data, "Surface (0-20m)")
-    if(has_deep) depths_with_data <- c(depths_with_data, "Subsurface (>20m)")
+    # Get depths that have data
+    depths_with_data <- filtered_data |>
+      pull(depth_cat) |>
+      unique()
+    
     
     # Determine which depths to disable
     depths_to_disable <- !all_depths %in% depths_with_data
@@ -86,18 +102,60 @@ server <- function(input, output, session) {
     # Update the picker
     updatePickerInput(
       session,
-      "depth_map_input",
+      "depth_input",
       choices = all_depths,
-      selected = if(length(depths_with_data) > 0) depths_with_data[1] else "Surface (0-20m)",
+      selected = if(length(depths_with_data) > 0) depths_with_data else all_depths,
       choicesOpt = list(
         disabled = depths_to_disable,
-        style = ifelse(depths_to_disable,
-                       "color: #ccc;",
-                       "")
+        style = ifelse(depths_to_disable, "color: #ccc;", "")
       )
     )
   }
-  
+  # update_depth_picker <- function(species_selection, season_selection) {
+  #   
+  #   # All possible depth options
+  #   all_depths <- c("Surface (0-20m)", "Subsurface (>20m)")
+  #   
+  #   # Filter data based on species and season
+  #   if(species_selection == "All taxa") {
+  #     filtered_data <- map_data |>
+  #       filter(Season %in% season_selection)
+  #   } else {
+  #     filtered_data <- map_data |>
+  #       filter(map_label == species_selection,
+  #              Season %in% season_selection)
+  #   }
+  #   
+  #   # Check which depths have data
+  #   filtered_data <- filtered_data |>
+  #     mutate(depth = as.numeric(as.character(depth))) |>
+  #     filter(!is.na(depth))
+  #   
+  #   has_shallow <- any(filtered_data$depth <= 20, na.rm = TRUE)
+  #   has_deep <- any(filtered_data$depth > 20, na.rm = TRUE)
+  #   
+  #   depths_with_data <- c()
+  #   if(has_shallow) depths_with_data <- c(depths_with_data, "Surface (0-20m)")
+  #   if(has_deep) depths_with_data <- c(depths_with_data, "Subsurface (>20m)")
+  #   
+  #   # Determine which depths to disable
+  #   depths_to_disable <- !all_depths %in% depths_with_data
+  #   
+  #   # Update the picker
+  #   updatePickerInput(
+  #     session,
+  #     "depth_input",
+  #     choices = all_depths,
+  #     selected = if(length(depths_with_data) > 0) depths_with_data[1] else "Surface (0-20m)",
+  #     choicesOpt = list(
+  #       disabled = depths_to_disable,
+  #       style = ifelse(depths_to_disable,
+  #                      "color: #ccc;",
+  #                      "")
+  #     )
+  #   )
+  # }
+  # 
   # ------------------------------------------------------------------------------
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -113,17 +171,17 @@ server <- function(input, output, session) {
   
   
   # Season selection options -- depth plot
-  updateSelectInput(
-    session,
-    "season_depth_input",
-    choices = unique(map_data$Season))
+  # updateSelectInput(
+  #   session,
+  #   "season_depth_input",
+  #   choices = unique(map_data$Season))
   
   
   # Species selection options -- species line graph plot
-  updateSelectInput(
-    session,
-    "species_season_line_input",
-    choices = unique(map_data$map_label))
+  # updateSelectInput(
+  #   session,
+  #   "species_season_line_input",
+  #   choices = unique(map_data$map_label))
   
   
   # Date selection options: call function originally for All taxa option
@@ -195,13 +253,24 @@ server <- function(input, output, session) {
   
   output$indicator_sp_map <- renderPlotly({
     
-    req(input$season_input, input$species_input, input$depth_map_input)
+    cat("\n=== RENDER DEBUG ===\n")
+    cat("Season input:", input$season_input, "\n")
+    cat("Species input:", input$species_input, "\n")
+    cat("Depth input:", input$depth_input, "\n")
     
-    plotly_map(
+    req(input$season_input, input$species_input)
+    
+    if(input$species_input != "All taxa") {
+      req(input$depth_input)
+    }
+    
+    cat("All inputs present, calling function...\n")
+    
+    plotly_map_new(
       data_fn = map_data,
       season_fn = input$season_input,
       species_fn = input$species_input,
-      depth_fn = input$depth_map_input
+      depth_fn = input$depth_input
     )
   })
   

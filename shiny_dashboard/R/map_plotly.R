@@ -1,40 +1,42 @@
 # This script is to try and remake the plotly graph with the correct depth partitioning 
 
-plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
+plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
   
   if(species_fn == "All taxa") {
     
     # Subset environmental data to surface and subsurface
-    envtl_data <- data_fn |> 
-      filter(Season %in% season_fn) |>  # All selected seasons
-      mutate(depth = as.numeric(as.character(depth))) |>
-      filter(
-        if (depth_fn == "Surface (0-20m)") {
-          depth <= 20
-        } else {
-          depth > 20
-        }
-      ) |>
-      group_by(Latitude, Longitude) |>  # Average by location
-      summarize(
-        temperature = mean(temperature, na.rm = TRUE),
-        salinity = mean(salinity, na.rm = TRUE),
-        oxygen = mean(oxygen, na.rm = TRUE),
-        .groups = "drop"
-      ) |>
-      drop_na() 
+    # envtl_data <- data_fn |> 
+    #   filter(Season %in% season_fn) |>  # All selected seasons
+    #   mutate(depth = as.numeric(as.character(depth))) |>
+    #   filter(
+    #     if (depth_fn == "Surface (0-20m)") {
+    #       depth <= 20
+    #     } else {
+    #       depth > 20
+    #     }
+    #   ) |>
+    #   group_by(Latitude, Longitude) |>  # Average by location
+    #   summarize(
+    #     temperature = mean(temperature, na.rm = TRUE),
+    #     salinity = mean(salinity, na.rm = TRUE),
+    #     oxygen = mean(oxygen, na.rm = TRUE),
+    #     .groups = "drop"
+    #   ) |>
+    #   drop_na() 
     
     # Filter date for all selection ----
+    # Want number of unique species at each location and depth 
+  
+    
     leaflet_data_all <- data_fn |>
-      filter(Season %in% season_fn) |> # This will be reactive --> filter leaflet_data_all by input date in server
+      filter(Season %in% season_fn) |> 
       group_by(Latitude, Longitude) |>
       summarize(
-        indicator_count = n_distinct(map_label), # size circles by number of indicator species at that point
-        indicator_species_list = paste(sort(unique(map_label)), collapse = "<br>"), # This creates a list of species at a point to plot in the popup
-        .groups = "drop") |> 
-      left_join(envtl_data, by = c("Latitude", "Longitude")) 
+        indicator_count = n_distinct(map_label),
+        .groups = "drop"
+      ) 
     
-    
+
     
     # Plot All taxa ----
     
@@ -55,7 +57,7 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
                    reversescale = TRUE,
                    showscale = TRUE,
                    colorbar = list(
-                     title = "Unique<br>Species",
+                     title = "Unique<br>Taxa",
                      orientation = "h",
                      x = 0,
                      xanchor = "left",
@@ -82,16 +84,16 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
                    line = list(color = 'white', width = 1)
                  ),
                  hovertext = ~paste0(
-                   "<b>Unique indicator species:</b> ", indicator_count, "<br>",
-                   if_else(
-                     is.na(temperature),
-                     "",
-                     paste0(
-                       "<b>Temperature:</b> ", round(temperature, 1), "°C<br>",
-                       "<b>Salinity:</b> ", round(salinity, 1), " psu<br>",
-                       "<b>Oxygen:</b> ", round(oxygen, 2), " ml/L"
-                     )
-                   )
+                   "<b>Unique taxa detected:</b> ", indicator_count, "<br>"
+                   # if_else(
+                   #   is.na(temperature),
+                   #   "",
+                   #   paste0(
+                   #     "<b>Temperature:</b> ", round(temperature, 1), "°C<br>",
+                   #     "<b>Salinity:</b> ", round(salinity, 1), " psu<br>",
+                   #     "<b>Oxygen:</b> ", round(oxygen, 2), " ml/L"
+                   #   )
+                   # )
                  ),
                  hoverinfo = "text"
     ) |>
@@ -115,6 +117,7 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
                       color = "black")
         )
       ) 
+    p
     # Register the click event
     event_register(p, "plotly_click")
     
@@ -129,116 +132,134 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
   else {
     
     # Get valid seasons for this species
-    valid_seasons <- data_fn |>
-      filter(map_label == species_fn) |>
-      pull(Season) |>
-      unique()
-    
-    
-    # Filter to only valid seasons
-    seasons_to_use <- season_fn[season_fn %in% valid_seasons]
-    
-    
-    if(length(seasons_to_use) == 0) {
-      return(
-        plot_ly() |>
-          add_trace(
-            type = "scattermapbox",  # ← ADD THIS
-            lat = c(36.74),
-            lon = c(-122.16),
-            mode = "markers",
-            marker = list(opacity = 0)
-          ) |>
-          layout(
-            mapbox = list(
-              style = "white-bg",
-              zoom = 8,
-              center = list(lon = -122.16, lat = 36.74)
-            ),
-            annotations = list(
-              text = "No data for this species in selected seasons",
-              showarrow = FALSE,
-              font = list(size = 16, color = "gray")
-            )
-          )
-      )
-    }
-    
-    
-    # Subset environmental data for this using valid seasons
-    envtl_data <- data_fn |> 
-      filter(Season %in% seasons_to_use) |>
-      mutate(depth = as.numeric(as.character(depth))) 
-    
-    
-    
-    # Apply depth filter
-    if (depth_fn == "Surface (0-20m)") {
-      envtl_data <- envtl_data |> filter(depth <= 20)
-    } else {
-      envtl_data <- envtl_data |> filter(depth > 20)
-    } 
-    
-    envtl_data <- envtl_data |>
-      group_by(Latitude, Longitude) |>
-      summarize(
-        temperature = mean(temperature, na.rm = TRUE),
-        salinity = mean(salinity, na.rm = TRUE),
-        oxygen = mean(oxygen, na.rm = TRUE),
-        .groups = "drop"
-      ) |>
-      drop_na()
-    
+    # valid_seasons <- data_fn |>
+    #   filter(map_label == species_fn) |>
+    #   pull(Season) |>
+    #   unique()
+    # 
+    # 
+    # # Filter to only valid seasons
+    # seasons_to_use <- season_fn[season_fn %in% valid_seasons]
+    # 
+    # 
+    # if(length(seasons_to_use) == 0) {
+    #   return(
+    #     plot_ly() |>
+    #       add_trace(
+    #         type = "scattermapbox",  # ← ADD THIS
+    #         lat = c(36.74),
+    #         lon = c(-122.16),
+    #         mode = "markers",
+    #         marker = list(opacity = 0)
+    #       ) |>
+    #       layout(
+    #         mapbox = list(
+    #           style = "white-bg",
+    #           zoom = 8,
+    #           center = list(lon = -122.16, lat = 36.74)
+    #         ),
+    #         annotations = list(
+    #           text = "No data for this species in selected seasons",
+    #           showarrow = FALSE,
+    #           font = list(size = 16, color = "gray")
+    #         )
+    #       )
+    #   )
+    # }
+    # 
+    # 
+    # # Subset environmental data for this using valid seasons
+    # envtl_data <- data_fn |> 
+    #   filter(Season %in% seasons_to_use) |>
+    #   mutate(depth = as.numeric(as.character(depth))) 
+    # 
+    # 
+    # 
+    # # Apply depth filter
+    # if (depth_fn == "Surface (0-20m)") {
+    #   envtl_data <- envtl_data |> filter(depth <= 20)
+    # } else {
+    #   envtl_data <- envtl_data |> filter(depth > 20)
+    # } 
+    # 
+    # envtl_data <- envtl_data |>
+    #   group_by(Latitude, Longitude) |>
+    #   summarize(
+    #     temperature = mean(temperature, na.rm = TRUE),
+    #     salinity = mean(salinity, na.rm = TRUE),
+    #     oxygen = mean(oxygen, na.rm = TRUE),
+    #     .groups = "drop"
+    #   ) |>
+    #   drop_na()
+    # 
     
     # Filter species and date ----
-    leaflet_data_subset <- data_fn |> 
-      filter(Season %in% seasons_to_use,
-             map_label == species_fn) |>
-      group_by(Latitude, Longitude, map_label, date) |> # These will both be reactive
+    # Want number of SAMPLES at each depth and location for that organism
+    # Categorize DCM and convert to character for selection
+    data_dcm <- data_fn |>
+      mutate(
+        depth = case_when(
+          depth == 0 ~ "0",
+          depth > 0 & depth < 150 ~ "DCM",
+          depth == 150 ~ "150",
+          depth == 300 ~ "300",
+          TRUE ~ as.character(depth)
+        )
+      )
+    
+    leaflet_data_subset <- data_dcm |> 
+      filter(Season %in% season_fn, #MAKE REACTIVE
+             depth %in% depth_fn, 
+             map_label == species_fn) |> #|>
+      group_by(Latitude, Longitude) |> # These will both be reactive
       summarize(
-        sp_count = n(), # size circles by number of samples w/ that organism at that point
+        sample_count = n_distinct(sample_id), # size circles by number of samples w/ that organism at that point
+        depths_detected = paste(sort(unique(depth)), collapse = ", "),
         .groups = "drop"
       ) 
     
-    # Join environmental data if it has rows
-    if(nrow(envtl_data) > 0) {
-      leaflet_data_subset <- leaflet_data_subset |>
-        left_join(envtl_data, by = c("Latitude", "Longitude"))
-    }
-    
-    
-    
-    # Not All taxa have observations for a given date -- check to avoid errors
-    if(nrow(leaflet_data_subset) == 0) {
-      return(
-        plot_ly() |>
-          add_trace(
-            type = "scattermapbox",  # ← ADD THIS
-            lat = c(36.74),
-            lon = c(-122.16),
-            mode = "markers",
-            marker = list(opacity = 0)
-          ) |>
-          layout(
-            mapbox = list(
-              style = "white-bg",
-              zoom = 8,
-              center = list(lon = -122.16, lat = 36.74)
-            ),
-            annotations = list(
-              text = "No data for this species and date",
-              showarrow = FALSE,
-              font = list(size = 16, color = "gray")
-            )
+    # Make table for hover: 
+    depth_envtl_table <- data_dcm |> 
+      filter(Season %in% season_fn,
+             depth %in% depth_fn,
+             map_label == species_fn) |>
+      distinct(sample_id, Latitude, Longitude, depth, temperature, salinity, oxygen) |> 
+      group_by(Latitude, Longitude, depth) |> 
+      summarize(
+        samples = n_distinct(sample_id),
+        temperature = round(mean(temperature, na.rm = TRUE), 1),
+        salinity = round(mean(salinity, na.rm = TRUE), 1),
+        oxygen = round(mean(oxygen, na.rm = TRUE), 1),
+        .groups = "drop"
+      ) 
+      
+    # Make html table:
+    # Replace the hover_table creation with this simpler format:
+    depth_hover_tables <- depth_envtl_table |>
+      arrange(Latitude, Longitude, depth) |>
+      group_by(Latitude, Longitude) |>
+      summarize(
+        hover_table = paste0(
+          "<b>By Depth (m):</b><br>",
+          paste0(
+            "<b>", depth, ":</b> ", samples, " samples | ",
+            "Temp: ", ifelse(is.na(temperature), "NA", paste0(temperature, "°C")), " | ",  # ← Fixed
+            "Salinity: ", ifelse(is.na(salinity), "NA", salinity), " | ",  # ← Fixed
+            "O₂: ", ifelse(is.na(oxygen), "NA", oxygen),  # ← Fixed
+            collapse = "<br>"
           )
+        ),
+        .groups = "drop"
       )
-    }
     
+    # Join back to subset data: 
+    leaflet_data_subset <- leaflet_data_subset |>
+      left_join(depth_hover_tables, by = c("Latitude", "Longitude"))
     
     
     # Create palette with minimum range to avoid weird scaling ----
-    actual_min <- min(leaflet_data_subset$sp_count, na.rm = TRUE)
-    actual_max <- max(leaflet_data_subset$sp_count, na.rm = TRUE)
+    actual_min <- min(leaflet_data_subset$sample_count, na.rm = TRUE)
+    actual_max <- max(leaflet_data_subset$sample_count, na.rm = TRUE)
     
     
     range_width <- actual_max - actual_min
@@ -283,13 +304,13 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
                  
                  marker = list(
                    size = 15,
-                   color = if(single_point && actual_min == actual_max) "#FFFFCC" else ~sp_count,  # ← Force color for single point
-                   colorscale = if(actual_min == actual_max) list(c(0, "#FFFFCC"), c(1, "#FFFFCC")) else "YlOrRd",
+                   color = if(single_point && actual_min == actual_max) "#FFFFCC" else ~sample_count,  # ← Force color for single point
+                   colorscale = if(actual_min == actual_max) list(c(0, "#FFFFCC"), c(1, "#FFFFCC")) else "Viridis",
                    reversescale = if(actual_min == actual_max) FALSE else TRUE,
                    showscale = TRUE,
                    cauto = FALSE,
                    colorbar = list(
-                     title = "Detections", 
+                     title = "Samples", 
                      orientation = "h",
                      x = 0,
                      xanchor = "left",
@@ -320,21 +341,12 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
                    cmin = if(actual_min == actual_max) actual_min else domain_min,
                    cmax = if(actual_min == actual_max) actual_min else domain_max
                  ),
-                 hovertext = ~paste0(
-                   "<b>Species:</b> ", map_label, "<br>",
-                   "<b>Detections:</b> ", sp_count, "<br>",
-                   "<b>Date:</b> ", date, "<br>",
-                   if_else(
-                     is.na(temperature),
-                     "",
-                     paste0(
-                       "<b>Temperature:</b> ", round(temperature, 1), "°C<br>",
-                       "<b>Salinity:</b> ", round(salinity, 1), " psu<br>",
-                       "<b>Oxygen:</b> ", round(oxygen, 2), " ml/L"
-                     )
-                   )
-                 ),
-                 hoverinfo = "text"
+                 hovertemplate = ~paste0(
+                   "<b> Unique taxa: </b> 1 ", "<br><br>",
+                   "<b>Total samples: </b>", sample_count, "<br><br>",
+                   hover_table,
+                   "<extra></extra>"
+                 )
     ) |>
       layout(
         mapbox = list(
@@ -356,7 +368,7 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
                       color = "black")
         )
       ) 
-    
+    p
     # Register the click event
     event_register(p, "plotly_click")
     
