@@ -1,3 +1,5 @@
+# This script is to try and remake the plotly graph with the correct depth partitioning 
+
 plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
   
   if(species_fn == "All taxa") {
@@ -32,66 +34,66 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
         .groups = "drop") |> 
       left_join(envtl_data, by = c("Latitude", "Longitude")) 
     
-  
+    
     
     # Plot All taxa ----
     
     # Make plotly graph ---
     
     p <- plot_ly(leaflet_data_all,
-            lat = ~Latitude,
-            lon = ~Longitude,
-            customdata = ~paste(Latitude, Longitude, sep = "|"),
-            #key = ~paste(Latitude, Longitude, sep = "_"),
-            type = "scattermapbox",
-            mode = "markers",
-            source = "indicator_map", 
-            marker = list(
-              size = 15,
-              color = ~indicator_count,
-              colorscale = "YlOrRd",
-              reversescale = TRUE,
-              showscale = TRUE,
-              colorbar = list(
-                title = "Unique<br>Species",
-                orientation = "h",
-                x = 0,
-                xanchor = "left",
-                y = 0,
-                len = 0.4,
-                thickness = 15,
-                bgcolor = "rgba(255,255,255,0)",  # ← Transparent background
-                borderwidth = 0,                   # ← No border
-                outlinewidth = 0,
-                tickmode = "array",                    # ← Add this
-                tickvals = seq(
-                  min(leaflet_data_all$indicator_count, na.rm = TRUE),
-                  max(leaflet_data_all$indicator_count, na.rm = TRUE),
-                  length.out = 5
-                ),
-                ticktext = round(seq(
-                  min(leaflet_data_all$indicator_count, na.rm = TRUE),
-                  max(leaflet_data_all$indicator_count, na.rm = TRUE),
-                  length.out = 5
-                )),
-                tickfont = list(size = 10)),             # ← Font size),                   # ← Explicitly no outline),
-              
-              opacity = 0.8,
-              line = list(color = 'white', width = 1)
-            ),
-            hovertext = ~paste0(
-              "<b>Unique indicator species:</b> ", indicator_count, "<br>",
-              if_else(
-                is.na(temperature),
-                "",
-                paste0(
-                  "<b>Temperature:</b> ", round(temperature, 1), "°C<br>",
-                  "<b>Salinity:</b> ", round(salinity, 1), " psu<br>",
-                  "<b>Oxygen:</b> ", round(oxygen, 2), " ml/L"
-                )
-              )
-            ),
-            hoverinfo = "text"
+                 lat = ~Latitude,
+                 lon = ~Longitude,
+                 customdata = ~paste(Latitude, Longitude, sep = "|"),
+                 #key = ~paste(Latitude, Longitude, sep = "_"),
+                 type = "scattermapbox",
+                 mode = "markers",
+                 source = "indicator_map", 
+                 marker = list(
+                   size = 15,
+                   color = ~indicator_count,
+                   colorscale = "YlOrRd",
+                   reversescale = TRUE,
+                   showscale = TRUE,
+                   colorbar = list(
+                     title = "Unique<br>Species",
+                     orientation = "h",
+                     x = 0,
+                     xanchor = "left",
+                     y = 0,
+                     len = 0.4,
+                     thickness = 15,
+                     bgcolor = "rgba(255,255,255,0)",  # ← Transparent background
+                     borderwidth = 0,                   # ← No border
+                     outlinewidth = 0,
+                     tickmode = "array",                    # ← Add this
+                     tickvals = seq(
+                       min(leaflet_data_all$indicator_count, na.rm = TRUE),
+                       max(leaflet_data_all$indicator_count, na.rm = TRUE),
+                       length.out = 5
+                     ),
+                     ticktext = round(seq(
+                       min(leaflet_data_all$indicator_count, na.rm = TRUE),
+                       max(leaflet_data_all$indicator_count, na.rm = TRUE),
+                       length.out = 5
+                     )),
+                     tickfont = list(size = 10)),             # ← Font size),                   # ← Explicitly no outline),
+                   
+                   opacity = 0.8,
+                   line = list(color = 'white', width = 1)
+                 ),
+                 hovertext = ~paste0(
+                   "<b>Unique indicator species:</b> ", indicator_count, "<br>",
+                   if_else(
+                     is.na(temperature),
+                     "",
+                     paste0(
+                       "<b>Temperature:</b> ", round(temperature, 1), "°C<br>",
+                       "<b>Salinity:</b> ", round(salinity, 1), " psu<br>",
+                       "<b>Oxygen:</b> ", round(oxygen, 2), " ml/L"
+                     )
+                   )
+                 ),
+                 hoverinfo = "text"
     ) |>
       layout(
         mapbox = list(
@@ -118,7 +120,7 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
     
     return(p)
     
-
+    
     
   } # End if statement
   
@@ -231,7 +233,7 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
           )
       )
     }
-
+    
     
     
     # Create palette with minimum range to avoid weird scaling ----
@@ -241,7 +243,7 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
     
     range_width <- actual_max - actual_min
     min_range_width <- 4  # Adjust this value as needed
-
+    
     if(range_width < min_range_width) {
       # Expand range to minimum width
       domain_min <- 1
@@ -261,78 +263,78 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
       plot_max <- domain_max
     }
     
-
-
-      
+    
+    
+    
     
     # Plot species subset ----
     # Check if there's only 1 row of data
     single_point <- nrow(leaflet_data_subset) == 1
     
     p <- plot_ly(leaflet_data_subset,
-            lat = ~Latitude,
-            lon = ~Longitude,
-            customdata = ~paste(Latitude, Longitude, sep = "|"),
-            #key = ~paste(Latitude, Longitude, sep = "_"),
-            type = "scattermapbox",
-            mode = "markers",
-            source = "indicator_map", 
-           
-            
-            marker = list(
-              size = 15,
-              color = if(single_point && actual_min == actual_max) "#FFFFCC" else ~sp_count,  # ← Force color for single point
-              colorscale = if(actual_min == actual_max) list(c(0, "#FFFFCC"), c(1, "#FFFFCC")) else "YlOrRd",
-              reversescale = if(actual_min == actual_max) FALSE else TRUE,
-              showscale = TRUE,
-              cauto = FALSE,
-              colorbar = list(
-                title = "Detections", 
-                orientation = "h",
-                x = 0,
-                xanchor = "left",
-                y = 0,
-                yanchor = "bottom",
-                len = 0.4,
-                thickness = 15,
-                bgcolor = "rgba(255,255,255,0)",
-                borderwidth = 0,
-                outlinewidth = 0,
-                tickmode = "array",
-                tickvals = if(actual_min == actual_max) {
-                  c(actual_min)
-                } else {
-                  pretty(c(domain_min, domain_max), n = 3)
-                },
-                ticktext = if(actual_min == actual_max) {
-                  c(as.character(actual_min))
-                } else {
-                  as.character(pretty(c(domain_min, domain_max), n = 3))
-                },
-                tickfont = list(size = 10),
-                tick0 = if(actual_min == actual_max) actual_min else NULL,
-                dtick = if(actual_min == actual_max) 1 else NULL
-              ),                             
-              opacity = 0.8,
-              line = list(color = 'white', width = 1),
-              cmin = if(actual_min == actual_max) actual_min else domain_min,
-              cmax = if(actual_min == actual_max) actual_min else domain_max
-            ),
-            hovertext = ~paste0(
-              "<b>Species:</b> ", map_label, "<br>",
-              "<b>Detections:</b> ", sp_count, "<br>",
-              "<b>Date:</b> ", date, "<br>",
-              if_else(
-                is.na(temperature),
-                "",
-                paste0(
-                  "<b>Temperature:</b> ", round(temperature, 1), "°C<br>",
-                  "<b>Salinity:</b> ", round(salinity, 1), " psu<br>",
-                  "<b>Oxygen:</b> ", round(oxygen, 2), " ml/L"
-                )
-              )
-            ),
-            hoverinfo = "text"
+                 lat = ~Latitude,
+                 lon = ~Longitude,
+                 customdata = ~paste(Latitude, Longitude, sep = "|"),
+                 #key = ~paste(Latitude, Longitude, sep = "_"),
+                 type = "scattermapbox",
+                 mode = "markers",
+                 source = "indicator_map", 
+                 
+                 
+                 marker = list(
+                   size = 15,
+                   color = if(single_point && actual_min == actual_max) "#FFFFCC" else ~sp_count,  # ← Force color for single point
+                   colorscale = if(actual_min == actual_max) list(c(0, "#FFFFCC"), c(1, "#FFFFCC")) else "YlOrRd",
+                   reversescale = if(actual_min == actual_max) FALSE else TRUE,
+                   showscale = TRUE,
+                   cauto = FALSE,
+                   colorbar = list(
+                     title = "Detections", 
+                     orientation = "h",
+                     x = 0,
+                     xanchor = "left",
+                     y = 0,
+                     yanchor = "bottom",
+                     len = 0.4,
+                     thickness = 15,
+                     bgcolor = "rgba(255,255,255,0)",
+                     borderwidth = 0,
+                     outlinewidth = 0,
+                     tickmode = "array",
+                     tickvals = if(actual_min == actual_max) {
+                       c(actual_min)
+                     } else {
+                       pretty(c(domain_min, domain_max), n = 3)
+                     },
+                     ticktext = if(actual_min == actual_max) {
+                       c(as.character(actual_min))
+                     } else {
+                       as.character(pretty(c(domain_min, domain_max), n = 3))
+                     },
+                     tickfont = list(size = 10),
+                     tick0 = if(actual_min == actual_max) actual_min else NULL,
+                     dtick = if(actual_min == actual_max) 1 else NULL
+                   ),                             
+                   opacity = 0.8,
+                   line = list(color = 'white', width = 1),
+                   cmin = if(actual_min == actual_max) actual_min else domain_min,
+                   cmax = if(actual_min == actual_max) actual_min else domain_max
+                 ),
+                 hovertext = ~paste0(
+                   "<b>Species:</b> ", map_label, "<br>",
+                   "<b>Detections:</b> ", sp_count, "<br>",
+                   "<b>Date:</b> ", date, "<br>",
+                   if_else(
+                     is.na(temperature),
+                     "",
+                     paste0(
+                       "<b>Temperature:</b> ", round(temperature, 1), "°C<br>",
+                       "<b>Salinity:</b> ", round(salinity, 1), " psu<br>",
+                       "<b>Oxygen:</b> ", round(oxygen, 2), " ml/L"
+                     )
+                   )
+                 ),
+                 hoverinfo = "text"
     ) |>
       layout(
         mapbox = list(
@@ -354,7 +356,7 @@ plotly_map <- function(data_fn, season_fn, species_fn, depth_fn) {
                       color = "black")
         )
       ) 
-      
+    
     # Register the click event
     event_register(p, "plotly_click")
     
