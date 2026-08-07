@@ -2,7 +2,7 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
   
   
   bath <- data_fn |>
-    select(map_label, Station, depth, abundance, Season, sample_id, Latitude, Longitude, upload_time, sampling.date, Family, Genus) |>
+    select(map_label, Station, depth, Season, sample_id, Latitude, Longitude) |>
     mutate( # Do this to combine all chlorophyll max obs
       depth = as.numeric(as.character(depth)))
   
@@ -22,8 +22,9 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
   if(species_fn == "All taxa"){
     bath_summary <- bath |>
       filter(Season %in% season_fn ) |> # REACTIVE: This will be reactive + loop through the different season selections
+      distinct(sample_id, Station, depth_plot) |> 
       group_by(Station, depth_plot) |>  # Want number at each station and at each depth
-      summarize(detections = n(), .groups = "drop") |>
+      summarize(samples = n(), .groups = "drop") |>
       mutate(
         depth_label = if_else(
           depth_plot == chl_max_median, "Chlorophyll Max", as.character(depth_plot)
@@ -33,8 +34,9 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
     bath_summary <- bath |>
       filter(Season %in% season_fn ) |> # REACTIVE: This will be reactive + loop through the different season selections
       filter(map_label == species_fn) |> # REACTIVE: This will be reactive and depend on species input
+      distinct(sample_id, Station, depth_plot) |> 
       group_by(Station, depth_plot) |>  # Want number at each station and at each depth
-      summarize(detections = n(), .groups = "drop") |>
+      summarize(samples = n(), .groups = "drop") |>
       mutate(
         depth_label = if_else(
           depth_plot == chl_max_median, "Chlorophyll Max", as.character(depth_plot)
@@ -81,7 +83,7 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
   
   # Join distances
   bath_plot <- bath_summary |> 
-    select(Station, detections, depth_plot, depth_label) |> 
+    select(Station, samples, depth_plot, depth_label) |> 
     left_join(station_distances, by = c("Station" = "station")) |> 
     mutate(depth = as.numeric(as.character(depth_plot)),
            distance = if_else(Station == "Elkhorn Slough", 0, distance)) 
@@ -110,8 +112,8 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
   
   # Fix min and max values, otherwise taxa with only one observation do not follow colorscale
   # Force a range even for single values
-  min_det <- min(bath_plot$detections)
-  max_det <- max(bath_plot$detections)
+  min_det <- min(bath_plot$samples)
+  max_det <- max(bath_plot$samples)
 
   # Create plotly basemap 
 p <- plot_ly() |> 
@@ -155,7 +157,7 @@ if(nrow(bath_plot) > 0) {
           opacity = 0.8,
           line = list(color = 'black', width = 1),
           colorbar = list(
-            title = "Detections",
+            title = "Samples",
             tickmode = "array",
             tickvals = c(0.9),  # Single tick in the middle
             ticktext = c(as.character(min_det)),  # Shows "1" or whatever the value is
@@ -168,7 +170,7 @@ if(nrow(bath_plot) > 0) {
           cmax = 1
         ),
         hovertemplate = paste0("Depth: ", bath_plot$depth_label, "<br>",
-                               "Detections: ", bath_plot$detections,
+                               "Samples: ", bath_plot$samples,
                                "<extra></extra>")
       )
   } else {
@@ -179,16 +181,16 @@ if(nrow(bath_plot) > 0) {
         x = jitter(as.numeric(bath_plot$distance), amount = 0.5),
         y = -as.numeric(bath_plot$depth_plot),  
         marker = list(
-          color = as.numeric(bath_plot$detections),
+          color = as.numeric(bath_plot$samples),
           colorscale = list(c(0, "#FFF7BC"), c(0.5, "#FF6347"), c(1, "#8B0000")),
           showscale = TRUE,
           size = 10, 
           opacity = 0.8,
           line = list(color = 'black', width = 1), 
-          colorbar = list(title = "Detections")
+          colorbar = list(title = "Samples")
         ),
         hovertemplate = paste0("Depth: ", bath_plot$depth_label, "<br>",
-                               "Detections: ", bath_plot$detections,
+                               "Samples: ", bath_plot$samples,
                                "<extra></extra>")
         
       )
