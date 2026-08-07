@@ -3,29 +3,30 @@
 
 depth_plot <- function(data_fn, season_fn, species_fn) {
   
-  
-  # Filter data - relative abundance at each depth
-  depth_data <- data_fn |> 
-    select(map_label, depth, abundance, Season) |> 
+  depth_data <- map_data |> 
     filter(Season %in% season_fn) |> 
-    mutate( # Do this to combine all chlorophyll max obs
-      depth = as.numeric(as.character(depth)))
-
+    mutate(depth = as.numeric(as.character(depth))) |>
+    distinct(sample_id, map_label, depth)  # ← ADD: Remove ASVID duplicates
   
-  min_depth <-  min(depth_data$depth[depth_data$depth > 0], na.rm = TRUE)
+  min_depth <- min(depth_data$depth[depth_data$depth > 0], na.rm = TRUE)
   max_depth_below_150 <- max(depth_data$depth[depth_data$depth < 150], na.rm = TRUE)
   chl_max_median <- median(c(min_depth, max_depth_below_150))
-  
   
   depth_data <- depth_data |> 
     mutate(
       depth_plot = if_else(
-        depth > 0 & depth <= max_depth_below_150, chl_max_median, depth) )|> 
+        depth > 0 & depth <= max_depth_below_150, chl_max_median, depth)
+    ) |>
     group_by(map_label, depth_plot) |> 
-    summarize(sp_depth = sum(abundance), .groups = "drop") |> 
+    summarize(
+      sp_depth = n(),  # ← CHANGED: Count samples instead of sum(abundance)
+      .groups = "drop"
+    ) |> 
     group_by(depth_plot) |> 
     mutate(
-      relative_abundance = (sp_depth / sum(sp_depth)) * 100) |> 
+      total_samples_at_depth = sum(sp_depth),  # ← Total samples at this depth
+      relative_abundance = (sp_depth / sum(sp_depth)) * 100
+    ) |> 
     ungroup() |> 
     mutate(
       depth_label = if_else(
@@ -34,11 +35,49 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
     ) |> 
     mutate(
       map_label_abb = if_else(
-        str_detect(map_label, "^[A-Z][a-z]+ [a-z]+ \\("),  # Two words before parentheses
-        str_replace(map_label, "^([A-Z])[a-z]+ ([a-z]+)", "\\1. \\2"),  # Abbreviate genus
-        map_label  # Keep as-is (only one word before parentheses)
-      )) 
+        str_detect(map_label, "^[A-Z][a-z]+ [a-z]+ \\("),
+        str_replace(map_label, "^([A-Z])[a-z]+ ([a-z]+)", "\\1. \\2"),
+        map_label
+      )
+    )
   
+  # 
+  # # Filter data - relative abundance at each depth: number of samples/total for that depth
+  # depth_data <- data_fn |> 
+  #   select(map_label, depth, abundance, Season, sample_id) |> 
+  #   filter(Season %in% season_fn) |> 
+  #   mutate( # Do this to combine all chlorophyll max obs
+  #     depth = as.numeric(as.character(depth)))
+  # 
+  # 
+  # min_depth <-  min(depth_data$depth[depth_data$depth > 0], na.rm = TRUE)
+  # max_depth_below_150 <- max(depth_data$depth[depth_data$depth < 150], na.rm = TRUE)
+  # chl_max_median <- median(c(min_depth, max_depth_below_150))
+  # 
+  # 
+  # depth_data <- depth_data |> 
+  #   mutate(
+  #     depth_plot = if_else(
+  #       depth > 0 & depth <= max_depth_below_150, chl_max_median, depth) )|>
+  #   
+  #   group_by(map_label, depth_plot) |> 
+  #   summarize(sp_depth = sum(abundance), .groups = "drop") |> 
+  #   group_by(depth_plot) |> 
+  #   mutate(
+  #     relative_abundance = (sp_depth / sum(sp_depth)) * 100) |> 
+  #   ungroup() |> 
+  #   mutate(
+  #     depth_label = if_else(
+  #       depth_plot == chl_max_median, "Chlorophyll Max", as.character(depth_plot)
+  #     )
+  #   ) |> 
+  #   mutate(
+  #     map_label_abb = if_else(
+  #       str_detect(map_label, "^[A-Z][a-z]+ [a-z]+ \\("),  # Two words before parentheses
+  #       str_replace(map_label, "^([A-Z])[a-z]+ ([a-z]+)", "\\1. \\2"),  # Abbreviate genus
+  #       map_label  # Keep as-is (only one word before parentheses)
+  #     )) 
+  # 
   # Calculate average depth per species (weighted by abundance)
   species_order <- depth_data |>
     group_by(map_label_abb) |>
