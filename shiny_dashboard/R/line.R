@@ -8,27 +8,59 @@ line_graph <- function(data_fn, species_fn) {
   season_order <- c("Spring 2025", "Summer 2025", "Autumn 2025")
   
   
-  # Data wrangling
+  # Data wrangling - calculate relative abundance: # of samples of selected organism out of total samples that season
+  # sp_plot_data <- data_fn |>
+  #   select(map_label, Season, sample_id) |> 
+  #   filter(map_label %in% species_fn) |>   # Make interactive 
+  #   distinct(sample_id) |> 
+  #   mutate(
+  #     total_samples = n(), .groups = "drop"
+  #   ) 
+  #   group_by(map_label, Season) |> 
+  #   
+  #   
+  #   summarize(total_sp_season = sum(abundance), .groups = "drop") |> 
+  #   complete(map_label, Season = season_order, fill = list(total_sp_season = 0)) |> 
+  #   group_by(Season) |> 
+  #   mutate(relative_abundance_percent = (total_sp_season / sum(total_sp_season)) * 100) |> 
+  #   ungroup() |> 
+  #   mutate(Season = factor(Season, levels = season_order)) |> 
+  #   
+  # 
   sp_plot_data <- data_fn |>
-    select(map_label, Season, abundance) |> 
-    group_by(map_label, Season) |> 
-    summarize(total_sp_season = sum(abundance), .groups = "drop") |> 
-    complete(map_label, Season = season_order, fill = list(total_sp_season = 0)) |> 
+    select(map_label, Season, sample_id) |> 
+    filter(map_label %in% species_fn) |>   # Make interactive 
+    distinct(sample_id, Season, map_label) |> 
+    # Number of samples w/ that species
     group_by(Season) |> 
-    mutate(relative_abundance_percent = (total_sp_season / sum(total_sp_season)) * 100) |> 
-    ungroup() |> 
-    mutate(Season = factor(Season, levels = season_order)) |> 
-    filter(map_label %in% species_fn)   # Make interactive 
+    summarize(
+      sp_samples = n(),
+      .groups = "drop"
+    ) |> 
+    
+    # Get total samples each season
+    left_join(
+      data_fn |> 
+        distinct(sample_id, Season) |> 
+        group_by(Season) |> 
+        summarize(total_samples = n(),
+                  .groups = "drop"),
+      by = "Season"
+      
+    ) |> 
+    mutate(relative_abundance = (sp_samples / total_samples * 100)) |> 
+    complete(Season = season_order, fill = list(sp_samples = 0, total_samples = 0, relative_abundance = 0)) |>
+    mutate(Season = factor(Season, levels = season_order))
   
   
   # Graph
   
-  sp_plot <- ggplot(sp_plot_data, aes(x = Season, y = relative_abundance_percent, group = 1)) +
+  sp_plot <- ggplot(sp_plot_data, aes(x = Season, y = relative_abundance, group = 1)) +
     geom_line(color = "darkgrey") +
     geom_point_interactive(color = "black", fill = "#69b3a2", size = 3, shape = 21,
                            aes(tooltip = paste0(
-                             map_label, "\n",
-                             "Relative Abundance: ", round(relative_abundance_percent, 3), "%")))+ 
+                             species_fn, "\n",
+                             "Relative Abundance: ", round(relative_abundance, 2), "%")))+ 
     theme_minimal() +
     labs(x = "Season", 
          y = "Relative abundance (%)",
