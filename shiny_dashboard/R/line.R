@@ -48,7 +48,7 @@ line_graph <- function(data_fn, species_fn) {
       by = "Season"
       
     ) |> 
-    mutate(relative_abundance = (sp_samples / total_samples * 100)) |> 
+    mutate(relative_abundance = ((sp_samples / total_samples) * 100)) |> 
     complete(Season = season_order, fill = list(sp_samples = 0, total_samples = 0, relative_abundance = 0)) |>
     mutate(Season = factor(Season, levels = season_order))
   

@@ -253,18 +253,12 @@ server <- function(input, output, session) {
   
   output$indicator_sp_map <- renderPlotly({
     
-    cat("\n=== RENDER DEBUG ===\n")
-    cat("Season input:", input$season_input, "\n")
-    cat("Species input:", input$species_input, "\n")
-    cat("Depth input:", input$depth_input, "\n")
-    
     req(input$season_input, input$species_input)
     
     if(input$species_input != "All taxa") {
       req(input$depth_input)
     }
     
-    cat("All inputs present, calling function...\n")
     
     plotly_map_new(
       data_fn = map_data,

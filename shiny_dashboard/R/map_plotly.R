@@ -227,11 +227,15 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
         total_count = n_distinct(sample_id), 
         .groups = "drop"
       ) 
-    
+    print(paste("Rows before join:", nrow(leaflet_data_subset)))
     # Join: 
     leaflet_data_subset <- leaflet_data_subset |>
-      left_join(leaflet_data_subset_totals, by = c("Latitude", "Longitude"))
-    
+      left_join(leaflet_data_subset_totals, by = c("Latitude", "Longitude")) |> 
+      mutate(
+        relative_abundance = (sample_count / total_count) * 100
+      )
+    print(paste("Rows after join:", nrow(leaflet_data_subset)))
+    print(sum(is.na(leaflet_data_subset$total_count)))
     # Make table for hover: 
     depth_envtl_table <- data_dcm |> 
       filter(Season %in% season_fn,
@@ -246,6 +250,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
         oxygen = round(mean(oxygen, na.rm = TRUE), 1),
         .groups = "drop"
       ) 
+   
       
     # Make html table:
     # Replace the hover_table creation with this simpler format:
@@ -273,43 +278,43 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
     leaflet_data_subset <- leaflet_data_subset |>
       left_join(depth_hover_tables, by = c("Latitude", "Longitude"))
     
-    
+    print(paste("Rows after hover table join:", nrow(leaflet_data_subset))) 
     
     
     # Create palette with minimum range to avoid weird scaling ----
-    actual_min <- min(leaflet_data_subset$sample_count, na.rm = TRUE)
-    actual_max <- max(leaflet_data_subset$sample_count, na.rm = TRUE)
-    
-    
-    range_width <- actual_max - actual_min
-    min_range_width <- 4  # Adjust this value as needed
-    
-    if(range_width < min_range_width) {
-      # Expand range to minimum width
-      domain_min <- 1
-      domain_max <- max(actual_max, min_range_width + 1)
-    } else {
-      # Use actual range
-      domain_min <- as.integer(actual_min)
-      domain_max <- as.integer(actual_max)
-    }
-    
-    # Fix for single values - make them appear light
-    if(actual_min == actual_max) {
-      plot_min <- actual_min
-      plot_max <- actual_min + 10  # Creates range so single value is light
-    } else {
-      plot_min <- domain_min
-      plot_max <- domain_max
-    }
-    
-    
-    
+    # actual_min <- min(leaflet_data_subset$relative_abundance, na.rm = TRUE)
+    # actual_max <- max(leaflet_data_subset$relative_abundance, na.rm = TRUE)
+    # 
+    # 
+    # range_width <- actual_max - actual_min
+    # min_range_width <- 4  # Adjust this value as needed
+    # 
+    # if(range_width < min_range_width) {
+    #   # Expand range to minimum width
+    #   domain_min <- 1
+    #   domain_max <- max(actual_max, min_range_width + 1)
+    # } else {
+    #   # Use actual range
+    #   domain_min <- as.integer(actual_min)
+    #   domain_max <- as.integer(actual_max)
+    # }
+    # 
+    # # Fix for single values - make them appear light
+    # if(actual_min == actual_max) {
+    #   plot_min <- actual_min
+    #   plot_max <- actual_min + 10  # Creates range so single value is light
+    # } else {
+    #   plot_min <- domain_min
+    #   plot_max <- domain_max
+    # }
+    # 
+    # 
+    # 
     
     
     # Plot species subset ----
     # Check if there's only 1 row of data
-    single_point <- nrow(leaflet_data_subset) == 1
+    #single_point <- nrow(leaflet_data_subset) == 1
     
     p <- plot_ly(leaflet_data_subset,
                  lat = ~Latitude,
@@ -323,13 +328,16 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                  
                  marker = list(
                    size = 15,
-                   color = if(single_point && actual_min == actual_max) "#FFFFCC" else ~sample_count,  # ← Force color for single point
-                   colorscale = if(actual_min == actual_max) list(c(0, "#FFFFCC"), c(1, "#FFFFCC")) else "Viridis",
-                   reversescale = if(actual_min == actual_max) FALSE else TRUE,
+                   # color = if(single_point && actual_min == actual_max) "#FFFFCC" else ~relative_abundance,  # ← Force color for single point
+                   # colorscale = if(actual_min == actual_max) list(c(0, "#FFFFCC"), c(1, "#FFFFCC")) else "Viridis",
+                   color = ~relative_abundance,
+                   colorscale = "Viridis",
+                   #reversescale = if(actual_min == actual_max) FALSE else TRUE,
+                   reversescale = TRUE,
                    showscale = TRUE,
                    cauto = FALSE,
                    colorbar = list(
-                     title = "Samples", 
+                     title = "Proportion of station samples", 
                      orientation = "h",
                      x = 0,
                      xanchor = "left",
@@ -341,28 +349,18 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                      borderwidth = 0,
                      outlinewidth = 0,
                      tickmode = "array",
-                     tickvals = if(actual_min == actual_max) {
-                       c(actual_min)
-                     } else {
-                       pretty(c(domain_min, domain_max), n = 3)
-                     },
-                     ticktext = if(actual_min == actual_max) {
-                       c(as.character(actual_min))
-                     } else {
-                       as.character(pretty(c(domain_min, domain_max), n = 3))
-                     },
-                     tickfont = list(size = 10),
-                     tick0 = if(actual_min == actual_max) actual_min else NULL,
-                     dtick = if(actual_min == actual_max) 1 else NULL
+                     tickvals = pretty(c(0, 100), n = 5),
+                     ticktext = as.character(pretty(c(0, 100), n = 5)),
+                     tickfont = list(size = 10)
                    ),                             
                    opacity = 0.8,
                    line = list(color = 'white', width = 1),
-                   cmin = if(actual_min == actual_max) actual_min else domain_min,
-                   cmax = if(actual_min == actual_max) actual_min else domain_max
+                   cmin = 0, #if(actual_min == actual_max) actual_min else domain_min,
+                   cmax = 100 #if(actual_min == actual_max) actual_min else domain_max
                  ),
                  hovertemplate = ~paste0(
                    "<b>Unique taxa: </b> 1 ", "<br><br>",
-                   "<b>Total samples: </b>", sample_count," of ",total_count, " total samples at this station", "<br><br>",
+                   "<b>Samples: </b>", sample_count," of ",total_count, " total samples at this station", "(", relative_abundance, ")", "<br><br>",
                    hover_table,
                    "<extra></extra>"
                  )
