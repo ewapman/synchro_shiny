@@ -81,12 +81,22 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
   # }
   
   
+  # Get total number of detections for label
+  total_samples_by_location <- bath |>
+    filter(Season %in% season_fn) |>
+    distinct(sample_id, Station, depth_plot) |>
+    group_by(Station, depth_plot) |>
+    summarize(total_samples = n(), .groups = "drop")
+  
   # Join distances
   bath_plot <- bath_summary |> 
     select(Station, samples, depth_plot, depth_label) |> 
     left_join(station_distances, by = c("Station" = "station")) |> 
+    left_join(total_samples_by_location, by = c("Station", "depth_plot")) |> 
     mutate(depth = as.numeric(as.character(depth_plot)),
            distance = if_else(Station == "Elkhorn Slough", 0, distance)) 
+  
+
   
   
   # Create annotations
@@ -170,7 +180,7 @@ if(nrow(bath_plot) > 0) {
           cmax = 1
         ),
         hovertemplate = paste0("Depth: ", bath_plot$depth_label, "<br>",
-                               "Samples: ", bath_plot$samples,
+                               "Samples: ", bath_plot$samples, " of ", bath_plot$total_samples, " samples at this station and depth",
                                "<extra></extra>")
       )
   } else {
@@ -190,7 +200,7 @@ if(nrow(bath_plot) > 0) {
           colorbar = list(title = "Samples")
         ),
         hovertemplate = paste0("Depth: ", bath_plot$depth_label, "<br>",
-                               "Samples: ", bath_plot$samples,
+                               "Samples: ", bath_plot$samples, " of ", bath_plot$total_samples, " total samples at this station and depth",
                                "<extra></extra>")
         
       )
