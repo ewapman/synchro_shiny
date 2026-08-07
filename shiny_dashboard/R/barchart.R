@@ -4,21 +4,46 @@ barchart <- function(data_fn, species_fn, season_fn, clicked_lat, clicked_lon){
   if(species_fn == "All taxa") { 
     
     # Filter data:
-    bar_plot_data <- data_fn |> 
+    # bar_plot_data <- data_fn |> 
+    #   filter(Season %in% season_fn,
+    #          near(Latitude, clicked_lat),
+    #          near(Longitude, clicked_lon)) |>
+    #   group_by(map_label) |> 
+    #   summarize(
+    #     sp_count = n(), # of sp detections at that lat/long
+    #     .groups = "drop") |> 
+    #   arrange(sp_count) |> # reorder 
+    #   mutate(percent = (sp_count / sum(sp_count)) * 100) |> 
+    #   mutate(
+    #     percent_bin = cut(percent,
+    #                       breaks = c(0, 1, 2, 5, 10, 20, 50, 100),
+    #                       labels = c("<1%", "1-2%", "2-5%", "5-10%", "10-20%", "20-50%", ">50%"))
+    #   )
+    
+    bar_plot_data <- map_data |> 
+      # Filter season and selected lat/lon
       filter(Season %in% season_fn,
              near(Latitude, clicked_lat),
              near(Longitude, clicked_lon)) |>
+      # Get total number of samples at that point
+      mutate(
+        total_samples = n_distinct(sample_id) 
+      ) |> 
+      # Get total number of samples with each species 
+      distinct(map_label, sample_id, total_samples) |> # one row per sample per species
       group_by(map_label) |> 
       summarize(
         sp_count = n(), # of sp detections at that lat/long
+        total_samples = first(total_samples),
         .groups = "drop") |> 
       arrange(sp_count) |> # reorder 
-      mutate(percent = (sp_count / sum(sp_count)) * 100) |> 
+      mutate(percent = (sp_count / total_samples) * 100) |> 
       mutate(
         percent_bin = cut(percent,
                           breaks = c(0, 1, 2, 5, 10, 20, 50, 100),
                           labels = c("<1%", "1-2%", "2-5%", "5-10%", "10-20%", "20-50%", ">50%"))
       )
+    
     
     # Make palette
     bar_palette <- c("<1%" = "#43c197",
@@ -80,12 +105,17 @@ barchart <- function(data_fn, species_fn, season_fn, clicked_lat, clicked_lon){
       filter(Season %in% season_fn, 
              near(Latitude, clicked_lat),
              near(Longitude, clicked_lon)) |>
+      mutate(
+        total_samples = n_distinct(sample_id) 
+      ) |>
+      distinct(map_label, sample_id, total_samples) |> 
       group_by(map_label) |> 
       summarize(
         sp_count = n(), # of sp detections at that lat/long
+        total_samples = first(total_samples),
         .groups = "drop") |> 
       arrange(sp_count) |> # reorder 
-      mutate(percent = (sp_count / sum(sp_count)) * 100) |> 
+      mutate(percent = (sp_count / total_samples) * 100) |> 
       mutate(
         percent_bin = cut(percent,
                           breaks = c(0, 1, 2, 5, 10, 20, 50, 100),

@@ -207,6 +207,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
         )
       )
     
+    # Number of sample with that species at that location
     leaflet_data_subset <- data_dcm |> 
       filter(Season %in% season_fn, #MAKE REACTIVE
              depth %in% depth_fn, 
@@ -217,6 +218,19 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
         depths_detected = paste(sort(unique(depth)), collapse = ", "),
         .groups = "drop"
       ) 
+    
+    # Total number of samples at that location
+    leaflet_data_subset_totals <- data_dcm |> 
+      filter(Season %in% season_fn) |> 
+      group_by(Latitude, Longitude) |> 
+      summarize(
+        total_count = n_distinct(sample_id), 
+        .groups = "drop"
+      ) 
+    
+    # Join: 
+    leaflet_data_subset <- leaflet_data_subset |>
+      left_join(leaflet_data_subset_totals, by = c("Latitude", "Longitude"))
     
     # Make table for hover: 
     depth_envtl_table <- data_dcm |> 
@@ -236,6 +250,9 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
     # Make html table:
     # Replace the hover_table creation with this simpler format:
     depth_hover_tables <- depth_envtl_table |>
+      mutate(
+        depth = factor(depth, levels = c("0", "DCM", "150", "300"))  # ← Set order
+      ) |>
       arrange(Latitude, Longitude, depth) |>
       group_by(Latitude, Longitude) |>
       summarize(
@@ -255,6 +272,8 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
     # Join back to subset data: 
     leaflet_data_subset <- leaflet_data_subset |>
       left_join(depth_hover_tables, by = c("Latitude", "Longitude"))
+    
+    
     
     
     # Create palette with minimum range to avoid weird scaling ----
@@ -342,8 +361,8 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                    cmax = if(actual_min == actual_max) actual_min else domain_max
                  ),
                  hovertemplate = ~paste0(
-                   "<b> Unique taxa: </b> 1 ", "<br><br>",
-                   "<b>Total samples: </b>", sample_count, "<br><br>",
+                   "<b>Unique taxa: </b> 1 ", "<br><br>",
+                   "<b>Total samples: </b>", sample_count,"/",total_count, "<br><br>",
                    hover_table,
                    "<extra></extra>"
                  )
