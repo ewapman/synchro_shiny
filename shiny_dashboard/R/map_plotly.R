@@ -62,7 +62,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                      x = 0,
                      xanchor = "left",
                      y = 0,
-                     len = 0.4,
+                     len = 0.5,
                      thickness = 15,
                      bgcolor = "rgba(255,255,255,0)",  # ← Transparent background
                      borderwidth = 0,                   # ← No border
@@ -227,15 +227,14 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
         total_count = n_distinct(sample_id), 
         .groups = "drop"
       ) 
-    print(paste("Rows before join:", nrow(leaflet_data_subset)))
+
     # Join: 
     leaflet_data_subset <- leaflet_data_subset |>
       left_join(leaflet_data_subset_totals, by = c("Latitude", "Longitude")) |> 
       mutate(
         relative_abundance = (sample_count / total_count) * 100
       )
-    print(paste("Rows after join:", nrow(leaflet_data_subset)))
-    print(sum(is.na(leaflet_data_subset$total_count)))
+
     # Make table for hover: 
     depth_envtl_table <- data_dcm |> 
       filter(Season %in% season_fn,
@@ -278,8 +277,6 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
     leaflet_data_subset <- leaflet_data_subset |>
       left_join(depth_hover_tables, by = c("Latitude", "Longitude"))
     
-    print(paste("Rows after hover table join:", nrow(leaflet_data_subset))) 
-    
     
     # Create palette with minimum range to avoid weird scaling ----
     # actual_min <- min(leaflet_data_subset$relative_abundance, na.rm = TRUE)
@@ -316,6 +313,20 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
     # Check if there's only 1 row of data
     #single_point <- nrow(leaflet_data_subset) == 1
     
+    # Have to create dummy points so that taxa with one point will map to scale correctly: 
+    if(nrow(leaflet_data_subset) == 1) {
+      dummy_points <- data.frame(
+        Latitude = c(0, 0),  # Could be anything
+        Longitude = c(0, 0),  # Could be anything
+        relative_abundance = c(0, 100),
+        sample_count = c(NA, NA),
+        total_count = c(NA, NA),
+        depths_detected = c(NA, NA),
+        hover_table = c(NA, NA)
+      )
+      leaflet_data_subset <- bind_rows(leaflet_data_subset, dummy_points)
+    }
+    
     p <- plot_ly(leaflet_data_subset,
                  lat = ~Latitude,
                  lon = ~Longitude,
@@ -337,13 +348,13 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                    showscale = TRUE,
                    cauto = FALSE,
                    colorbar = list(
-                     title = "Proportion of station samples", 
+                     title = "% of<br>Station Samples", 
                      orientation = "h",
-                     x = 0,
+                     x = 0.05,
                      xanchor = "left",
                      y = 0,
                      yanchor = "bottom",
-                     len = 0.4,
+                     len = 0.5,
                      thickness = 15,
                      bgcolor = "rgba(255,255,255,0)",
                      borderwidth = 0,
@@ -351,7 +362,9 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                      tickmode = "array",
                      tickvals = pretty(c(0, 100), n = 5),
                      ticktext = as.character(pretty(c(0, 100), n = 5)),
-                     tickfont = list(size = 10)
+                     tickfont = list(size = 10), 
+                     tickangle = 0
+                     
                    ),                             
                    opacity = 0.8,
                    line = list(color = 'white', width = 1),
@@ -360,11 +373,13 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                  ),
                  hovertemplate = ~paste0(
                    "<b>Unique taxa: </b> 1 ", "<br><br>",
-                   "<b>Samples: </b>", sample_count," of ",total_count, " total samples at this station", "(", relative_abundance, ")", "<br><br>",
+                   "<b>Samples: </b>", sample_count," of ", total_count, " total samples at this station", " (", round(relative_abundance, 2), "%", ")", "<br><br>",
                    hover_table,
                    "<extra></extra>"
-                 )
+                 ) 
+                   
     ) |>
+      
       layout(
         mapbox = list(
           style = "white-bg",
