@@ -30,7 +30,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
     
     leaflet_data_all <- data_fn |>
       filter(Season %in% season_fn) |> 
-      group_by(Latitude, Longitude) |>
+      group_by(Latitude, Longitude, Station) |>
       summarize(
         indicator_count = n_distinct(map_label),
         .groups = "drop"
@@ -84,7 +84,9 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                    line = list(color = 'white', width = 1)
                  ),
                  hovertext = ~paste0(
+                   "<b>Station:</b> ", Station, "<br>",
                    "<b>Unique taxa detected:</b> ", indicator_count, "<br>"
+                   
                    # if_else(
                    #   is.na(temperature),
                    #   "",
@@ -212,7 +214,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
       filter(Season %in% season_fn, #MAKE REACTIVE
              depth %in% depth_fn, 
              map_label == species_fn) |> #|>
-      group_by(Latitude, Longitude) |> # These will both be reactive
+      group_by(Latitude, Longitude, Station) |> # These will both be reactive
       summarize(
         sample_count = n_distinct(sample_id), # size circles by number of samples w/ that organism at that point
         depths_detected = paste(sort(unique(depth)), collapse = ", "),
@@ -222,7 +224,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
     # Total number of samples at that location
     leaflet_data_subset_totals <- data_dcm |> 
       filter(Season %in% season_fn) |> 
-      group_by(Latitude, Longitude) |> 
+      group_by(Latitude, Longitude, Station) |> 
       summarize(
         total_count = n_distinct(sample_id), 
         .groups = "drop"
@@ -230,7 +232,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
 
     # Join: 
     leaflet_data_subset <- leaflet_data_subset |>
-      left_join(leaflet_data_subset_totals, by = c("Latitude", "Longitude")) |> 
+      left_join(leaflet_data_subset_totals, by = c("Latitude", "Longitude", "Station")) |> 
       mutate(
         relative_abundance = (sample_count / total_count) * 100
       )
@@ -372,6 +374,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                    cmax = 100 #if(actual_min == actual_max) actual_min else domain_max
                  ),
                  hovertemplate = ~paste0(
+                   "<b>Station:</b> ", Station, "<br><br>",
                    "<b>Unique taxa: </b> 1 ", "<br><br>",
                    "<b>Samples: </b>", sample_count," of ", total_count, " total samples at this station", " (", round(relative_abundance, 2), "%", ")", "<br><br>",
                    hover_table,
