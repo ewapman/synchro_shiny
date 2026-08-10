@@ -134,7 +134,8 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
     scale_x_discrete(limits = all_taxa_depth_order, drop = FALSE) +  # Show all taxa
     labs(x = "Indicator Taxa", 
          y = "Depth (m)",
-         title = paste0("Seasons selected: ", season_list),
+         title = paste0("All stations included", "\n", "Seasons selected: ", season_list, "\n", 
+                        "Taxa selected: ", species_fn),
          subtitle = paste0("Green zone = Deep Chlorophyll Max (", min_depth, "-", max_depth_below_150, ")")) +
     theme_bw() +
     scale_y_reverse(
