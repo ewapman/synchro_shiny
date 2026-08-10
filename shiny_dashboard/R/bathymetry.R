@@ -19,30 +19,53 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
   
   
   # Two options: All taxa or unique taxa
-  if(species_fn == "All taxa"){
-    bath_summary <- bath |>
-      filter(Season %in% season_fn ) |> # REACTIVE: This will be reactive + loop through the different season selections
-      distinct(sample_id, Station, depth_plot) |> 
-      group_by(Station, depth_plot) |>  # Want number at each station and at each depth
-      summarize(samples = n(), .groups = "drop") |>
-      mutate(
-        depth_label = if_else(
-          depth_plot == chl_max_median, "Chlorophyll Max", as.character(depth_plot)
-        )
-      )
-  } else {
+  # if(species_fn == "All taxa"){
+  #   bath_summary <- bath |>
+  #     filter(Season %in% season_fn ) |> # REACTIVE: This will be reactive + loop through the different season selections
+  #     #distinct(sample_id, Station, depth_plot) |> 
+  #     group_by(Station, depth_plot) |>  # For all taxa, want # of unique species
+  #     summarize(samples = n_distinct(map_label), .groups = "drop") |>
+  #     mutate(
+  #       depth_label = if_else(
+  #         depth_plot == chl_max_median, "Deep Chlorophyll Max", as.character(depth_plot)
+  #       )
+  #     )
+  #   
+  #   bath_plot <- bath_summary |> 
+  #     select(Station, samples, depth_plot, depth_label) |> 
+  #     left_join(station_distances, by = c("Station" = "station")) |> 
+  #     mutate(depth = as.numeric(as.character(depth_plot)),
+  #            distance = if_else(Station == "Elkhorn Slough", 0, distance)) 
+  #   
+  # } else {
     bath_summary <- bath |>
       filter(Season %in% season_fn ) |> # REACTIVE: This will be reactive + loop through the different season selections
       filter(map_label == species_fn) |> # REACTIVE: This will be reactive and depend on species input
-      distinct(sample_id, Station, depth_plot) |> 
+      distinct(sample_id, Station, depth_plot) |> # Avoid duplicate ASVID's
       group_by(Station, depth_plot) |>  # Want number at each station and at each depth
       summarize(samples = n(), .groups = "drop") |>
       mutate(
         depth_label = if_else(
-          depth_plot == chl_max_median, "Chlorophyll Max", as.character(depth_plot)
+          depth_plot == chl_max_median, "Deep Chlorophyll Max", as.character(depth_plot)
         )
       )
-  }
+    
+    # Get total number of samples at each station/depth combo (total_samples)
+    total_samples_by_location <- bath |>
+      filter(Season %in% season_fn) |>
+      distinct(sample_id, Station, depth_plot) |>
+      group_by(Station, depth_plot) |>
+      summarize(total_samples = n(), .groups = "drop")
+    
+    # Join distances and calculate relative abundance
+    bath_plot <- bath_summary |> 
+      select(Station, samples, depth_plot, depth_label) |> 
+      left_join(station_distances, by = c("Station" = "station")) |> 
+      left_join(total_samples_by_location, by = c("Station", "depth_plot")) |> 
+      mutate(depth = as.numeric(as.character(depth_plot)),
+             distance = if_else(Station == "Elkhorn Slough", 0, distance)) |> 
+      mutate(relative_abundance = (samples / total_samples) * 100)
+  #}
 
   
   # Get station coords: average because some have 2
@@ -57,48 +80,8 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
     mutate(
       Station = if_else(Station == "Elkhorn Slough", "ES", Station)
     )
-  
-  
-  # Calculate distance along transect for each station
-  # station_distances <- data.frame(
-  #   station = character(),
-  #   distance = numeric(),
-  #   stringsAsFactors = FALSE
-  # )
-  # 
-  # for(i in 1:nrow(stations)) {
-  #   # Get transect to each station from start point
-  #   temp_transect <- get.transect(monterey_map,
-  #                                 x1 = start_lon,
-  #                                 y1 = start_lat,
-  #                                 x2 = stations$Longitude[i],
-  #                                 y2 = stations$Latitude[i],
-  #                                 distance = TRUE)
-  #   
-  #   station_distances <- rbind(station_distances,
-  #                              data.frame(station = stations$Station[i],
-  #                                         distance = max(temp_transect$dist)))
-  # }
-  
-  
-  # Get total number of detections for label
-  total_samples_by_location <- bath |>
-    filter(Season %in% season_fn) |>
-    distinct(sample_id, Station, depth_plot) |>
-    group_by(Station, depth_plot) |>
-    summarize(total_samples = n(), .groups = "drop")
-  
-  # Join distances
-  bath_plot <- bath_summary |> 
-    select(Station, samples, depth_plot, depth_label) |> 
-    left_join(station_distances, by = c("Station" = "station")) |> 
-    left_join(total_samples_by_location, by = c("Station", "depth_plot")) |> 
-    mutate(depth = as.numeric(as.character(depth_plot)),
-           distance = if_else(Station == "Elkhorn Slough", 0, distance)) 
-  
 
-  
-  
+
   # Create annotations
   annotations_list <- lapply(1:nrow(station_distances), function(i) {
     
@@ -119,11 +102,7 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
     )
   })
   
-  
-  # Fix min and max values, otherwise taxa with only one observation do not follow colorscale
-  # Force a range even for single values
-  min_det <- min(bath_plot$samples)
-  max_det <- max(bath_plot$samples)
+
 
   # Create plotly basemap 
 p <- plot_ly() |> 
@@ -148,69 +127,78 @@ p <- plot_ly() |>
     ) 
 
 # Add markers if there is data for that organism & season
-if(nrow(bath_plot) > 0) {
+if(species_fn == "All taxa") {
+  # Don't show bath graph for All taxa - add message
+  p <- p |>
+    add_annotations(
+      text = "Select a specific taxa",
+      x = 0.5, y = 0.5,
+      xref = "paper", yref = "paper",
+      showarrow = FALSE,
+      font = list(size = 14, color = "gray50")
+    )
   
-  # Check if there is only one observation:
-  single_obs <- (max_det == min_det)
+} else if(nrow(bath_plot) > 0) {
   
-  # If there is only a single observation, set to the lower color
-  if(single_obs) {
-    # Single observation - use fixed red color
-    p <- p |> 
-      add_markers(
-        x = as.numeric(bath_plot$distance),
-        y = -as.numeric(bath_plot$depth_plot),  
-        marker = list(
-          color = "#FFF7BC",  # Fixed tomato red color
-          showscale = TRUE,   # Show the colorbar
-          size = 10, 
-          opacity = 0.8,
-          line = list(color = 'black', width = 1),
-          colorbar = list(
-            title = "Samples",
-            tickmode = "array",
-            tickvals = c(0.9),  # Single tick in the middle
-            ticktext = c(as.character(min_det)),  # Shows "1" or whatever the value is
-            ticklabelposition = "outside top" 
-            
-          ),
-          # Create a dummy colorscale so the bar shows the right color
-          colorscale = list(c(0, "#FFF7BC"), c(1, "#FFF7BC")),  # All red
-          cmin = 0,
-          cmax = 1
-        ),
-        hovertemplate = paste0("Depth: ", bath_plot$depth_label, "<br>",
-                               "Samples: ", bath_plot$samples, " of ", bath_plot$total_samples, " samples at this station and depth",
-                               "<extra></extra>")
-      )
-  } else {
-    
-    # Otherwise do the normal colorscale
-    p <-p |> 
-      add_markers(
-        x = jitter(as.numeric(bath_plot$distance), amount = 0.5),
-        y = -as.numeric(bath_plot$depth_plot),  
-        marker = list(
-          color = as.numeric(bath_plot$samples),
-          colorscale = list(c(0, "#FFF7BC"), c(0.5, "#FF6347"), c(1, "#8B0000")),
-          showscale = TRUE,
-          size = 10, 
-          opacity = 0.8,
-          line = list(color = 'black', width = 1), 
-          colorbar = list(title = "Samples")
-        ),
-        hovertemplate = paste0("Depth: ", bath_plot$depth_label, "<br>",
-                               "Samples: ", bath_plot$samples, " of ", bath_plot$total_samples, " total samples at this station and depth",
-                               "<extra></extra>")
-        
-      )
-    
-    
+  # If there is only a single observation, create dummy points
+  if(nrow(bath_plot) == 1) {
+    dummy_points <- data.frame(
+      Station = c("dummy1", "dummy2"),
+      samples = c(NA, NA),
+      depth_plot = c(0, 0),
+      depth_label = c("", ""),
+      distance = c(0, 0),
+      total_samples = c(NA, NA),
+      depth = c(0, 0),
+      relative_abundance = c(0, 100)
+    )
+    bath_plot <- bind_rows(bath_plot, dummy_points)
   }
   
-} else {
+  # Set variables for specific species
+  color_var <- bath_plot$relative_abundance
+  color_title <- "% of<br>Station Samples"
+  cmin_val <- 0
+  cmax_val <- 100
+  tick_vals <- pretty(c(0, 100), n = 5)
+  tick_text <- paste0(as.character(tick_vals), "%")
+  opacity_val <- ~ifelse(is.na(bath_plot$samples), 0, 0.8)
+  colorscale_choice <- "Viridis"
+  hover_text <- ifelse(is.na(bath_plot$samples), "",
+                       paste0("Depth: ", bath_plot$depth_label, "<br>",
+                              "Samples: ", bath_plot$samples, " of ", bath_plot$total_samples, 
+                              " (", round(bath_plot$relative_abundance, 2), "%)"))
   
-  # Empty plot with annotation 
+  # Add markers
+  p <- p |> 
+    add_markers(
+      x = jitter(as.numeric(bath_plot$distance), amount = 0.5),
+      y = -as.numeric(bath_plot$depth_plot),  
+      marker = list(
+        color = color_var,
+        reversescale = TRUE,
+        colorscale = colorscale_choice,
+        cauto = FALSE,
+        showscale = TRUE,
+        size = 10, 
+        opacity = opacity_val,
+        line = list(color = "black", width = 1), 
+        cmin = cmin_val,
+        cmax = cmax_val,
+        colorbar = list(
+          title = color_title,
+          tickmode = "array",
+          tickvals = tick_vals,
+          ticktext = tick_text,
+          len = 0.5,
+          thickness = 15
+        )
+      ),
+      hovertemplate = paste0(hover_text, "<extra></extra>")
+    )
+  
+} else {
+  # No data for this species in selected seasons
   p <- p |>
     add_annotations(
       text = paste("No data for", species_fn, "in selected season(s)"),
@@ -219,8 +207,7 @@ if(nrow(bath_plot) > 0) {
       showarrow = FALSE,
       font = list(size = 14, color = "gray50")
     )
-  
-}  
+}
 
 # Create list of selected seasons
 season_list <- paste(season_fn, collapse = ", ")
