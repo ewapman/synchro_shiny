@@ -21,7 +21,7 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
   
   
   # Filter depending on season ----
-  depth_data <- map_data |> 
+  depth_data <- data_fn |> 
     filter(Season %in% season_fn) |> 
     mutate(depth = as.numeric(as.character(depth))) |>
     distinct(sample_id, map_label, depth)  # Remove ASVID duplicates
@@ -30,6 +30,8 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
   max_depth_below_150 <- max(depth_data$depth[depth_data$depth < 150], na.rm = TRUE)
   chl_max_median <- median(c(min_depth, max_depth_below_150))
   
+  
+  # Get number of samples of each species at that depth 
   depth_data <- depth_data |> 
     mutate(
       depth_plot = if_else(
@@ -37,15 +39,23 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
     ) |>
     group_by(map_label, depth_plot) |> 
     summarize(
-      sp_depth = n(),  # ← CHANGED: Count samples instead of sum(abundance)
+      sp_depth = n(),  #  Count samples
       .groups = "drop"
     ) |> 
-    group_by(depth_plot) |> 
-    mutate(
-      total_samples_at_depth = sum(sp_depth),  # ← Total samples at this depth
-      relative_abundance = (sp_depth / sum(sp_depth)) * 100
+    
+    left_join(
+      data_fn |>  
+        filter(Season %in% season_fn) |> 
+        mutate(depth = as.numeric(as.character(depth))) |>
+        mutate(depth_plot = if_else(depth > 0 & depth <= max_depth_below_150, chl_max_median, depth)) |>
+        distinct(sample_id, depth_plot) |>  # Remove ASVID duplicates
+        group_by(depth_plot) |> 
+        summarize(total_samples_at_depth = n(), .groups = "drop"),  # ← Count ALL samples
+      by = "depth_plot"
     ) |> 
-    ungroup() |> 
+    mutate(
+      relative_abundance = (sp_depth / total_samples_at_depth) * 100  
+    ) |> 
     mutate(
       depth_label = if_else(
         depth_plot == chl_max_median, "Chlorophyll Max", as.character(depth_plot)
@@ -125,7 +135,7 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
                              tooltip = paste0(
                                map_label, "\n",
                                "Depth: ", depth_label, "m\n",
-                               "Relative Abundance: ",
+                               "% of samples: ",
                                if_else(relative_abundance < 0.01,
                                        paste0(format(relative_abundance, scientific = TRUE, digits = 2), "%"),
                                        sprintf("%.2f%%", relative_abundance)))))+

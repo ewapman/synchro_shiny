@@ -15,7 +15,7 @@ Environmental DNA (eDNA) refers to the DNA that is found naturally in the enviro
 
 ### What can eDNA tell us?
 
-eDNA can tell us whether an organism is present or absent and give an idea of community biodiversity.
+eDNA can tell us what organisms are present or were recently present in an area.
 
 ### What can eDNA *not* tell us?
 
@@ -25,5 +25,4 @@ For eDNA sequenced for a specific gene, it can be difficult to show:
 - The age of an organism
 - The exact location of an organism
 - The sex of an organism
-
-eDNA can also have false negatives, meaning an organism could be present in the environment even if its DNA is not detected in a sample.
+- The absence of an organism (eDNA can have false negatives, meaning an organism could be present in the environment even if its DNA is not detected in a sample.)

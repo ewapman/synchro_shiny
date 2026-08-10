@@ -27,14 +27,14 @@ barchart <- function(data_fn, species_fn, season_fn, clicked_lat, clicked_lon){
              near(Longitude, clicked_lon)) |>
       # Get total number of samples at that point
       mutate(
-        total_samples = n_distinct(sample_id) 
-      ) |> 
+        total_samples = n_distinct(sample_id)
+      ) |>
       # Get total number of samples with each species 
       distinct(map_label, sample_id, total_samples) |> # one row per sample per species
       group_by(map_label) |> 
       summarize(
         sp_count = n(), # of sp detections at that lat/long
-        total_samples = first(total_samples),
+         total_samples = first(total_samples),
         .groups = "drop") |> 
       arrange(sp_count) |> # reorder 
       mutate(percent = (sp_count / total_samples) * 100) |> 
@@ -106,7 +106,7 @@ barchart <- function(data_fn, species_fn, season_fn, clicked_lat, clicked_lon){
              near(Latitude, clicked_lat),
              near(Longitude, clicked_lon)) |>
       mutate(
-        total_samples = n_distinct(sample_id) 
+        total_samples = n_distinct(sample_id)
       ) |>
       distinct(map_label, sample_id, total_samples) |> 
       group_by(map_label) |> 

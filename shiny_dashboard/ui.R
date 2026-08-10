@@ -181,7 +181,7 @@ body <- dashboardBody(
                                    ),
                                    column(4,
                                           wellPanel(
-                                            h4(strong("Taxonomic Composition")),
+                                            h4(strong("Percentage of samples detecting each taxon")),
                                             plotlyOutput("species_bar_plot", height = "500px")
                                           )
                                    )
@@ -222,7 +222,7 @@ body <- dashboardBody(
                                 
                                    box(width = 12,
                                        height = "700px",
-                                       h4(strong("Relative abundance of taxa at each depth")),
+                                       h4(strong("Percentage of samples containing each taxon by depth")),
                                        
                                        headerPanel(""),
                                        headerPanel(""),

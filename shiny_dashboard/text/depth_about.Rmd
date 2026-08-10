@@ -9,7 +9,7 @@ output: html_document
 
 eDNA surveys can be a useful method for detecting organisms deeper in the water column without deploying Remotely Operated Vehicles (ROVs).
 
-The graph shows the relative abundance of each organism detected during the selected season(s) at each depth. **For example, at 300m, each organism made up X% of all samples at that depth.** Larger circles indicate a higher relative abundance. Selecting a unique taxa at the top of the page highlights the data points in <span style="color: darkorange;">orange</span>.
+The graph shows the percentage of samples containing each organism at each depth for the selected season(s). Circle size represents how commonly that organism was found at that depth. Selecting a unique taxa at the top of the page highlights the data points in <span style="color: darkorange;">orange</span>.
 
 The <span style="color: green;">deep chlorophyll max</span> varies spatially and temporally with changes in nutrient and light availability. All detections at the deep chlorophyll max were grouped into one sampling depth category for calculations. <span style="color: green;"> The highlighted section shows the range of deep chlorophyll max values sampled for the selected season(s).</span>
 

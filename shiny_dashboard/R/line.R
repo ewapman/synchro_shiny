@@ -60,11 +60,11 @@ line_graph <- function(data_fn, species_fn) {
     geom_point_interactive(color = "black", fill = "#69b3a2", size = 3, shape = 21,
                            aes(tooltip = paste0(
                              species_fn, "\n",
-                             "Relative Abundance: ", round(relative_abundance, 2), "%")))+ 
+                             "% of samples: ", round(relative_abundance, 2), "%")))+ 
     theme_minimal() +
     labs(x = "Season", 
-         y = "Relative abundance (%)",
-         title = paste0("Relative abundance of ", species_fn, " per season")) +
+         y = "Percent of samples (%)",
+         title = paste0("Percentage of ", species_fn, " per season")) +
     theme(
       axis.title.x = element_text(margin = margin(t = 20)),
       axis.title.y = element_text(margin = margin(r = 20))
