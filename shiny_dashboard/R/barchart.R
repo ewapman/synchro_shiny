@@ -25,19 +25,14 @@ barchart <- function(data_fn, species_fn, season_fn, clicked_lat, clicked_lon){
       filter(Season %in% season_fn,
              near(Latitude, clicked_lat),
              near(Longitude, clicked_lon)) |>
-      # Get total number of samples at that point
-      mutate(
-        total_samples = n_distinct(sample_id)
-      ) |>
       # Get total number of samples with each species 
-      distinct(map_label, sample_id, total_samples) |> # one row per sample per species
+      distinct(map_label, sample_id) |> # one row per sample per species
       group_by(map_label) |> 
       summarize(
         sp_count = n(), # of sp detections at that lat/long
-         total_samples = first(total_samples),
         .groups = "drop") |> 
       arrange(sp_count) |> # reorder 
-      mutate(percent = (sp_count / total_samples) * 100) |> 
+      mutate(percent = (sp_count / sum(sp_count)) * 100) |> 
       mutate(
         percent_bin = cut(percent,
                           breaks = c(0, 1, 2, 5, 10, 20, 50, 100),
@@ -85,7 +80,8 @@ barchart <- function(data_fn, species_fn, season_fn, clicked_lat, clicked_lon){
           showticklabels = FALSE  # Hide "rep(Species, nrow...)"
         ),
         yaxis = list(
-          title = "Percentage of Samples (%)"  # Y-axis label
+          title = "Proportion of detections (%)",  
+          range = c(0, 100)
         ),
         showlegend = FALSE,
         hoverlabel = list(
@@ -105,17 +101,12 @@ barchart <- function(data_fn, species_fn, season_fn, clicked_lat, clicked_lon){
       filter(Season %in% season_fn, 
              near(Latitude, clicked_lat),
              near(Longitude, clicked_lon)) |>
-      mutate(
-        total_samples = n_distinct(sample_id)
-      ) |>
-      distinct(map_label, sample_id, total_samples) |> 
+      distinct(map_label, sample_id) |> 
       group_by(map_label) |> 
       summarize(
         sp_count = n(), # of sp detections at that lat/long
-        total_samples = first(total_samples),
         .groups = "drop") |> 
-      arrange(sp_count) |> # reorder 
-      mutate(percent = (sp_count / total_samples) * 100) |> 
+      mutate(percent = (sp_count / sum(sp_count)) * 100) |> 
       mutate(
         percent_bin = cut(percent,
                           breaks = c(0, 1, 2, 5, 10, 20, 50, 100),
@@ -165,7 +156,8 @@ barchart <- function(data_fn, species_fn, season_fn, clicked_lat, clicked_lon){
           showticklabels = FALSE  # Hide "rep(Species, nrow...)"
         ),
         yaxis = list(
-          title = "Percentage of Samples (%)"  # Y-axis label
+          title = "Proportion of detections (%)", 
+          range = c(0, 100)
         ),
         showlegend = FALSE,
         hoverlabel = list(
