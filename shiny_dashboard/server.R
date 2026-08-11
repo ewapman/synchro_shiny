@@ -214,26 +214,38 @@ server <- function(input, output, session) {
   # })
   
   # When map marker is clicked, save it -- plotly version
+  # In server, update the click event handler:
   observeEvent(event_data("plotly_click", source = "indicator_map"), {
-
     click <- event_data("plotly_click", source = "indicator_map")
-
+    
     if(!is.null(click) && !is.null(click$customdata)) {
-
-      # Split the customdata
-      coords <- strsplit(click$customdata, "\\|")[[1]]
-      clicked_lat <- as.numeric(coords[1])
-      clicked_lon <- as.numeric(coords[2])
-
-      cat("Clicked lat:", clicked_lat, "\n")
-      cat("Clicked lon:", clicked_lon, "\n")
-
-      clicked_point(list(
-        lat = clicked_lat,
-        lng = clicked_lon
-      ))
+      clicked_station <- click$customdata  # ← Get station name
+      
+      cat("Clicked station:", clicked_station, "\n")
+      
+      clicked_point(list(station = clicked_station))  # ← Store station
     }
   })
+  # observeEvent(event_data("plotly_click", source = "indicator_map"), {
+  # 
+  #   click <- event_data("plotly_click", source = "indicator_map")
+  # 
+  #   if(!is.null(click) && !is.null(click$customdata)) {
+  # 
+  #     # Split the customdata
+  #     coords <- strsplit(click$customdata, "\\|")[[1]]
+  #     clicked_lat <- as.numeric(coords[1])
+  #     clicked_lon <- as.numeric(coords[2])
+  # 
+  #     cat("Clicked lat:", clicked_lat, "\n")
+  #     cat("Clicked lon:", clicked_lon, "\n")
+  # 
+  #     clicked_point(list(
+  #       lat = clicked_lat,
+  #       lng = clicked_lon
+  #     ))
+  #   }
+  # })
   
   # When species changes, clear the clicked point
   observeEvent(input$species_input, {
@@ -273,6 +285,8 @@ server <- function(input, output, session) {
   output$species_bar_plot <- renderPlotly({
     
     clicked <- clicked_point()  # Use reactiveVal instead of input
+    cat("clicked object:", str(clicked), "\n")
+    cat("clicked$station:", clicked$station, "\n")
     
     if(is.null(clicked)) {
       return(
@@ -297,8 +311,9 @@ server <- function(input, output, session) {
       data_fn = map_data,
       species_fn = input$species_input,
       season_fn = input$season_input,
-      clicked_lat = clicked$lat,
-      clicked_lon = clicked$lng
+      clicked_station = clicked$station
+      # clicked_lat = clicked$lat,
+      # clicked_lon = clicked$lng
     )
   })
   

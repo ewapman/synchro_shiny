@@ -2,27 +2,20 @@
 
 plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
   
+  # Change station coordinates so they are the same for each station
+  station_coords <- tribble(
+    ~station, ~station_lat, ~station_lon,
+    "Elkhorn Slough", 36.8117, -121.7796,
+    "C1", 36.8045, -121.858,
+    "M1", 36.7502, -122.0495,
+    "MARS", 36.721, -122.1903,
+    "M2", 36.7015, -122.3743,
+    "OSWS", 36.6775, -122.5352
+  )
+  
   if(species_fn == "All taxa") {
     
-    # Subset environmental data to surface and subsurface
-    # envtl_data <- data_fn |> 
-    #   filter(Season %in% season_fn) |>  # All selected seasons
-    #   mutate(depth = as.numeric(as.character(depth))) |>
-    #   filter(
-    #     if (depth_fn == "Surface (0-20m)") {
-    #       depth <= 20
-    #     } else {
-    #       depth > 20
-    #     }
-    #   ) |>
-    #   group_by(Latitude, Longitude) |>  # Average by location
-    #   summarize(
-    #     temperature = mean(temperature, na.rm = TRUE),
-    #     salinity = mean(salinity, na.rm = TRUE),
-    #     oxygen = mean(oxygen, na.rm = TRUE),
-    #     .groups = "drop"
-    #   ) |>
-    #   drop_na() 
+    
     
     # Filter date for all selection ----
     # Want number of unique species at each location and depth 
@@ -44,13 +37,20 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
       summarize(
         indicator_count = n_distinct(map_label),
         .groups = "drop"
-      ) 
+      ) |>
+      # Join station coordinates
+      left_join(station_coords, by = c("Station" = "station")) |>
+      # Add jitter for display
+      mutate(
+        display_lat = station_lat + rnorm(n(), 0, 0.008),
+        display_lon = station_lon + rnorm(n(), 0, 0.008)
+      )
     
     depth_envtl_table_all <- data_dcm_all |>
       filter(Season %in% season_fn,
              depth %in% depth_fn) |>
-      distinct(sample_id, Latitude, Longitude, depth, temperature, salinity, oxygen) |>
-      group_by(Latitude, Longitude, depth) |>
+      distinct(sample_id, Station, depth, temperature, salinity, oxygen) |>
+      group_by(Station, depth) |>
       summarize(
         samples = n_distinct(sample_id),
         temperature = round(mean(temperature, na.rm = TRUE), 1),
@@ -58,13 +58,13 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
         oxygen = round(mean(oxygen, na.rm = TRUE), 1),
         .groups = "drop"
       )
-
+    
     depth_hover_table_all <- depth_envtl_table_all |>
       mutate(
         depth = factor(depth, levels = c("0", "DCM", "150", "300"))  # ← Set order
       ) |>
-      arrange(Latitude, Longitude, depth) |>
-      group_by(Latitude, Longitude) |>
+      arrange(Station, depth) |>
+      group_by(Station) |>
       summarize(
         hover_table = paste0(
           "<b>By Depth (m):</b><br>",
@@ -78,21 +78,21 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
         ),
         .groups = "drop"
       )
-
+    
     # Join back to subset data:
     leaflet_data_all <- leaflet_data_all |>
-      left_join(depth_hover_table_all, by = c("Latitude", "Longitude"))
-
-
+      left_join(depth_hover_table_all, by = c("Station"))
+    
+    
     
     # Plot All taxa ----
     
     # Make plotly graph ---
     
     p <- plot_ly(leaflet_data_all,
-                 lat = ~Latitude,
-                 lon = ~Longitude,
-                 customdata = ~paste(Latitude, Longitude, sep = "|"),
+                 lat = ~display_lat,
+                 lon = ~display_lon,
+                 customdata = ~Station,#~paste(Latitude, Longitude, sep = "|"),
                  #key = ~paste(Latitude, Longitude, sep = "_"),
                  type = "scattermapbox",
                  mode = "markers",
@@ -181,67 +181,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
   
   else {
     
-    # Get valid seasons for this species
-    # valid_seasons <- data_fn |>
-    #   filter(map_label == species_fn) |>
-    #   pull(Season) |>
-    #   unique()
-    # 
-    # 
-    # # Filter to only valid seasons
-    # seasons_to_use <- season_fn[season_fn %in% valid_seasons]
-    # 
-    # 
-    # if(length(seasons_to_use) == 0) {
-    #   return(
-    #     plot_ly() |>
-    #       add_trace(
-    #         type = "scattermapbox",  # ← ADD THIS
-    #         lat = c(36.74),
-    #         lon = c(-122.16),
-    #         mode = "markers",
-    #         marker = list(opacity = 0)
-    #       ) |>
-    #       layout(
-    #         mapbox = list(
-    #           style = "white-bg",
-    #           zoom = 8,
-    #           center = list(lon = -122.16, lat = 36.74)
-    #         ),
-    #         annotations = list(
-    #           text = "No data for this species in selected seasons",
-    #           showarrow = FALSE,
-    #           font = list(size = 16, color = "gray")
-    #         )
-    #       )
-    #   )
-    # }
-    # 
-    # 
-    # # Subset environmental data for this using valid seasons
-    # envtl_data <- data_fn |> 
-    #   filter(Season %in% seasons_to_use) |>
-    #   mutate(depth = as.numeric(as.character(depth))) 
-    # 
-    # 
-    # 
-    # # Apply depth filter
-    # if (depth_fn == "Surface (0-20m)") {
-    #   envtl_data <- envtl_data |> filter(depth <= 20)
-    # } else {
-    #   envtl_data <- envtl_data |> filter(depth > 20)
-    # } 
-    # 
-    # envtl_data <- envtl_data |>
-    #   group_by(Latitude, Longitude) |>
-    #   summarize(
-    #     temperature = mean(temperature, na.rm = TRUE),
-    #     salinity = mean(salinity, na.rm = TRUE),
-    #     oxygen = mean(oxygen, na.rm = TRUE),
-    #     .groups = "drop"
-    #   ) |>
-    #   drop_na()
-    # 
+    
     
     # Filter species and date ----
     # Want number of SAMPLES at each depth and location for that organism
@@ -262,7 +202,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
       filter(Season %in% season_fn, #MAKE REACTIVE
              depth %in% depth_fn, 
              map_label == species_fn) |> #|>
-      group_by(Latitude, Longitude, Station) |> # These will both be reactive
+      group_by(Station) |> # These will both be reactive CHANGED TO GROUP BY STATION ONLY
       summarize(
         sample_count = n_distinct(sample_id), # size circles by number of samples w/ that organism at that point
         depths_detected = paste(sort(unique(depth)), collapse = ", "),
@@ -272,26 +212,34 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
     # Total number of samples at that location
     leaflet_data_subset_totals <- data_dcm |> 
       filter(Season %in% season_fn) |> 
-      group_by(Latitude, Longitude, Station) |> 
+      group_by(Station) |> # CHANGED TO GROUP BY STATION ONLY
       summarize(
         total_count = n_distinct(sample_id), 
         .groups = "drop"
       ) 
-
+    
     # Join: 
     leaflet_data_subset <- leaflet_data_subset |>
-      left_join(leaflet_data_subset_totals, by = c("Latitude", "Longitude", "Station")) |> 
+      left_join(leaflet_data_subset_totals, by = c("Station")) |> # REMOVED LATITUDE AND LONGITUDE
       mutate(
         relative_abundance = (sample_count / total_count) * 100
+      ) |> 
+      # Join station coordinates
+      left_join(station_coords, by = c("Station" = "station")) |>
+      # Add jitter
+      mutate(
+        display_lat = station_lat + rnorm(n(), 0, 0.008),
+        display_lon = station_lon + rnorm(n(), 0, 0.008)
       )
-
+    
+    
     # Make table for hover: 
     depth_envtl_table <- data_dcm |> 
       filter(Season %in% season_fn,
              depth %in% depth_fn,
              map_label == species_fn) |>
-      distinct(sample_id, Latitude, Longitude, depth, temperature, salinity, oxygen) |> 
-      group_by(Latitude, Longitude, depth) |> 
+      distinct(sample_id, Station, depth, temperature, salinity, oxygen) |> 
+      group_by(Station, depth) |> # CHANGE FROM LATITUDE LONGITUDE
       summarize(
         samples = n_distinct(sample_id),
         temperature = round(mean(temperature, na.rm = TRUE), 1),
@@ -299,16 +247,16 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
         oxygen = round(mean(oxygen, na.rm = TRUE), 1),
         .groups = "drop"
       ) 
-   
-      
+    
+    
     # Make html table:
     # Replace the hover_table creation with this simpler format:
     depth_hover_tables <- depth_envtl_table |>
       mutate(
         depth = factor(depth, levels = c("0", "DCM", "150", "300"))  # ← Set order
       ) |>
-      arrange(Latitude, Longitude, depth) |>
-      group_by(Latitude, Longitude) |>
+      arrange(Station, depth) |> # change to station
+      group_by(Station) |> #change to station
       summarize(
         hover_table = paste0(
           "<b>By Depth (m):</b><br>",
@@ -325,7 +273,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
     
     # Join back to subset data: 
     leaflet_data_subset <- leaflet_data_subset |>
-      left_join(depth_hover_tables, by = c("Latitude", "Longitude"))
+      left_join(depth_hover_tables, by = c("Station")) # Change to station
     
     
     # Create palette with minimum range to avoid weird scaling ----
@@ -378,9 +326,9 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
     }
     
     p <- plot_ly(leaflet_data_subset,
-                 lat = ~Latitude,
-                 lon = ~Longitude,
-                 customdata = ~paste(Latitude, Longitude, sep = "|"),
+                 lat = ~display_lat,
+                 lon = ~display_lon,
+                 customdata = ~Station,#~paste(Latitude, Longitude, sep = "|"),
                  #key = ~paste(Latitude, Longitude, sep = "_"),
                  type = "scattermapbox",
                  mode = "markers",
@@ -428,7 +376,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                    hover_table,
                    "<extra></extra>"
                  ) 
-                   
+                 
     ) |>
       
       layout(

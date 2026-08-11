@@ -1,4 +1,4 @@
-barchart <- function(data_fn, species_fn, season_fn, clicked_lat, clicked_lon){
+barchart <- function(data_fn, species_fn, season_fn, clicked_station){
   
   
   if(species_fn == "All taxa") { 
@@ -23,8 +23,9 @@ barchart <- function(data_fn, species_fn, season_fn, clicked_lat, clicked_lon){
     bar_plot_data <- map_data |> 
       # Filter season and selected lat/lon
       filter(Season %in% season_fn,
-             near(Latitude, clicked_lat),
-             near(Longitude, clicked_lon)) |>
+             Station == clicked_station) |> 
+             #near(Latitude, clicked_lat),
+             #near(Longitude, clicked_lon)) |>
       # Get total number of samples with each species 
       distinct(map_label, sample_id) |> # one row per sample per species
       group_by(map_label) |> 
@@ -97,10 +98,11 @@ barchart <- function(data_fn, species_fn, season_fn, clicked_lat, clicked_lon){
   else {
     
     
-    bar_plot_data_sp <- data_fn |> 
+    bar_plot_data_sp <- map_data |> 
       filter(Season %in% season_fn, 
-             near(Latitude, clicked_lat),
-             near(Longitude, clicked_lon)) |>
+             Station == clicked_station) |> 
+             #near(Latitude, clicked_lat),
+             #near(Longitude, clicked_lon)) |>
       distinct(map_label, sample_id) |> 
       group_by(map_label) |> 
       summarize(
