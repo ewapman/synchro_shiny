@@ -65,10 +65,10 @@ server <- function(input, output, session) {
         "depth_input",
         choices = all_depths,
         selected = all_depths,  # Select all by default
-        choicesOpt = list(
-          disabled = rep(TRUE, length(all_depths)),  # Disable all
-          style = rep("color: #ccc;", length(all_depths))
-        )
+        # choicesOpt = list(
+        #   disabled = rep(TRUE, length(all_depths)),  # Disable all
+        #   style = rep("color: #ccc;", length(all_depths))
+        # )
       )
       return()  # Exit early
     }

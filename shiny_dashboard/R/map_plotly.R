@@ -26,16 +26,64 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
     
     # Filter date for all selection ----
     # Want number of unique species at each location and depth 
-  
+    data_dcm_all <- data_fn |>
+      mutate(
+        depth = case_when(
+          depth == 0 ~ "0",
+          depth > 0 & depth < 150 ~ "DCM",
+          depth == 150 ~ "150",
+          depth == 300 ~ "300",
+          TRUE ~ as.character(depth)
+        )
+      )
     
-    leaflet_data_all <- data_fn |>
-      filter(Season %in% season_fn) |> 
+    leaflet_data_all <- data_dcm_all |>
+      filter(Season %in% season_fn,
+             depth %in% depth_fn) |> 
       group_by(Latitude, Longitude, Station) |>
       summarize(
         indicator_count = n_distinct(map_label),
         .groups = "drop"
       ) 
     
+    # depth_envtl_table_all <- data_dcm_all |> 
+    #   filter(Season %in% season_fn,
+    #          depth %in% depth_fn,
+    #          map_label == species_fn) |>
+    #   distinct(sample_id, Latitude, Longitude, depth, temperature, salinity, oxygen) |> 
+    #   group_by(Latitude, Longitude, depth) |> 
+    #   summarize(
+    #     samples = n_distinct(sample_id),
+    #     temperature = round(mean(temperature, na.rm = TRUE), 1),
+    #     salinity = round(mean(salinity, na.rm = TRUE), 1),
+    #     oxygen = round(mean(oxygen, na.rm = TRUE), 1),
+    #     .groups = "drop"
+    #   ) 
+    # 
+    # depth_hover_table_all <- depth_envtl_table |>
+    #   mutate(
+    #     depth = factor(depth, levels = c("0", "DCM", "150", "300"))  # ← Set order
+    #   ) |>
+    #   arrange(Latitude, Longitude, depth) |>
+    #   group_by(Latitude, Longitude) |>
+    #   summarize(
+    #     hover_table = paste0(
+    #       "<b>By Depth (m):</b><br>",
+    #       paste0(
+    #         "<b>", depth, ":</b> ", samples, " samples | ",
+    #         "Temp: ", ifelse(is.na(temperature), "NA", paste0(temperature, "°C")), " | ",  # ← Fixed
+    #         "Salinity: ", ifelse(is.na(salinity), "NA", salinity), " | ",  # ← Fixed
+    #         "O₂: ", ifelse(is.na(oxygen), "NA", oxygen),  # ← Fixed
+    #         collapse = "<br>"
+    #       )
+    #     ),
+    #     .groups = "drop"
+    #   )
+    # 
+    # # Join back to subset data: 
+    # leaflet_data_subset <- leaflet_data_subset |>
+    #   left_join(depth_hover_tables, by = c("Latitude", "Longitude"))
+    # 
 
     
     # Plot All taxa ----
