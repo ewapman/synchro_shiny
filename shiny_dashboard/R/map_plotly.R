@@ -42,8 +42,16 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
       left_join(station_coords, by = c("Station" = "station")) |>
       # Add jitter for display
       mutate(
-        display_lat = station_lat + rnorm(n(), 0, 0.008),
-        display_lon = station_lon + rnorm(n(), 0, 0.008)
+        display_lat = if_else(
+          Station == "Elkhorn Slough",  # ← Fixed the space!
+          station_lat,                   # NO vertical jitter
+          station_lat + rnorm(n(), 0, 0.004)
+        ),
+        display_lon = if_else(
+          Station == "Elkhorn Slough",
+          station_lon + rnorm(n(), 0, 0.0025),  # Tiny horizontal jitter
+          station_lon + rnorm(n(), 0, 0.004)
+        )
       )
     
     depth_envtl_table_all <- data_dcm_all |>
@@ -228,8 +236,16 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
       left_join(station_coords, by = c("Station" = "station")) |>
       # Add jitter
       mutate(
-        display_lat = station_lat + rnorm(n(), 0, 0.008),
-        display_lon = station_lon + rnorm(n(), 0, 0.008)
+        display_lat = if_else(
+          Station == "Elkhorn Slough",  # ← Fixed the space!
+          station_lat,                   # NO vertical jitter
+          station_lat + rnorm(n(), 0, 0.004)
+        ),
+        display_lon = if_else(
+          Station == "Elkhorn Slough",
+          station_lon + rnorm(n(), 0, 0.0025),  # Tiny horizontal jitter
+          station_lon + rnorm(n(), 0, 0.004)
+        )
       )
     
     
