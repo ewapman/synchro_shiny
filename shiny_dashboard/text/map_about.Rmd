@@ -15,8 +15,14 @@ Indicator species are organisms whose population levels can indicate broader cha
 ### **Where are indicator taxa detected?**
 **Map:** Shows detection locations for the selected season(s) and depth(s).
 
-  **All taxa:** Shows number of unique organisms at each station
+  * **All taxa:** Shows number of unique organisms at each station
   
-  **Specific taxon:** Shows percentage of samples where that organism was detected
+  * **Specific taxon:** Shows percentage of samples where that organism was detected
+  
+**Barchart:** Shows the proportion of each detected organism out of all detections at the selected location. 
+
+#### **Definitions:**
+
+**Detection:** The organism's DNA was present in a sample. This is a presence/absence measure. Each sample is counted once per organism regardless of abundance.
     
 *Hover for details. Click a point to see a bar chart of the percentage of samples containing each taxon at that location.*

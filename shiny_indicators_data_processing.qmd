@@ -381,7 +381,18 @@ taxa_full_df <- as.data.frame(tax_table(ps_decontam))
 
 saveRDS(taxa_full_df, here("shiny_dashboard", "data", "processed", "full_taxa.rds"))
 
+# Extract full sample data
 
+sample_data_df <- as.data.frame(sample_data(ps_decontam))
+
+# Save it
+saveRDS(sample_data_df, here("shiny_dashboard", "data", "processed", "sample_metadata.rds"))
+
+# extract full otu data
+otu_data <- as.data.frame(otu_table(ps_decontam))
+
+# Save it for future use
+saveRDS(otu_data, here("shiny_dashboard", "data", "processed", "otu_table.rds"))
 ```
 
 ### Import indicator species data
@@ -567,6 +578,7 @@ Add temperature data and time --- potentially change qmd earlier to account for 
 
 meta_temp_time <- read_csv(here("shiny_dashboard/data/raw", "all_metadata_CTD_time.csv"))
 # Check for duplicate SampleIDs in meta_temp_time
+
 
 
 shiny_data <- shiny_data %>%

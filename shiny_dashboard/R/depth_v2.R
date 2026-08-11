@@ -91,7 +91,7 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
   detected_taxa <- unique(depth_data$map_label_abb)
   label_colors <- ifelse(
     all_taxa_depth_order == species_fn_abb & species_fn != "All taxa",
-    "darkorange",
+    "red",
     ifelse(all_taxa_depth_order %in% detected_taxa, "black", "gray70")
   )
   
@@ -131,7 +131,7 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
                            aes(
                              fill = if_else(
                                map_label == species_fn & species_fn != "All taxa",
-                               "darkorange", "darkblue"),
+                               "red", "darkblue"),
                              tooltip = paste0(
                                map_label, "\n",
                                "Depth: ", depth_label, "m\n",
