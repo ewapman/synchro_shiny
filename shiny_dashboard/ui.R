@@ -40,7 +40,10 @@ body <- dashboardBody(
     tabItem(tabName = "welcome",
             tags$div(
               style = "text-align: center;",
-            tags$img(class = "banner", src = "media/cover.jpg", height = "500px",
+            tags$img(class = "banner", src = "media/cover.jpg", 
+                     height = "400px",  # ← Try 600px or 650px
+                     width = "100%",  # ← Add this to ensure it spans full width
+                     style = "object-fit: cover;",  # ← Add this to crop nicely
                      alt = "A photo of sea water bags being filtered for eDNA on a boat.")),
             headerPanel(""),
             # START fluidRow with DNA intro box ----
@@ -81,36 +84,49 @@ body <- dashboardBody(
               
             ),
             
+            headerPanel(""),
+            headerPanel(""),
+            
             # Start fluidRow with Synchro about box 2 ----
             fluidRow(
-              headerPanel(""),
-              headerPanel(""),
-              box(width = 5, 
+          
+              box(width = 12, 
                   includeMarkdown("text/synchro_about_2.Rmd")),
-              column(7, align = "center",
-                     tags$img(src = "media/ctd.jpg", width = "100%",
-                              style = "margin-top: 40px;"),
-                     tags$br(),
-                     tags$em("A CTD cast")
                      
-                     )
+                     
             ), # End fluid row
             
+            headerPanel(""),
             headerPanel(""),
             
           
             # Add images
             fluidRow(
-              column(6, align = "center", 
+              column(4, align = "center",
+                     tags$img(src = "media/ctd.jpg", width = "100%"
+                     ),
+                     tags$br(),
+                     tags$em("A CTD cast")),
+              column(4, align = "center", 
                      tags$img(src = "media/filter_bags.jpg", width = "70%"),
                      tags$br(),
                      tags$em("Active filtration on board")
               ),
-              column(6, align = "center", 
+              column(4, align = "center", 
                      tags$img(src = "media/torpe.jpg", width = "70%"),
                      tags$br(),
                      tags$em("Passive filtration using a TorpeDNA device")
               )
+              # column(6, align = "center", 
+              #        tags$img(src = "media/filter_bags.jpg", width = "50%"),
+              #        tags$br(),
+              #        tags$em("Active filtration on board")
+              # ),
+              # column(6, align = "center", 
+              #        tags$img(src = "media/torpe.jpg", width = "50%"),
+              #        tags$br(),
+              #        tags$em("Passive filtration using a TorpeDNA device")
+              # )
               
             ),
             
@@ -123,7 +139,7 @@ body <- dashboardBody(
                 style = "text-align: center;",
               tags$img(class = "banner", src = "media/methods.png",
                        #alt = "A photo of sea water bags being filtered for eDNA on a boat.",
-                       style = "max-width: 90%; height: auto; display: block; margin: 0 auto;"),
+                       style = "max-width: 70%; height: auto; display: block; margin: 0 auto;"),
               tags$figcaption(
                 style = "font-style: italic; color: #555555; margin-top: 8px; font-size: 14px; margin-left: 30px;",
                 "Diagram of sampling methods from the offshore wind station (left) to Elkhorn Slough (right)."
@@ -138,7 +154,7 @@ body <- dashboardBody(
                 style = "text-align: center;",
                 tags$img(class = "banner", src = "media/study_map_2.jpeg",
                        #alt = "A photo of sea water bags being filtered for eDNA on a boat.",
-                       style = "max-width: 70%; height: auto; display: block; margin: 0 auto;"),
+                       style = "max-width: 50%; height: auto; display: block; margin: 0 auto;"),
                 tags$figcaption(
                   style = "font-style: italic; color: #555555; margin-top: 8px; font-size: 14px;",
                   "Map of study transect."

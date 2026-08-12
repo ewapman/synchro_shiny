@@ -157,7 +157,7 @@ if(species_fn == "All taxa") {
   
   # Set variables for specific species
   color_var <- bath_plot$relative_abundance
-  color_title <- "% of<br>Station Samples"
+  color_title <- "% of samples"
   cmin_val <- 0
   cmax_val <- 100
   tick_vals <- pretty(c(0, 100), n = 5)
@@ -223,7 +223,8 @@ p <- p |>
       ),
       
       xaxis = list(title = "Distance from start of transect (km)",
-                   fixedrange = FALSE),
+                   fixedrange = FALSE,
+                   autorange = "reversed"),
       yaxis = list(
         title = "Depth (m)",
         range = c(-3000, 50),
