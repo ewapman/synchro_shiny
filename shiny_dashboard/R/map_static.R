@@ -1,76 +1,60 @@
-# # Static map
-# 
-# library(ggplot2)
-# library(maps)
-# library(ggOceanMaps)
-# 
-# bath <- map_data |>
-#   select(map_label, Station, depth, abundance, Season, sample_id, Latitude, Longitude, upload_time, sampling.date, Family, Genus) |>
-#   mutate( # Do this to combine all chlorophyll max obs
-#     depth = as.numeric(as.character(depth)))
-# 
-# 
-# # Get station coords: average because some have 2
-# stations <- bath |> 
-#   group_by(Station) |> 
-#   summarize(
-#     Latitude = mean(Latitude, na.rm = TRUE),
-#     Longitude = mean(Longitude, na.rm = TRUE)
-#   ) |> 
-#   # add_row(Station = "ES", Latitude = start_lat, Longitude = start_lon) |> 
-#   arrange(Longitude) |>  # Order from west to east
-#   mutate(
-#     Station = if_else(Station == "Elkhorn Slough", "ES", Station)
-#   )
-# 
-# 
-# # Calculate distance along transect for each station
-# station_distances <- data.frame(
-#   station = character(),
-#   distance = numeric(),
-#   stringsAsFactors = FALSE
-# )
-# 
-# for(i in 1:nrow(stations)) {
-#   # Get transect to each station from start point
-#   temp_transect <- get.transect(monterey_map,
-#                                 x1 = start_lon,
-#                                 y1 = start_lat,
-#                                 x2 = stations$Longitude[i],
-#                                 y2 = stations$Latitude[i],
-#                                 distance = TRUE)
-#   
-#   station_distances <- rbind(station_distances,
-#                              data.frame(station = stations$Station[i],
-#                                         distance = max(temp_transect$dist)))
-# }
-# 
-# 
-# 
-# ca_county <- subset(map_data("county"), region == "california")
-# 
-# # 4. Build the plot and zoom into Monterey Bay coordinates
-# # county lines
-# map <- ggplot() +
-#   geom_polygon(data = ca_county, aes(x = long, y = lat, group = group),
-#                fill = "antiquewhite", color = "gray60") +
-#   # Plot the coordinates
-#   
-#   geom_point(data = stations, aes(x = Longitude, y = Latitude),
-#              color = "#EF4444", size = 3) +
-#   # Add labels to the points
-#   geom_text(data = stations, aes(x = Longitude, y = Latitude, label = Station),
-#             vjust = -1, fontface = "bold") +
-#   # Crop map to Monterey Bay boundaries
-#   coord_quickmap(xlim = c(-122.6, -121.5), ylim = c(36.4, 37.1)) +
-#   # Clean up the background
-#   labs(x = "Longitude", y = "Latitude") +
-#   
-#   
-#   theme(
-#     panel.background = element_rect(fill = "lightblue"),
-#     panel.grid.major = element_blank(),
-#     panel.grid.minor = element_blank()
-#   )
-# 
-# ggsave(filename = "shiny_dashboard/www/media/study_map.jpeg", plot = map)
+# Static map
+
+library(ggplot2)
+library(maps)
+
+
+
+
+# Get station coords: average because some have 2
+stations <-  tribble(
+  ~station, ~station_lat, ~station_lon,
+  "ES", 36.8117, -121.7796,
+  "C1", 36.8045, -121.858,
+  "M1", 36.7502, -122.0495,
+  "MARS", 36.721, -122.1903,
+  "M2", 36.7015, -122.3743,
+  "OSWS", 36.6775, -122.5352
+)
+  
+
+library(tigris)
+library(sf)
+
+options(tigris_use_cache = TRUE)
+
+# Get California counties as sf object
+ca_counties <- counties(state = "CA", cb = TRUE, class = "sf")
+
+cities <- data.frame(
+  city = c("Santa Cruz", "Monterey"),
+  lon = c(-122.03, -121.89),
+  lat = c(36.97, 36.60)
+)
+
+map <- ggplot() +
+  geom_sf(data = ca_counties, fill = "antiquewhite", color = "gray60") +
+  geom_point(data = stations, aes(x = station_lon, y = station_lat),
+             color = "#EF4444", size = 3) +
+  geom_text(data = stations, aes(x = station_lon, y = station_lat, label = station),
+            vjust = -1, fontface = "bold") +
+  # Add city points
+  geom_point(data = cities, aes(x = lon, y = lat),
+             color = "black", size = 1, shape = 21, fill = "black") +
+  geom_text(data = cities, aes(x = lon, y = lat, label = city),
+            fontface = "italic", size = 3.5, vjust = -1) +
+  coord_sf(xlim = c(-122.6, -121.5), ylim = c(36.4, 37.1)) +
+  labs(x = "Longitude", y = "Latitude") +
+  theme_minimal() +
+  theme(
+    panel.background = element_rect(fill = "lightblue"),
+    panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_text(margin = margin(t = 15)),  # Push "Longitude" further down
+    axis.title.y = element_text(margin = margin(r = 15)),
+    panel.ontop = FALSE
+  )
+map
+
+ggsave(filename = "study_map.jpeg", plot = map)

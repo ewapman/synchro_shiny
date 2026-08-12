@@ -434,15 +434,15 @@ ind_sp <- indicators_collapsed |>
   filter(is_species == TRUE)
 
 ind_higher <- indicators_collapsed |> 
-  filter(is_species == FALSE) |> 
+  filter(is_species == FALSE) |>
   mutate(clean_name = str_remove(scientific_name, " spp\\.$")) # remove spp for joining
 
 # First join to species dataframe 
 tax_joined <- tax_df |> 
   left_join(
     ind_sp %>% select(scientific_name, 
-                     habitat_sp = habitat,      
-                     common_sp = common_name),
+                      habitat_sp = habitat,      
+                      common_sp = common_name),
     by = c("preferred_species_for_reporting" = "scientific_name")
   )
 
@@ -452,8 +452,8 @@ tax_joined <- tax_df |>
 tax_joined <- tax_joined %>%
   left_join(
     ind_higher %>% select(taxon = clean_name, 
-                         habitat_genus = habitat, 
-                         common_genus = common_name),
+                          habitat_genus = habitat, 
+                          common_genus = common_name),
     by = c("Genus" = "taxon")
   )
 
@@ -461,8 +461,8 @@ tax_joined <- tax_joined %>%
 tax_joined <- tax_joined %>%
   left_join(
     ind_higher %>% select(taxon = clean_name, 
-                         habitat_family = habitat, 
-                         common_family = common_name),
+                          habitat_family = habitat, 
+                          common_family = common_name),
     by = c("Family" = "taxon")
   )
 
@@ -470,8 +470,8 @@ tax_joined <- tax_joined %>%
 tax_joined <- tax_joined %>%
   left_join(
     ind_higher %>% select(taxon = clean_name, 
-                         habitat_order = habitat, 
-                         common_order = common_name),
+                          habitat_order = habitat, 
+                          common_order = common_name),
     by = c("Order" = "taxon")
   )
 
@@ -479,20 +479,20 @@ tax_joined <- tax_joined %>%
 tax_joined <- tax_joined %>%
   left_join(
     ind_higher %>% select(taxon = clean_name, 
-                         habitat_class = habitat, 
-                         common_class = common_name),
+                          habitat_class = habitat, 
+                          common_class = common_name),
     by = c("Class" = "taxon")
   )
 
-    
+
 #Combine columns (priority: species > genus > family > order > class)
 # Combine columns class ends up empty I think, so make it go to NA if empty to avoid problems
 tax_joined <- tax_joined %>%
   mutate(
     habitat = coalesce(habitat_sp, habitat_genus, habitat_family, habitat_order, # coalesce returns the first non NA value from left to right
-                      if("habitat_class" %in% names(.)) habitat_class else NA_character_),
+                       if("habitat_class" %in% names(.)) habitat_class else NA_character_),
     common_name_final = coalesce(common_sp, common_genus, common_family, common_order,
-                                if("common_class" %in% names(.)) common_class else NA_character_),
+                                 if("common_class" %in% names(.)) common_class else NA_character_),
     match_level = case_when(
       !is.na(habitat_sp) ~ "species",
       !is.na(habitat_genus) ~ "genus",
@@ -520,6 +520,143 @@ tax_joined_indicators <- tax_joined_indicators |>
 
 # Convert back to matrix and update phyloseq object
 tax_table(ps_decontam) <- tax_table(as.matrix(tax_joined_indicators))
+
+# # First join to species dataframe 
+# tax_joined <- tax_df |> 
+#   left_join(
+#     ind_sp %>% select(scientific_name, 
+#                      habitat_sp = habitat,      
+#                      common_sp = common_name),
+#     by = c("preferred_species_for_reporting" = "scientific_name")
+#   )
+# 
+# # Also try joining the species data frame to the genus column 
+# tax_joined <- tax_joined %>%
+#   left_join(
+#     ind_sp %>% 
+#       mutate(genus_only = word(scientific_name, 1)) %>%
+#       group_by(genus_only) %>%
+#       slice(1) %>%  # Keep first species per genus to avoid duplicates
+#       ungroup() %>%
+#       select(genus_only, 
+#              habitat_sp_genus = habitat,      
+#              common_sp_genus = common_name),
+#     by = c("Genus" = "genus_only")
+#   ) %>%
+#   mutate(
+#     # Only use genus match if species match was NA
+#     habitat_sp = if_else(is.na(habitat_sp), habitat_sp_genus, habitat_sp),
+#     common_sp = if_else(is.na(common_sp), common_sp_genus, common_sp)
+#   ) %>%
+#   select(-habitat_sp_genus, -common_sp_genus)
+# 
+# # Join to higher taxonomy dataframe 
+# 
+# # Try Genus
+# tax_joined <- tax_joined %>%
+#   left_join(
+#     ind_higher %>% select(taxon = clean_name, 
+#                          habitat_genus = habitat, 
+#                          common_genus = common_name),
+#     by = c("Genus" = "taxon")
+#   ) %>%
+#   mutate(
+#     # Set to NA if species already matched (so coalesce will skip it)
+#     habitat_genus = if_else(is.na(habitat_sp), habitat_genus, NA_character_),
+#     common_genus = if_else(is.na(common_sp), common_genus, NA_character_)
+#   )
+# 
+# # Try Family
+# tax_joined <- tax_joined %>%
+#   left_join(
+#     ind_higher %>% select(taxon = clean_name, 
+#                          habitat_family = habitat, 
+#                          common_family = common_name),
+#     by = c("Family" = "taxon")
+#   ) %>%
+#   mutate(
+#     # Set to NA if species or genus already matched
+#     habitat_family = if_else(is.na(habitat_sp) & is.na(habitat_genus), 
+#                              habitat_family, NA_character_),
+#     common_family = if_else(is.na(common_sp) & is.na(common_genus), 
+#                             common_family, NA_character_)
+#   )
+# 
+# 
+# # Try Order
+# tax_joined <- tax_joined %>%
+#   left_join(
+#     ind_higher %>% select(taxon = clean_name, 
+#                          habitat_order = habitat, 
+#                          common_order = common_name),
+#     by = c("Order" = "taxon")
+#   ) %>%
+#   mutate(
+#     # Set to NA if any higher taxonomic level already matched
+#     habitat_order = if_else(is.na(habitat_sp) & is.na(habitat_genus) & is.na(habitat_family), 
+#                             habitat_order, NA_character_),
+#     common_order = if_else(is.na(common_sp) & is.na(common_genus) & is.na(common_family), 
+#                            common_order, NA_character_)
+#   )
+# 
+# # Try Class
+# tax_joined <- tax_joined %>%
+#   left_join(
+#     ind_higher %>% select(taxon = clean_name, 
+#                          habitat_class = habitat, 
+#                          common_class = common_name),
+#     by = c("Class" = "taxon")
+#   ) %>%
+#   mutate(
+#     # Set to NA if any higher taxonomic level already matched
+#     habitat_class = if_else(is.na(habitat_sp) & is.na(habitat_genus) & 
+#                               is.na(habitat_family) & is.na(habitat_order), 
+#                             habitat_class, NA_character_),
+#     common_class = if_else(is.na(common_sp) & is.na(common_genus) & 
+#                              is.na(common_family) & is.na(common_order), 
+#                            common_class, NA_character_)
+#   )
+# 
+#     
+# #Combine columns (priority: species > genus > family > order > class)
+# # Combine columns class ends up empty I think, so make it go to NA if empty to avoid problems
+# tax_joined <- tax_joined %>%
+#   mutate(
+#     habitat = coalesce(habitat_sp, habitat_genus, habitat_family, habitat_order, # coalesce returns the first non NA value from left to right
+#                       if("habitat_class" %in% names(.)) habitat_class else NA_character_),
+#     common_name_final = coalesce(common_sp, common_genus, common_family, common_order,
+#                                 if("common_class" %in% names(.)) common_class else NA_character_),
+#     match_level = case_when(
+#       !is.na(habitat_sp) ~ "species",
+#       !is.na(habitat_genus) ~ "genus",
+#       !is.na(habitat_family) ~ "family",
+#       !is.na(habitat_order) ~ "order",
+#       !is.na(habitat_class) ~ "class", 
+#       TRUE ~ "no_match"
+#     )
+#   ) %>%
+#   select(-any_of(c("habitat_sp", "habitat_genus", "habitat_family", # remove these added columns if they exist
+#                    "habitat_order", "habitat_class",
+#                    "common_sp", "common_genus", "common_family", 
+#                    "common_order", "common_class")))
+# 
+# 
+# 
+# 
+# # Filter to only those with matches
+# tax_joined_indicators <- tax_joined %>%
+#   filter(match_level != "no_match")
+# 
+# no_match <- tax_joined |> 
+#   filter(match_level == "no_match")
+# 
+# 
+# # Put ASVs back as rownames to put back in phyloseq object
+# tax_joined_indicators <- tax_joined_indicators |> 
+#   column_to_rownames("ASV_ID")
+# 
+# # Convert back to matrix and update phyloseq object
+# tax_table(ps_decontam) <- tax_table(as.matrix(tax_joined_indicators))
 
 ```
 

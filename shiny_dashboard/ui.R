@@ -85,7 +85,7 @@ body <- dashboardBody(
             fluidRow(
               headerPanel(""),
               headerPanel(""),
-              box(width = 4, 
+              box(width = 5, 
                   includeMarkdown("text/synchro_about_2.Rmd")),
               column(7, align = "center",
                      tags$img(src = "media/ctd.jpg", width = "100%",
@@ -115,6 +115,7 @@ body <- dashboardBody(
             ),
             
             headerPanel(""),
+            headerPanel(""),
             
             # Schematic
             fluidRow(
@@ -135,9 +136,9 @@ body <- dashboardBody(
             fluidRow(
               tags$div(
                 style = "text-align: center;",
-                tags$img(class = "banner", src = "media/study_map.jpeg",
+                tags$img(class = "banner", src = "media/study_map_2.jpeg",
                        #alt = "A photo of sea water bags being filtered for eDNA on a boat.",
-                       style = "max-width: 50%; height: auto; display: block; margin: 0 auto;"),
+                       style = "max-width: 70%; height: auto; display: block; margin: 0 auto;"),
                 tags$figcaption(
                   style = "font-style: italic; color: #555555; margin-top: 8px; font-size: 14px;",
                   "Map of study transect."
