@@ -285,8 +285,7 @@ server <- function(input, output, session) {
   output$species_bar_plot <- renderPlotly({
     
     clicked <- clicked_point()  # Use reactiveVal instead of input
-    cat("clicked object:", str(clicked), "\n")
-    cat("clicked$station:", clicked$station, "\n")
+    
     
     if(is.null(clicked)) {
       return(

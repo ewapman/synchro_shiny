@@ -33,26 +33,27 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
     leaflet_data_all <- data_dcm_all |>
       filter(Season %in% season_fn,
              depth %in% depth_fn) |> 
-      group_by(Latitude, Longitude, Station) |>
+      group_by(Station) |> # Removed latitude/longitude to get one point per station
       summarize(
         indicator_count = n_distinct(map_label),
+        seasons = paste(sort(unique(Season)), collapse = ", "),
         .groups = "drop"
       ) |>
       # Join station coordinates
-      left_join(station_coords, by = c("Station" = "station")) |>
+      left_join(station_coords, by = c("Station" = "station")) #|>
       # Add jitter for display
-      mutate(
-        display_lat = if_else(
-          Station == "Elkhorn Slough",  # ← Fixed the space!
-          station_lat,                   # NO vertical jitter
-          station_lat + rnorm(n(), 0, 0.004)
-        ),
-        display_lon = if_else(
-          Station == "Elkhorn Slough",
-          station_lon + rnorm(n(), 0, 0.0025),  # Tiny horizontal jitter
-          station_lon + rnorm(n(), 0, 0.004)
-        )
-      )
+      # mutate(
+      #   display_lat = if_else(
+      #     Station == "Elkhorn Slough",  # ← Fixed the space!
+      #     station_lat,                   # NO vertical jitter
+      #     station_lat + rnorm(n(), 0, 0.004)
+      #   ),
+      #   display_lon = if_else(
+      #     Station == "Elkhorn Slough",
+      #     station_lon + rnorm(n(), 0, 0.0025),  # Tiny horizontal jitter
+      #     station_lon + rnorm(n(), 0, 0.004)
+      #   )
+      # )
     
     depth_envtl_table_all <- data_dcm_all |>
       filter(Season %in% season_fn,
@@ -98,9 +99,9 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
     # Make plotly graph ---
     
     p <- plot_ly(leaflet_data_all,
-                 lat = ~display_lat,
-                 lon = ~display_lon,
-                 customdata = ~Station,#~paste(Latitude, Longitude, sep = "|"),
+                 lat = ~station_lat,
+                 lon = ~station_lon,
+                 customdata = ~Station,
                  #key = ~paste(Latitude, Longitude, sep = "_"),
                  type = "scattermapbox",
                  mode = "markers",
@@ -140,6 +141,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                  ),
                  hovertext = ~paste0(
                    "<b>Station:</b> ", Station, "<br><br>",
+                   "<b>Season(s):</b> ", seasons, "<br><br>",
                    "<b>Unique taxa detected:</b> ", indicator_count, "<br><br>",
                    hover_table
                    
@@ -214,6 +216,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
       summarize(
         sample_count = n_distinct(sample_id), # size circles by number of samples w/ that organism at that point
         depths_detected = paste(sort(unique(depth)), collapse = ", "),
+        seasons = paste(sort(unique(Season)), collapse = ", "),
         .groups = "drop"
       ) 
     
@@ -233,20 +236,20 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
         relative_abundance = (sample_count / total_count) * 100
       ) |> 
       # Join station coordinates
-      left_join(station_coords, by = c("Station" = "station")) |>
+      left_join(station_coords, by = c("Station" = "station")) #|>
       # Add jitter
-      mutate(
-        display_lat = if_else(
-          Station == "Elkhorn Slough",  # ← Fixed the space!
-          station_lat,                   # NO vertical jitter
-          station_lat + rnorm(n(), 0, 0.004)
-        ),
-        display_lon = if_else(
-          Station == "Elkhorn Slough",
-          station_lon + rnorm(n(), 0, 0.0025),  # Tiny horizontal jitter
-          station_lon + rnorm(n(), 0, 0.004)
-        )
-      )
+      # mutate(
+      #   display_lat = if_else(
+      #     Station == "Elkhorn Slough",  # ← Fixed the space!
+      #     station_lat,                   # NO vertical jitter
+      #     station_lat + rnorm(n(), 0, 0.004)
+      #   ),
+      #   display_lon = if_else(
+      #     Station == "Elkhorn Slough",
+      #     station_lon + rnorm(n(), 0, 0.0025),  # Tiny horizontal jitter
+      #     station_lon + rnorm(n(), 0, 0.004)
+      #   )
+      # )
     
     
     # Make table for hover: 
@@ -330,21 +333,26 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
     # Have to create dummy points so that taxa with one point will map to scale correctly: 
     if(nrow(leaflet_data_subset) == 1) {
       dummy_points <- data.frame(
-        Latitude = c(0, 0),  # Could be anything
-        Longitude = c(0, 0),  # Could be anything
+        Station = c(NA, NA),  # Add this
+        #Season = c(NA, NA),  # Add this
+        station_lat = c(0, 0),
+        station_lon = c(0, 0), 
+        # display_lat = c(0, 0),  # Add this
+        # display_lon = c(0, 0),
         relative_abundance = c(0, 100),
         sample_count = c(NA, NA),
         total_count = c(NA, NA),
         depths_detected = c(NA, NA),
-        hover_table = c(NA, NA)
+        hover_table = c(NA, NA),
+        seasons = c(NA, NA)
       )
       leaflet_data_subset <- bind_rows(leaflet_data_subset, dummy_points)
     }
     
     p <- plot_ly(leaflet_data_subset,
-                 lat = ~display_lat,
-                 lon = ~display_lon,
-                 customdata = ~Station,#~paste(Latitude, Longitude, sep = "|"),
+                 lat = ~station_lat,
+                 lon = ~station_lon,
+                 customdata = ~Station,
                  #key = ~paste(Latitude, Longitude, sep = "_"),
                  type = "scattermapbox",
                  mode = "markers",
@@ -388,6 +396,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                  hovertemplate = ~paste0(
                    "<b>Station:</b> ", Station, "<br><br>",
                    "<b>Unique taxa: </b> 1 ", "<br><br>",
+                   "<b>Season:</b> ", seasons, "<br><br>", 
                    "<b>Samples: </b>", sample_count," of ", total_count, " total samples at this station", " (", round(relative_abundance, 2), "%", ")", "<br><br>",
                    hover_table,
                    "<extra></extra>"
