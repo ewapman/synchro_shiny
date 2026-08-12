@@ -396,7 +396,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                  hovertemplate = ~paste0(
                    "<b>Station:</b> ", Station, "<br><br>",
                    "<b>Unique taxa: </b> 1 ", "<br><br>",
-                   "<b>Season:</b> ", seasons, "<br><br>", 
+                   "<b>Season(s):</b> ", seasons, "<br><br>", 
                    "<b>Samples: </b>", sample_count," of ", total_count, " total samples at this station", " (", round(relative_abundance, 2), "%", ")", "<br><br>",
                    hover_table,
                    "<extra></extra>"

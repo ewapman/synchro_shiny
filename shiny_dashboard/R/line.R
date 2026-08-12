@@ -61,6 +61,7 @@ line_graph <- function(data_fn, species_fn) {
                            aes(tooltip = paste0(
                              species_fn, "\n",
                              "% of samples: ", round(relative_abundance, 2), "%")))+ 
+    scale_y_continuous(limits = c(0, NA)) +
     theme_minimal() +
     labs(x = "Season", 
          y = "Percent of samples (%)",
