@@ -32,12 +32,12 @@ station_distances <- readRDS("data/processed/station_distances.rds")
 
 # MOVE LATER TO SAMPLE PROCESSING QMD: FIX COORDINATE
 # Fix the specific sample
-map_data <- map_data |>
-  mutate(Station = if_else(
-    sample_id == "20250724-M1-C-torp-B",  
-    "C1",
-    Station
-  ))
+# map_data <- map_data |>
+#   mutate(Station = if_else(
+#     sample_id == "20250724-M1-C-torp-B",  
+#     "C1",
+#     Station
+#   ))
 
 # Convert to dataframe (rest of your existing code)
 transect_df <- as.data.frame(transect_data) |> 
