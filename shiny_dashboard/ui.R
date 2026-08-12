@@ -40,9 +40,9 @@ body <- dashboardBody(
     tabItem(tabName = "welcome",
             tags$div(
               style = "text-align: center;",
-            tags$img(class = "banner", src = "media/synchro_boat.png",
+            tags$img(class = "banner", src = "media/cover.jpg", height = "500px",
                      alt = "A photo of sea water bags being filtered for eDNA on a boat.")),
-            
+            headerPanel(""),
             # START fluidRow with DNA intro box ----
             fluidRow(
               
@@ -53,7 +53,7 @@ body <- dashboardBody(
               ) # END intro box
             ), # End fluid row
             
-            # START fluidRow with Synchro about box ----
+            # START fluidRow with Synchro about box 1----
             fluidRow(
               
               # START eDNA about box ----
@@ -63,7 +63,60 @@ body <- dashboardBody(
               ) # END intro box
               
             ), # End fluid row
-            # 
+            
+            headerPanel(""),
+            
+            # Add images 
+            fluidRow(
+              column(6, align = "center",
+                     tags$img(src = "media/station.jpg", width = "80%"),
+                     tags$br(),
+                     tags$em("An offshore sampling station")
+              ),
+              column(6, align = "center",
+                     tags$img(src = "media/elkhorn.jpg", width = "80%"),
+                     tags$br(),
+                     tags$em("Processing samples at Elkhorn Slough")
+              )
+              
+            ),
+            
+            # Start fluidRow with Synchro about box 2 ----
+            fluidRow(
+              headerPanel(""),
+              headerPanel(""),
+              box(width = 4, 
+                  includeMarkdown("text/synchro_about_2.Rmd")),
+              column(7, align = "center",
+                     tags$img(src = "media/ctd.jpg", width = "100%",
+                              style = "margin-top: 40px;"),
+                     tags$br(),
+                     tags$em("A CTD cast")
+                     
+                     )
+            ), # End fluid row
+            
+            headerPanel(""),
+            
+          
+            # Add images
+            fluidRow(
+              column(6, align = "center", 
+                     tags$img(src = "media/filter_bags.jpg", width = "70%"),
+                     tags$br(),
+                     tags$em("Active filtration on board")
+              ),
+              column(6, align = "center", 
+                     tags$img(src = "media/torpe.jpg", width = "70%"),
+                     tags$br(),
+                     tags$em("Passive filtration using a TorpeDNA device")
+              )
+              
+            ),
+            
+            headerPanel(""),
+            
+            # Schematic
             fluidRow(
               tags$div(
                 style = "text-align: center;",
@@ -72,7 +125,7 @@ body <- dashboardBody(
                        style = "max-width: 90%; height: auto; display: block; margin: 0 auto;"),
               tags$figcaption(
                 style = "font-style: italic; color: #555555; margin-top: 8px; font-size: 14px; margin-left: 30px;",
-                "Diagram of sampling methods from Elkhorn Slough (right) to the offshore wind station (left)."
+                "Diagram of sampling methods from the offshore wind station (left) to Elkhorn Slough (right)."
               )
               )
             ),

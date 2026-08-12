@@ -1,0 +1,8 @@
+---
+title: "synchro_about_3"
+author: "Emily Wapman"
+date: "2026-08-12"
+output: html_document
+---
+
+Beyond water samples, air samples were also collected. For surface samples, passive sampling using a TorpeDNA device (DNA is filtered as the device is towed through the water) was compared to active sampling (water is pumped mechanically through a filter on the boat to filter out DNA).
