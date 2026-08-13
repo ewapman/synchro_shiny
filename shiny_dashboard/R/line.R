@@ -67,8 +67,9 @@ line_graph <- function(data_fn, species_fn) {
          y = "Percent of samples (%)",
          title = paste0("Percentage of ", species_fn, " per season")) +
     theme(
-      axis.title.x = element_text(margin = margin(t = 20)),
-      axis.title.y = element_text(margin = margin(r = 20))
+      axis.title.x = element_text(margin = margin(t = 20), size = 16),
+      axis.title.y = element_text(margin = margin(r = 20), size = 16),
+      axis.text = element_text(size = 14),
     )
   
   

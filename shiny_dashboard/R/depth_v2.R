@@ -147,19 +147,19 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
          title = paste0("All stations included", "\n", "Seasons selected: ", season_list, "\n", 
                         "Taxa selected: ", species_fn),
          subtitle = paste0("Green zone = Deep Chlorophyll Max (", min_depth, "-", max_depth_below_150, ")")) +
-    theme_bw() +
+    theme_bw(base_size = 16) +
     scale_y_reverse(
       breaks = c(0, max_depth_below_150, 150, 300),
       limits = c(300, 0)) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, color = label_colors),
           legend.position = "none") +
     theme(axis.title.y = element_text(
-      margin = margin(r = 20, l = 60),
+      margin = margin(r = 20, l = 80),
       vjust = 2),
-      plot.title = element_text(size = 18),
-      plot.subtitle = element_text(color = "darkgreen", size = 16),
-      axis.title = element_text(size = 16),
-      axis.text = element_text(size = 14),
+      plot.title = element_text(size = 22),
+      plot.subtitle = element_text(color = "darkgreen", size = 19),
+      axis.title = element_text(size = 19),
+      axis.text = element_text(size = 17),
       axis.title.x = element_text(
         margin = margin(t = 20)
       )
@@ -167,15 +167,16 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
     theme(
       panel.grid.major.y = element_line(color = "gray90"),  # Keep major gridlines
       panel.grid.minor.y = element_blank(),  # Remove minor gridlines
-      panel.grid.major.x = element_line(linewidth = 0.4)
+      panel.grid.major.x = element_line(linewidth = 0.4),
+      panel.border = element_rect(color = "black", fill = NA, linewidth = 1),
       
     )
   
   
   
   girafe(ggobj = p,
-         width_svg = 18,
-         height_svg = 11,
+         width_svg = 20,
+         height_svg = 13,
          options = list(
            opts_hover(css = "fill:orange;stroke:black;"),
            opts_toolbar(saveaspng = FALSE)

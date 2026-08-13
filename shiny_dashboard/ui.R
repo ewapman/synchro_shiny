@@ -9,6 +9,8 @@ header <- dashboardHeader(
   title = "Synchro eDNA Data",
   titleWidth = 400
   
+  
+  
 ) # END dashboardHeader
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -32,6 +34,26 @@ sidebar <- dashboardSidebar(
 body <- dashboardBody(
   
   # Load styling and font here ----
+  # Add teal styling ----
+  tags$head(
+    tags$style(HTML('
+      /* Header - deep ocean blue */
+      .skin-blue .main-header .navbar,
+      .skin-blue .main-header .logo,
+      .skin-blue .main-header .logo:hover {
+        background-color: #1e3a5f;  /* Navy from deep water */
+      }
+      
+      /* Sidebar - slightly darker */
+      .skin-blue .left-side, .skin-blue .main-sidebar, .skin-blue .wrapper {
+        background-color: #162d47;  /* Darker navy */
+      }
+      
+      /* Active menu item - lighter blue accent */
+      .skin-blue .sidebar-menu > li.active > a {
+        border-left-color: #4a90e2;  /* Sky blue accent */
+      }
+    '))),
   
   # START tabItems ----
   tabItems(

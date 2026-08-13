@@ -113,7 +113,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                    reversescale = TRUE,
                    showscale = TRUE,
                    colorbar = list(
-                     title = list(text = "Unique<br>Taxa", font = list(family = "Arial")),
+                     title = list(text = "Unique<br>Taxa", font = list(family = "Arial", size = 14)),
                      orientation = "h",
                      x = 0,
                      xanchor = "left",
@@ -134,7 +134,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                        max(leaflet_data_all$indicator_count, na.rm = TRUE),
                        length.out = 5
                      )),
-                     tickfont = list(size = 10, family = "Arial")),             # ← Font size),                   # ← Explicitly no outline),
+                     tickfont = list(size = 13, family = "Arial")),                      
                    
                    opacity = 0.8,
                    line = list(color = 'white', width = 1)
@@ -174,7 +174,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
           align = "left",           # Push it to the side
           bgcolor = "rgba(255,255,255,0.9)",  # Slightly transparent
           bordercolor = "black",
-          font = list(size = 11, family = "Arial, sans-serif", color = "black")
+          font = list(size = 13, family = "Arial, sans-serif", color = "black")
         )
       ) 
     p
@@ -370,7 +370,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                    showscale = TRUE,
                    cauto = FALSE,
                    colorbar = list(
-                     title = "% of<br>Station Samples", 
+                     title = list(text = "% of<br>Station Samples", font = list(family = "Arial", size = 14)),
                      orientation = "h",
                      x = 0.05,
                      xanchor = "left",
@@ -384,8 +384,9 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                      tickmode = "array",
                      tickvals = pretty(c(0, 100), n = 5),
                      ticktext = as.character(pretty(c(0, 100), n = 5)),
-                     tickfont = list(size = 10), 
-                     tickangle = 0
+                     
+                     tickangle = 0,
+                     tickfont = list(size = 13, family = "Arial")
                      
                    ),                             
                    opacity = 0.8,
@@ -420,8 +421,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
           align = "left",           # Push it to the side
           bgcolor = "rgba(255,255,255,0.9)",  # Slightly transparent
           bordercolor = "black",
-          font = list(size = 11,
-                      color = "black")
+          font = list(size = 13, family = "Arial, sans-serif", color = "black")
         )
       ) 
     p
