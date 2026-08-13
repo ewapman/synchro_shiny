@@ -113,7 +113,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                    reversescale = TRUE,
                    showscale = TRUE,
                    colorbar = list(
-                     title = "Unique<br>Taxa",
+                     title = list(text = "Unique<br>Taxa", font = list(family = "Arial")),
                      orientation = "h",
                      x = 0,
                      xanchor = "left",
@@ -134,7 +134,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                        max(leaflet_data_all$indicator_count, na.rm = TRUE),
                        length.out = 5
                      )),
-                     tickfont = list(size = 10)),             # ← Font size),                   # ← Explicitly no outline),
+                     tickfont = list(size = 10, family = "Arial")),             # ← Font size),                   # ← Explicitly no outline),
                    
                    opacity = 0.8,
                    line = list(color = 'white', width = 1)
@@ -158,6 +158,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
                  hoverinfo = "text"
     ) |>
       layout(
+        font = list(family = "Arial, sans-serif", size = 12),
         mapbox = list(
           style = "white-bg",
           zoom = 8,
@@ -173,8 +174,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
           align = "left",           # Push it to the side
           bgcolor = "rgba(255,255,255,0.9)",  # Slightly transparent
           bordercolor = "black",
-          font = list(size = 11,
-                      color = "black")
+          font = list(size = 11, family = "Arial, sans-serif", color = "black")
         )
       ) 
     p

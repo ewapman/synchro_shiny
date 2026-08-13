@@ -39,7 +39,7 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
     ) |>
     group_by(map_label, depth_plot) |> 
     summarize(
-      sp_depth = n(),  #  Count samples
+      sp_depth = n_distinct(sample_id),  #  Count samples
       .groups = "drop"
     ) |> 
     

@@ -352,7 +352,7 @@ server <- function(input, output, session) {
         girafe(
           ggobj = ggplot() +
             annotate("text", x = 0.5, y = 0.5,
-                     label = "Select a specific taxa",
+                     label = "Select a specific taxon",
                      size = 5, color = "gray50") +
             theme_void(),
           width_svg = 8,

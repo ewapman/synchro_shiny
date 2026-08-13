@@ -50,51 +50,92 @@ body <- dashboardBody(
             fluidRow(
               
               # START eDNA about box ----
-              box(width = 12,
+              box(width = 6, height = "750px",
                   title = tagList(icon("dna"), strong("DNA Background")),
                   includeMarkdown("text/dna_about.Rmd")
-              ) # END intro box
-            ), # End fluid row
-            
-            # START fluidRow with Synchro about box 1----
-            fluidRow(
+              ), # END intro box
               
               # START eDNA about box ----
-              box(width = 12,
+              box(width = 6, 
                   title = tagList(icon("ship"), strong("Synchro Background")),
-                  includeMarkdown("text/synchro_about.Rmd")
+                  includeMarkdown("text/synchro_about.Rmd"),
+                  tags$div(align = "center",
+                          tags$img(src = "media/study_map_2.jpeg", width = "100%"),
+                          tags$br(),
+                          tags$em("Map of study transect")
+                  )
+                  
+                  # Add photo below in same box
               ) # END intro box
               
             ), # End fluid row
-            
-            headerPanel(""),
-            
-            # Add images 
-            fluidRow(
-              column(6, align = "center",
-                     tags$img(src = "media/station.jpg", width = "80%"),
-                     tags$br(),
-                     tags$em("An offshore sampling station")
-              ),
-              column(6, align = "center",
-                     tags$img(src = "media/elkhorn.jpg", width = "80%"),
-                     tags$br(),
-                     tags$em("Processing samples at Elkhorn Slough")
-              )
-              
-            ),
             
             headerPanel(""),
             headerPanel(""),
             
             # Start fluidRow with Synchro about box 2 ----
             fluidRow(
-          
-              box(width = 12, 
+              
+              box(width = 3, 
                   includeMarkdown("text/synchro_about_2.Rmd")),
-                     
-                     
+              column(width = 9, align = "center",
+                     tags$div(
+                       style = "text-align: center;",
+                       tags$img(class = "banner", src = "media/methods.png",
+                                #alt = "A photo of sea water bags being filtered for eDNA on a boat.",
+                                style = "max-width: 100%; height: auto; display: block; margin: 0 auto;"),
+                       tags$em("Diagram of sampling methods from the offshore wind station (left) to Elkhorn Slough (right)"),
+                       
+                     ))
+              
             ), # End fluid row
+            
+            #fluidRow(
+              #column(width = 6, offset = 3,
+              # box(width = 2,  
+              #     includeMarkdown("text/station_acronyms.Rmd")),  
+              # column(4, align = "center",
+              #        tags$img(src = "media/study_map_2.jpeg", width = "100%"
+              #        ),
+              #        tags$br(),
+              #        tags$em("Map of study transect")),
+              
+              
+              #)
+            #),
+            
+            # START fluidRow with Synchro about box 1----
+            # fluidRow(
+            #   
+            #  
+            #   
+            # ), # End fluid row
+            
+            headerPanel(""),
+            headerPanel(""),
+            # Add images 
+            fluidRow(
+              column(4, align = "center",
+                     tags$img(src = "media/station.jpg", width = "100%"),
+                     tags$br(),
+                     tags$em("An offshore sampling station")
+              ),
+              column(4, align = "center",
+                     tags$img(src = "media/ctd.jpg", width = "100%"
+                     ),
+                     tags$br(),
+                     tags$em("A CTD cast")),
+              
+            
+              column(4, align = "center",
+                     tags$img(src = "media/elkhorn.jpg", width = "100%"),
+                     tags$br(),
+                     tags$em("Processing samples at Elkhorn Slough")
+              )
+              ),
+          
+            
+            
             
             headerPanel(""),
             headerPanel(""),
@@ -102,11 +143,9 @@ body <- dashboardBody(
           
             # Add images
             fluidRow(
-              column(4, align = "center",
-                     tags$img(src = "media/ctd.jpg", width = "100%"
-                     ),
-                     tags$br(),
-                     tags$em("A CTD cast")),
+              box(width = 3, 
+                  includeMarkdown("text/synchro_about_3.Rmd")),
+              
               column(4, align = "center", 
                      tags$img(src = "media/filter_bags.jpg", width = "70%"),
                      tags$br(),
@@ -128,39 +167,43 @@ body <- dashboardBody(
               #        tags$em("Passive filtration using a TorpeDNA device")
               # )
               
-            ),
+            )
             
-            headerPanel(""),
-            headerPanel(""),
+            # headerPanel(""),
+            # headerPanel(""),
+            
+            
+            
+           
+              # tags$div(
+              #   style = "text-align: center;",
+              #   tags$img(class = "banner", src = "media/study_map_2.jpeg",
+              #            #alt = "A photo of sea water bags being filtered for eDNA on a boat.",
+              #            style = "max-width: 50%; height: auto; display: block; margin: 0 auto;"),
+              #   tags$figcaption(
+              #     style = "font-style: italic; color: #555555; margin-top: 8px; font-size: 14px;",
+              #     "Map of study transect."
+              #   ))
+              
+            #),
+            # headerPanel(""),
+            # headerPanel(""),
             
             # Schematic
-            fluidRow(
-              tags$div(
-                style = "text-align: center;",
-              tags$img(class = "banner", src = "media/methods.png",
-                       #alt = "A photo of sea water bags being filtered for eDNA on a boat.",
-                       style = "max-width: 70%; height: auto; display: block; margin: 0 auto;"),
-              tags$figcaption(
-                style = "font-style: italic; color: #555555; margin-top: 8px; font-size: 14px; margin-left: 30px;",
-                "Diagram of sampling methods from the offshore wind station (left) to Elkhorn Slough (right)."
-              )
-              )
-            ),
+            # fluidRow(
+            #   tags$div(
+            #     style = "text-align: center;",
+            #   tags$img(class = "banner", src = "media/methods.png",
+            #            #alt = "A photo of sea water bags being filtered for eDNA on a boat.",
+            #            style = "max-width: 60%; height: auto; display: block; margin: 0 auto;"),
+            #   tags$figcaption(
+            #     style = "font-style: italic; color: #555555; margin-top: 8px; font-size: 14px; margin-left: 30px;",
+            #     "Diagram of sampling methods from the offshore wind station (left) to Elkhorn Slough (right)."
+            #   )
+            #   )
+            # )
             
-            headerPanel(""),
-            
-            fluidRow(
-              tags$div(
-                style = "text-align: center;",
-                tags$img(class = "banner", src = "media/study_map_2.jpeg",
-                       #alt = "A photo of sea water bags being filtered for eDNA on a boat.",
-                       style = "max-width: 50%; height: auto; display: block; margin: 0 auto;"),
-                tags$figcaption(
-                  style = "font-style: italic; color: #555555; margin-top: 8px; font-size: 14px;",
-                  "Map of study transect."
-              ))
-              
-            )
+  
             
     ), # END welcome tabItem
     

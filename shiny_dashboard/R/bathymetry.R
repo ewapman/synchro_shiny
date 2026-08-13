@@ -131,7 +131,7 @@ if(species_fn == "All taxa") {
   # Don't show bath graph for All taxa - add message
   p <- p |>
     add_annotations(
-      text = "Select a specific taxa",
+      text = "Select a specific taxon",
       x = 0.5, y = 0.5,
       xref = "paper", yref = "paper",
       showarrow = FALSE,
