@@ -9,3 +9,14 @@ The goal of the Synchro project is to assess how eDNA can be used to monitor mar
 
 Samples were collected at 6 stations along a transect ranging from Elkhorn Slough (ES) to an offshore wind station (OSWS) for three dates each in April, July, and October 2025. For these visualizations, all April dates are grouped as Spring 2025, the July dates as Summer 2025, and the October dates as Autumn 2025.
 
+#### **Station names:**
+
+**ES:** Elkhorn Slough
+
+**M1:** Mooring 1 (Long-term monitoring buoy)
+
+**M2:** Mooring 2 (Long-term monitoring site)
+
+**MARS:** Monterey Accelerated Research System (underwater monitoring site)
+
+**OSWS:** Offshore Wind Station

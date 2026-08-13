@@ -1,0 +1,18 @@
+---
+title: "station_acronyms"
+author: "Emily Wapman"
+date: "2026-08-13"
+output: html_document
+---
+
+#### **Station names:**
+
+**ES:** Elkhorn Slough
+
+**M1:** Mooring 1 (Long-term monitoring buoy)
+
+**M2:** Mooring 2 (Long-term monitoring site)
+
+**MARS:** Monterey Accelerated Research System (underwater monitoring site)
+
+**OSWS:** Offshore Wind Station

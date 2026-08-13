@@ -7,6 +7,6 @@ output: html_document
 
 ### **How do indicator taxa detections change over depth and across the transect?** 
 
-The graph shows the percentage of samples containing the selected organism at each station and depth for the selected season(s). Darker colors indicate the organism was found in a higher percentage of samples at that location and depth. The bathymetry shows the depth profile of Monterey Bay along the transect ranging from Elkhorn Slough (ES) to the offshore wind station (OSWS).
+The graph shows the percentage of samples containing the selected organism at each station and depth for the selected season(s). Darker colors indicate the organism was found in a higher percentage of samples at that location and depth. The bathymetry shows the depth profile of Monterey Bay along the transect ranging from the offshore wind station (OSWS) to Elkhorn Slough (ES).
 
 *Select a taxon and season(s) at the top of the page. Hover over points for details.*
