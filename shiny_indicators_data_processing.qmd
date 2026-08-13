@@ -17,7 +17,9 @@ library(taxize)
 
 sample_data_raw <- read_csv(here("shiny_dashboard/data/raw", "Synchro_fish_mammals_full.csv"), skip = 1)
 
-metadata_raw <- read_csv(here("shiny_dashboard/data/raw", "eDNAsample_inventory_allcombined_20260624.csv"))
+# metadata_raw <- read_csv(here("shiny_dashboard/data/raw", "eDNAsample_inventory_allcombined_20260624.csv"))
+
+metadata_raw <- read_csv(here("shiny_dashboard/data/raw", "CTD_metadata_joined_for_R_10082026.csv"))
 
 ```
 
@@ -56,7 +58,7 @@ physeq_sample_names <- data.frame(sample = sample_names(physeq_otu_taxa))
 
 # Expand metadata by joining with physeq samples
 metadata_expanded <- metadata_raw %>%
-  mutate(sample = `sample name`) %>% 
+  mutate(sample = SampleID) %>% #NEW META DATA - CHANGED FROM `SAMPLE NAME`
   right_join(physeq_sample_names, by = "sample") %>%
   dplyr::select(sample, everything()) %>%
   as.data.frame()
@@ -684,7 +686,7 @@ tax_df <- as.data.frame(tax_table(ps_decontam)) |>
 
 shiny_data <- otu_long |> 
   left_join(tax_df, by = "ASV_ID") |> 
-  left_join(metadata_df, by = c("sample_id" = "sample.name"))
+  left_join(metadata_df, by = c("sample_id" = "SampleID")) # CHANGED FROM SAMPLE.NAME
 
 # Add a column with the correct name to use for mapping -- lowest assignment
 shiny_data <- shiny_data |> 
@@ -713,18 +715,18 @@ Add temperature data and time --- potentially change qmd earlier to account for 
 # Join
 # meta_temp <- read_csv(here("indicator_sp_shiny/data/raw", "all_metadata_CTD_with_temp.csv"))
 
-meta_temp_time <- read_csv(here("shiny_dashboard/data/raw", "all_metadata_CTD_time.csv"))
-# Check for duplicate SampleIDs in meta_temp_time
-
-
-
-shiny_data <- shiny_data %>%
-  left_join(
-    meta_temp_time %>% 
-    distinct(SampleID, .keep_all = TRUE) %>%
-    select(SampleID, temperature, salinity, oxygen, system_upload_time),
-    by = c("sample_id" = "SampleID")
-  )
+# meta_temp_time <- read_csv(here("shiny_dashboard/data/raw", "all_metadata_CTD_time.csv"))
+# # Check for duplicate SampleIDs in meta_temp_time
+# 
+# 
+# 
+# shiny_data <- shiny_data %>%
+#   left_join(
+#     meta_temp_time %>% 
+#     distinct(SampleID, .keep_all = TRUE) %>%
+#     select(SampleID, temperature, salinity, oxygen, system_upload_time),
+#     by = c("sample_id" = "SampleID")
+#   )
 
 
 ```
@@ -817,9 +819,25 @@ shiny_data <- shiny_data |>
     Season = paste(Season, year)  # Combine season and year
   )
 
-library(lubridate)
+# library(lubridate)
+# shiny_data <- shiny_data |> 
+#   mutate(upload_time = format(system_upload_time, "%H:%M:%S"))
+
+# Fix station name and remove air samples
+shiny_data <- shiny_data |>
+  mutate(Station = if_else(
+    sample_id == "20250724-M1-C-torp-B",  
+    "C1",
+    Station
+  )) |> 
+  filter(medium != "air")
+
+# Change column names to be same as previous metadata sheet
 shiny_data <- shiny_data |> 
-  mutate(upload_time = format(system_upload_time, "%H:%M:%S"))
+  rename(
+         temperature = ctd_temp,
+         salinity = ctd_sal,
+         oxygen = ctd_oxygen2)
 
 # Save as an RDS to use in shiny app
 saveRDS(shiny_data, here("shiny_dashboard", "data", "processed", "shiny_data.rds"))
