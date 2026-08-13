@@ -1,0 +1,51 @@
+"ASV","sample.name","abundance","preferred_species_for_reporting","Domain","Phylum","Class","Order","Family","Genus"
+"ab01a4a8e2f7f7793406cd9d072770ad","20252910-M2-300m-2",15,"Bathylagus pacificus","Eukaryota","Chordata","Actinopteri","Argentiniformes","Bathylagidae","Bathylagus"
+"73f4c80cb0472c0cd5fe438696babc6e","20250417-MARS-300m-2",6,"Brevoortia tyrannus","Eukaryota","Chordata","Actinopteri","Clupeiformes","Clupeidae","Brevoortia"
+"f6f80a24d3ec1fe56a331145962e663f","20252810-C1-010m-3",3,"Genyonemus lineatus","Eukaryota","Chordata","Actinopteri","Euteleosteomorpha","Sciaenidae","Genyonemus"
+"be9e0b4caa3eb3711633461cdb60174a","20250417-MARS-011m-2",5,"Oncorhynchus mykiss","Eukaryota","Chordata","Actinopteri","Salmoniformes","Salmonidae","Oncorhynchus"
+"be9e0b4caa3eb3711633461cdb60174a","20250417-OSWS-300m-3",4,"Oncorhynchus mykiss","Eukaryota","Chordata","Actinopteri","Salmoniformes","Salmonidae","Oncorhynchus"
+"086c7e2e2de4106da172400808b482a6","MARS-air-st-c",46040,"Oncorhynchus tshawytscha","Eukaryota","Chordata","Actinopteri","Salmoniformes","Salmonidae","Oncorhynchus"
+"5b9c0bff3dd0be0021a5d6c7830e1919","20250418-C1-010m-6",1991,"Trachurus symmetricus","Eukaryota","Chordata","Actinopteri","Carangiformes","Carangidae","Trachurus"
+"c2c5e318efa4599536a03b053d4fdaf9","20250417-OSWS-150m-3",47037,NA,"Eukaryota","Chordata","Actinopteri","Clupeiformes","Clupeidae","Sardinops"
+"c2c5e318efa4599536a03b053d4fdaf9","20250724-MARS-air-st-2",234834,NA,"Eukaryota","Chordata","Actinopteri","Clupeiformes","Clupeidae","Sardinops"
+"c2c5e318efa4599536a03b053d4fdaf9","20250724-M1-C-torp-A",2932,NA,"Eukaryota","Chordata","Actinopteri","Clupeiformes","Clupeidae","Sardinops"
+"42d6351eb880def365854046667656e1","20252910-M2-300m-2",164782,NA,"Eukaryota","Chordata","Actinopteri","Argentiniformes","Bathylagidae",NA
+"42d6351eb880def365854046667656e1","20252910-MARS-M2-air-1",22,NA,"Eukaryota","Chordata","Actinopteri","Argentiniformes","Bathylagidae",NA
+"076079b4899143b03cfa48ef9c1b5d5e","20250724-MARS-air-st-1",223294,NA,"Eukaryota","Chordata","Actinopteri","Siluriformes","Pimelodidae","Rhamdia"
+"637910197a9b56797e2c2016798d7ee9","20250723-ML-M1-air-A",220189,NA,"Eukaryota","Chordata","Actinopteri","Esociformes","Esocidae","Esox"
+"69df148bf26926539e46023d023edfb7","20250724-MARS-air-st-2",49,NA,"Eukaryota","Chordata","Actinopteri","Clupeiformes","Clupeidae","Sardinops"
+"b1cf4acc40d8d655e6945dd2532768d7","20250417-OSWS-300m-3",3820,NA,"Eukaryota","Chordata","Actinopteri","Gadiformes","Merlucciidae","Merluccius"
+"1e646e70fecffb34dc28c644c3e111c9","20250414-ESe18b",3,NA,"Eukaryota","Chordata","Actinopteri","Uranoscopiformes","Ammodytidae",NA
+"1e646e70fecffb34dc28c644c3e111c9","MARS-air-st-c",67516,NA,"Eukaryota","Chordata","Actinopteri","Uranoscopiformes","Ammodytidae",NA
+"67cbbfb4b41f46e51aeb2b71aa2a790d","20250417-OSWS-300m-3",2,NA,"Eukaryota","Chordata","Actinopteri","Clupeiformes","Clupeidae","Sardinops"
+"58f334b2328948f27e06cbcd84c62c47","20250724-MARS-air-st-2",1962,NA,"Eukaryota","Chordata","Actinopteri","Clupeiformes","Clupeidae","Sardinops"
+"a7ce3d2d0ad3ed1f8c6d7b4d168f1e2b","20250417-OSWS-150m-3",39,NA,"Eukaryota","Chordata","Actinopteri","Clupeiformes","Clupeidae","Sardinops"
+"a7ce3d2d0ad3ed1f8c6d7b4d168f1e2b","20250724-MARS-air-st-2",222,NA,"Eukaryota","Chordata","Actinopteri","Clupeiformes","Clupeidae","Sardinops"
+"1531725e023eb3c05fae43a50d08b254","20250724-MARS-air-st-2",132,NA,"Eukaryota","Chordata","Actinopteri","Clupeiformes","Clupeidae","Sardinops"
+"5c234289c224c801c71b649f0894f867","20250723-ML-M1-air-A",1013,NA,"Eukaryota","Chordata","Actinopteri","Esociformes","Esocidae","Esox"
+"b70570402db20f25cb94d5f552ffe56b","20252910-M2-300m-2",201,NA,"Eukaryota","Chordata","Actinopteri","Argentiniformes","Bathylagidae",NA
+"a25904513baabc95a8f3f039b076b45b","20252910-M2-300m-2",104,NA,"Eukaryota","Chordata","Actinopteri","Argentiniformes","Bathylagidae",NA
+"6db5f68648e1390390d5010a8724d1f1","20250724-MARS-air-st-1",262,NA,"Eukaryota","Chordata","Actinopteri","Siluriformes","Pimelodidae","Rhamdia"
+"a957dd0a1737fccf925877046bd44a18","20250417-M1-air-st-B",183,NA,"Eukaryota","Chordata","Actinopteri","Siluriformes","Pimelodidae","Rhamdia"
+"ad0c66544c46726648d1110dd6f8f44c","20250724-MARS-air-st-1",168,NA,"Eukaryota","Chordata","Actinopteri","Siluriformes","Pimelodidae","Rhamdia"
+"6f44f50f51f215924138609f62810086","20250724-MARS-air-st-1",161,NA,"Eukaryota","Chordata","Actinopteri","Siluriformes","Pimelodidae","Rhamdia"
+"2cc5ac43e2349e9980227ab42aebea65","20250724-MARS-air-st-2",130,NA,"Eukaryota","Chordata","Actinopteri","Clupeiformes","Clupeidae","Sardinops"
+"2faa2835868dfde1516330cb95a0bdad","20250724-MARS-air-st-1",128,NA,"Eukaryota","Chordata","Actinopteri","Siluriformes","Pimelodidae","Rhamdia"
+"c66ef6bb849c95651a18bb1559e1d0e3","20252910-M2-300m-2",93,NA,"Eukaryota","Chordata","Actinopteri","Argentiniformes","Bathylagidae",NA
+"10975f385959d34f04a9b3335447cce8","20250724-MARS-air-st-1",92,NA,"Eukaryota","Chordata","Actinopteri","Siluriformes","Pimelodidae","Rhamdia"
+"506b034a1a20275817c3bc8d738f878b","20250724-MARS-air-st-1",81,NA,"Eukaryota","Chordata","Actinopteri","Siluriformes","Pimelodidae","Rhamdia"
+"bc99cd2f8d0ca4d9311c3f6658001d2e","20250417-M1-air-st-B",77,NA,"Eukaryota","Chordata","Actinopteri","Siluriformes","Pimelodidae","Rhamdia"
+"300a59d092aef359db2ecfcc72899b7f","20250723-ML-M1-air-A",67,NA,"Eukaryota","Chordata","Actinopteri","Esociformes","Esocidae","Esox"
+"60e3400190fa396b5f3b5f3f28b151f2","20250417-M1-air-st-B",58,NA,"Eukaryota","Chordata","Actinopteri","Siluriformes","Pimelodidae","Rhamdia"
+"d2e9abeae7e21881be433676d9b55ed3","20250723-ML-M1-air-A",55,NA,"Eukaryota","Chordata","Actinopteri","Esociformes","Esocidae","Esox"
+"ecdff48920dac27b31df5ae3a083d471","20250724-MARS-air-st-1",47,NA,"Eukaryota","Chordata","Actinopteri","Siluriformes","Pimelodidae","Rhamdia"
+"424187a47031045deab6b9acbe978f3f","20250724-MARS-air-st-2",37,NA,"Eukaryota","Chordata","Actinopteri","Clupeiformes","Clupeidae","Sardinops"
+"1b98df769e474c4a2b9119cc8f51f3ed","20250417-M1-air-st-B",36,NA,"Eukaryota","Chordata","Actinopteri","Siluriformes","Pimelodidae","Rhamdia"
+"1afb56cbd918f20c04fac4e9f083796a","MARS-air-st-c",31,NA,"Eukaryota","Chordata","Actinopteri","Uranoscopiformes","Ammodytidae",NA
+"0ae696476b906c4fc238a851e28b7034","20250417-OSWS-017m-3",5,NA,"Eukaryota","Chordata","Actinopteri","Perciformes","Pholidae","Pholis"
+"4b58193327c631a25dee59ca103c9ca5","20252910-M2-300m-2",24,NA,"Eukaryota","Chordata","Actinopteri","Argentiniformes","Bathylagidae",NA
+"4d0fb144c7115820a80ef64985d94353","20250723-ML-M1-air-A",19,NA,"Eukaryota","Chordata","Actinopteri","Esociformes","Esocidae","Esox"
+"8210e28ed7ad543b7fe8ba773ff1ebb3","20250724-MARS-air-st-2",19,NA,"Eukaryota","Chordata","Actinopteri","Clupeiformes","Clupeidae","Sardinops"
+"aff930850010f02f365b31826491010a","20250724-MARS-air-st-1",19,NA,"Eukaryota","Chordata","Actinopteri","Siluriformes","Pimelodidae","Rhamdia"
+"4783f531d6c411237070dd8ee8436fe6","MARS-air-st-c",17,NA,"Eukaryota","Chordata","Actinopteri","Salmoniformes","Salmonidae","Oncorhynchus"
+"adeb5794912fd00aa58dbd5e9ee0d012","20250417-OSWS-150m-3",15,NA,"Eukaryota","Chordata","Actinopteri","Clupeiformes","Clupeidae","Sardinops"
