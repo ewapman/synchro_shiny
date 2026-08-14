@@ -53,6 +53,10 @@ body <- dashboardBody(
       .skin-blue .sidebar-menu > li.active > a {
         border-left-color: #4a90e2;  /* Sky blue accent */
       }
+      
+      .small-box h3, .small-box p {
+        text-align: center;
+      }
     '))),
   
   # START tabItems ----
@@ -251,23 +255,23 @@ body <- dashboardBody(
                                  headerPanel(""),
                                  
                                  # Start summary fluid row ----
-                                 # fluidRow(
-                                 #   
-                                 #   column(
-                                 #     width = 4,
-                                 #     offset = 2,
-                                 #     valueBoxOutput("total_count", width = NULL)
-                                 #   ),
-                                 #   
-                                 #   column(
-                                 #     width = 4,
-                                 #     valueBoxOutput("indicator_count", width = NULL)
-                                 #   ),
-                                 #   
-                                 # ),
-                                 # 
-                                 #  headerPanel(""),
-                                 
+                                 fluidRow(
+
+                                   column(
+                                     width = 3,
+                                     offset = 3,
+                                     valueBoxOutput("total_count", width = NULL)
+                                   ),
+
+                                   column(
+                                     width = 3,
+                                     valueBoxOutput("indicator_count", width = NULL)
+                                   ),
+
+                                 ),
+
+                                  headerPanel(""),
+
                                  # Start fluidRow inputs ----
                                  fluidRow(
                                    

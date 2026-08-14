@@ -6,7 +6,7 @@ output: html_document
 ---
 ### **Dashboard overview**
 
-Sequencing for this project was focused on detecting fish and mammals. The full list of detections was narrowed for these visualizations to focus on indicator species important to the Monterey Bay National Marine Sanctuary.
+Sequencing for this project was focused on detecting fish and mammals. The full list of <span style="color: blue !important;">**129 detections**</span> was narrowed for these visualizations to focus on <span style="color: teal !important;">**50 indicator species**</span> important to the Monterey Bay National Marine Sanctuary. 
 
 ### **What is an indicator species?**
 

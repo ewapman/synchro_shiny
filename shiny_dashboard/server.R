@@ -323,9 +323,9 @@ server <- function(input, output, session) {
     
     valueBox(
       value = total_detections(full_taxa),
-      subtitle = "Unique Taxa Detected",
-      icon = icon("fish"),
-      color = "aqua"
+      subtitle = "Total unique taxa detected",
+      #icon = icon("dna"),
+      color = "blue"
     )
   })
   
@@ -334,8 +334,8 @@ server <- function(input, output, session) {
   output$indicator_count <- renderValueBox({
     valueBox(
       value = n_unique_indicators(map_data),
-      subtitle = "Unique indicator species",
-      icon = icon("otter"),
+      subtitle = "Indicator taxa shown",
+      #icon = icon("filter"),
       color = "teal"
     )
   })
