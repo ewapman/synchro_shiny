@@ -7,9 +7,9 @@ output: html_document
 
 ### **How do indicator taxa detections change over depth?**
 
-eDNA surveys can be a useful method for detecting organisms deeper in the water column without deploying Remotely Operated Vehicles (ROVs).
+eDNA surveys offer a cost-effective and non-invasive method for sampling depth, avoiding the high operational costs and ecological damages associated with other methods, such as ROVs and trawling.
 
-The graph shows the percentage of samples containing each organism at each depth for the selected season(s). Circle size represents how commonly each organism was found at each depth, with larger circles indicating more samples detected that organism. Selecting a unique taxa at the top of the page highlights the data points in <span style="color: red;">red</span>. Organisms in <span style="color: grey;">light grey</span> were not detected in the selected season(s).
+This figure shows the percentage of samples containing each organism at each depth for the selected season(s). Circle size represents how commonly each organism was found at each depth, with larger circles indicating more samples detected that organism. Organisms on the left are more commonly detected at the surface and organisms on the right are more commonly found at 300m. Selecting a unique taxa at the top of the page highlights the data points in <span style="color: red;">red</span>. Organisms in <span style="color: grey;">light grey</span> were not detected in the selected season(s).
 
 The <span style="color: green;">deep chlorophyll max</span> varies spatially and temporally with changes in nutrient and light availability. All detections at the deep chlorophyll max were grouped into one sampling depth category for calculations. <span style="color: green;"> The highlighted section shows the range of deep chlorophyll max values sampled for the selected season(s).</span>
 

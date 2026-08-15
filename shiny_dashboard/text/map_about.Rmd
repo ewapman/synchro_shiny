@@ -6,7 +6,7 @@ output: html_document
 ---
 ### **Dashboard overview**
 
-Sequencing for this project was focused on detecting fish and mammals. The full list of <span style="color: blue !important;">**129 detections**</span> was narrowed for these visualizations to focus on <span style="color: teal !important;">**50 indicator species**</span> important to the Monterey Bay National Marine Sanctuary. 
+Sequencing for this project was focused on detecting fishes and mammals. The full list of <span style="color: blue !important;">**129 detections**</span> was narrowed for these visualizations to focus on <span style="color: teal !important;">**50 indicator species**</span> important to Monterey Bay National Marine Sanctuary. 
 
 ### **What is an indicator species?**
 
@@ -21,8 +21,12 @@ Indicator species are organisms whose population levels can indicate broader cha
   
 **Barchart:** Shows the proportion of each detected organism out of all detections at the selected location. 
 
+***
+
 #### **Definitions:**
 
 **Detection:** The organism's DNA was present in a sample. This is a presence/absence measure. Each sample is counted once per organism regardless of abundance.
+
+**Deep Chlorophyll Max (DCM):** The subsurface layer with the highest amount of chlorophyll. Varies depending on nutrient and light availability. 
     
 *Hover for details. Click a point to see a bar chart of the percentage of samples containing each taxon at that location.*

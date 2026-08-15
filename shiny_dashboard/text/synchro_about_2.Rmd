@@ -6,4 +6,4 @@ output: html_document
 ---
 
 
-At Elkhorn Slough, water samples were collected using 4 buckets at the surface for three replicates. At each of the other stations, water samples were collected using a CTD cast, an instrument lowered into the water to collect samples and environmental data (temperature, salinity, oxygen, etc.) at defined depths: 0 meters, the deep chlorophyll maximum, 150 meters, and 300 meters, for three replicates. The deep chlorophyll max depth varies depending on nutrient and light availability.
+At Elkhorn Slough, water samples were collected using 4 buckets at the surface for three replicates. At each of the other stations, water samples were collected using a CTD cast, an instrument lowered into the water to collect samples and environmental data (temperature, salinity, oxygen, etc.) at defined depths: 0 meters, the deep chlorophyll maximum (DCM), 150 meters, and 300 meters, for three replicates. The DCM is the subsurface layer with the highest amount of chlorophyll, varying depending on nutrient and light availability.

@@ -324,7 +324,7 @@ server <- function(input, output, session) {
     valueBox(
       value = total_detections(full_taxa),
       subtitle = "Total unique taxa detected",
-      #icon = icon("dna"),
+      icon = icon("dna"),
       color = "blue"
     )
   })
@@ -335,13 +335,13 @@ server <- function(input, output, session) {
     valueBox(
       value = n_unique_indicators(map_data),
       subtitle = "Indicator taxa shown",
-      #icon = icon("filter"),
+      icon = icon("star"),
       color = "teal"
     )
   })
   
   
-  # Render line plot -------------------------------------------------------------
+  # Render line plot -----------------------------------------------------------
   
   output$species_line_plot <- renderGirafe({
     

@@ -7,7 +7,7 @@ output: html_document
 
 ### **How common is an indicator taxon over time?** 
 
-The graph shows the percentage of samples that contained the selected organism each season. For example, if the organism was found in 2 out of 10 samples in Spring 2025, the value shown is 20%.
+This figure shows the percentage of samples that contained the selected organism each season. For example, if the organism was found in 2 out of 10 samples in Spring 2025, the value shown is 20%.
 
 *Select a taxon and season(s). Hover for details.*
 

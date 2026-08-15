@@ -54,9 +54,9 @@ body <- dashboardBody(
         border-left-color: #4a90e2;  /* Sky blue accent */
       }
       
-      .small-box h3, .small-box p {
-        text-align: center;
-      }
+      # .small-box h3, .small-box p {
+      #   text-align: center;
+      # }
     '))),
   
   # START tabItems ----
@@ -102,19 +102,26 @@ body <- dashboardBody(
             # Start fluidRow with Synchro about box 2 ----
             fluidRow(
               
-              box(width = 3, 
-                  includeMarkdown("text/synchro_about_2.Rmd")),
-              column(width = 9, align = "center",
+              box(width = 12,
+                  title = tagList(icon("vial"), strong("Synchro Methods")),
+                  includeMarkdown("text/synchro_about_2.Rmd"))
+              
+              
+            ), # End fluid row
+            
+            fluidRow(
+              column(width = 9, offset = 1,  # offset pushes it slightly right
+                     style = "float: none; margin: 0 auto;",  # this centers the column
                      tags$div(
                        style = "text-align: center;",
                        tags$img(class = "banner", src = "media/methods.png",
-                                #alt = "A photo of sea water bags being filtered for eDNA on a boat.",
                                 style = "max-width: 100%; height: auto; display: block; margin: 0 auto;"),
-                       tags$em("Diagram of sampling methods from the offshore wind station (left) to Elkhorn Slough (right)"),
-                       
+                       tags$div(
+                         style = "width: 100%; text-align: center; margin-top: 10px;",
+                         tags$em("Diagram of sampling methods from the offshore wind station (left) to Elkhorn Slough (right)")
+                       )
                      ))
-              
-            ), # End fluid row
+              ),
             
             #fluidRow(
               #column(width = 6, offset = 3,
@@ -147,7 +154,8 @@ body <- dashboardBody(
                      tags$em("An offshore sampling station")
               ),
               column(4, align = "center",
-                     tags$img(src = "media/ctd.jpg", width = "100%"
+                     style = "margin-top: 10px;",
+                     tags$img(src = "media/ctd.jpeg", width = "100%"
                      ),
                      tags$br(),
                      tags$em("A CTD cast")),
@@ -166,13 +174,17 @@ body <- dashboardBody(
             headerPanel(""),
             headerPanel(""),
             
+            fluidRow(
+              box(width = 12, 
+                  title = tagList(icon("vial"), strong("Synchro Methods Cont.")),
+                  includeMarkdown("text/synchro_about_3.Rmd")),
+            ),
+            
           
             # Add images
             fluidRow(
-              box(width = 3, 
-                  includeMarkdown("text/synchro_about_3.Rmd")),
               
-              column(4, align = "center", 
+              column(4, offset = 2, align = "center", 
                      tags$img(src = "media/filter_bags.jpg", width = "70%"),
                      tags$br(),
                      tags$em("Active filtration on board")
@@ -258,13 +270,13 @@ body <- dashboardBody(
                                  fluidRow(
 
                                    column(
-                                     width = 3,
-                                     offset = 3,
+                                     width = 4,
+                                     offset = 2,
                                      valueBoxOutput("total_count", width = NULL)
                                    ),
 
                                    column(
-                                     width = 3,
+                                     width = 4,
                                      valueBoxOutput("indicator_count", width = NULL)
                                    ),
 

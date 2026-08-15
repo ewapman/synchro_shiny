@@ -50,7 +50,7 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
         mutate(depth_plot = if_else(depth > 0 & depth <= max_depth_below_150, chl_max_median, depth)) |>
         distinct(sample_id, depth_plot) |>  # Remove ASVID duplicates
         group_by(depth_plot) |> 
-        summarize(total_samples_at_depth = n(), .groups = "drop"),  # ← Count ALL samples
+        summarize(total_samples_at_depth = n(), .groups = "drop"),  # Count all samples
       by = "depth_plot"
     ) |> 
     mutate(
@@ -135,10 +135,12 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
                              tooltip = paste0(
                                map_label, "\n",
                                "Depth: ", depth_label, "m\n",
-                               "% of samples: ",
-                               if_else(relative_abundance < 0.01,
-                                       paste0(format(relative_abundance, scientific = TRUE, digits = 2), "%"),
-                                       sprintf("%.2f%%", relative_abundance)))))+
+                               "Samples: ", sp_depth, " of ", total_samples_at_depth, 
+                               " (", round(relative_abundance, 2),"%", " )")
+                           )) +
+                               # if_else(relative_abundance < 0.01,
+                               #         paste0(format(relative_abundance, scientific = TRUE, digits = 2), "%"),
+                               #         sprintf("%.2f%%", relative_abundance)))))+
     scale_fill_identity() +
     scale_size(range = c(1, 12), name="Relative Abundance") +
     scale_x_discrete(limits = all_taxa_depth_order, drop = FALSE) +  # Show all taxa
