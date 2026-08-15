@@ -793,7 +793,7 @@ shiny_data <- shiny_data %>%
     map_label == "Diaphus" ~ "Lanternfish",  # genus of lanternfish -- CHECK
     map_label == "Pleuronectiformes" ~ "Flatfish",  # matches "Flatfish"
     map_label == "Paralichthys" ~ "Flounders",  # genus of flatfish
-    map_label == "Cyclopsettidae" ~ "Sand Whiffs",  # family of flatfish
+    map_label == "Cyclopsettidae" ~ "Sand whiffs",  # family of flatfish
     map_label == "Stenobrachius" ~ "Lampfish",  # genus within "Lanternfish"
     TRUE ~ common_name  # Keep existing value
   ))
