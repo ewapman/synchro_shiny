@@ -33,8 +33,7 @@ sidebar <- dashboardSidebar(
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 body <- dashboardBody(
   
-  # Load styling and font here ----
-  # Add teal styling ----
+  # Add color styling ----
   tags$head(
     tags$style(HTML('
       /* Header - deep ocean blue */
@@ -54,25 +53,27 @@ body <- dashboardBody(
         border-left-color: #4a90e2;  /* Sky blue accent */
       }
       
-      # .small-box h3, .small-box p {
-      #   text-align: center;
-      # }
     '))),
   
   # START tabItems ----
   tabItems(
     
     # ......................START welcome tabItem ..............................
+    
+    # Banner photo ----
     tabItem(tabName = "welcome",
             tags$div(
               style = "text-align: center;",
             tags$img(class = "banner", src = "media/cover.jpg", 
-                     height = "400px",  # ← Try 600px or 650px
-                     width = "100%",  # ← Add this to ensure it spans full width
-                     style = "object-fit: cover;",  # ← Add this to crop nicely
-                     alt = "A photo of sea water bags being filtered for eDNA on a boat.")),
-            headerPanel(""),
-            # START fluidRow with DNA intro box ----
+                     height = "400px",  
+                     width = "100%",  
+                     style = "object-fit: cover;")
+            ),
+          
+            # Extra space
+             headerPanel(""),
+            
+            # START fluidRow with DNA and Synchro intro box ----
             fluidRow(
               
               # START eDNA about box ----
@@ -81,33 +82,36 @@ body <- dashboardBody(
                   includeMarkdown("text/dna_about.Rmd")
               ), # END intro box
               
-              # START eDNA about box ----
+              # START Synchro about box ----
               box(width = 6, 
                   title = tagList(icon("ship"), strong("Synchro Background")),
                   includeMarkdown("text/synchro_about.Rmd"),
                   tags$div(align = "center",
                           tags$img(src = "media/study_map_2.jpeg", width = "100%"),
-                          tags$br(),
-                          tags$em("Map of study transect")
+                          tags$br(), # Break
+                          tags$em("Map of study transect") # Image of study transect
                   )
                   
-                  # Add photo below in same box
-              ) # END intro box
+              ) # END synchro about box
               
             ), # End fluid row
             
+            # Extra space
             headerPanel(""),
             headerPanel(""),
             
-            # Start fluidRow with Synchro about box 2 ----
+            # Start fluidRow with Synchro methods box ----
             fluidRow(
               
               box(width = 12,
                   title = tagList(icon("vial"), strong("Synchro Methods")),
-                  includeMarkdown("text/synchro_about_2.Rmd"))
-              
-              
+                  includeMarkdown("text/synchro_about_2.Rmd")
+                  ) # End box
+
             ), # End fluid row
+            
+            
+            # Image of sampling diagram ----
             
             fluidRow(
               column(width = 9, offset = 1,  # offset pushes it slightly right
@@ -121,32 +125,13 @@ body <- dashboardBody(
                          tags$em("Diagram of sampling methods from the offshore wind station (left) to Elkhorn Slough (right)")
                        )
                      ))
-              ),
+              ), # End fluid row
             
-            #fluidRow(
-              #column(width = 6, offset = 3,
-              # box(width = 2,  
-              #     includeMarkdown("text/station_acronyms.Rmd")),  
-              # column(4, align = "center",
-              #        tags$img(src = "media/study_map_2.jpeg", width = "100%"
-              #        ),
-              #        tags$br(),
-              #        tags$em("Map of study transect")),
-              
-              
-              #)
-            #),
-            
-            # START fluidRow with Synchro about box 1----
-            # fluidRow(
-            #   
-            #  
-            #   
-            # ), # End fluid row
-            
+            # Extra space
             headerPanel(""),
             headerPanel(""),
-            # Add images 
+            
+            # Add images ----
             fluidRow(
               column(4, align = "center",
                      tags$img(src = "media/station.jpg", width = "100%"),
@@ -166,22 +151,21 @@ body <- dashboardBody(
                      tags$br(),
                      tags$em("Processing samples at Elkhorn Slough")
               )
-              ),
+              ), # End fluid row
           
-            
-            
-            
+            # Extra space 
             headerPanel(""),
             headerPanel(""),
             
+            # Add last Synchro methods box ----
             fluidRow(
               box(width = 12, 
                   title = tagList(icon("vial"), strong("Synchro Methods Cont.")),
                   includeMarkdown("text/synchro_about_3.Rmd")),
-            ),
+            ), # End fluid row
             
           
-            # Add images
+            # Add images ----
             fluidRow(
               
               column(4, offset = 2, align = "center", 
@@ -194,67 +178,21 @@ body <- dashboardBody(
                      tags$br(),
                      tags$em("Passive filtration using a TorpeDNA device")
               )
-              # column(6, align = "center", 
-              #        tags$img(src = "media/filter_bags.jpg", width = "50%"),
-              #        tags$br(),
-              #        tags$em("Active filtration on board")
-              # ),
-              # column(6, align = "center", 
-              #        tags$img(src = "media/torpe.jpg", width = "50%"),
-              #        tags$br(),
-              #        tags$em("Passive filtration using a TorpeDNA device")
-              # )
-              
-            )
-            
-            # headerPanel(""),
-            # headerPanel(""),
-            
-            
-            
-           
-              # tags$div(
-              #   style = "text-align: center;",
-              #   tags$img(class = "banner", src = "media/study_map_2.jpeg",
-              #            #alt = "A photo of sea water bags being filtered for eDNA on a boat.",
-              #            style = "max-width: 50%; height: auto; display: block; margin: 0 auto;"),
-              #   tags$figcaption(
-              #     style = "font-style: italic; color: #555555; margin-top: 8px; font-size: 14px;",
-              #     "Map of study transect."
-              #   ))
-              
-            #),
-            # headerPanel(""),
-            # headerPanel(""),
-            
-            # Schematic
-            # fluidRow(
-            #   tags$div(
-            #     style = "text-align: center;",
-            #   tags$img(class = "banner", src = "media/methods.png",
-            #            #alt = "A photo of sea water bags being filtered for eDNA on a boat.",
-            #            style = "max-width: 60%; height: auto; display: block; margin: 0 auto;"),
-            #   tags$figcaption(
-            #     style = "font-style: italic; color: #555555; margin-top: 8px; font-size: 14px; margin-left: 30px;",
-            #     "Diagram of sampling methods from the offshore wind station (left) to Elkhorn Slough (right)."
-            #   )
-            #   )
-            # )
-            
   
-            
+            ) # End fluid row
+
     ), # END welcome tabItem
     
-    # ......................Start map tabItem ..................................
+    # ......................Start dashboard tabItem ............................
     tabItem(tabName = "dashboard",
             
-            # Start map tabsetPanel ----
+            # Start dashboard tabsetPanel ----
             tabsetPanel(id = "dashboard_tabsetPanel",
                         
-                        # Start map tabPanel ----
+                        # Start dashboard tabPanel ----
                         tabPanel(title = strong("Indicator Taxa Dashboard"),
                                  
-                                 # Start about fluid row ----
+                                 # Start background fluid row ----
                                  fluidRow(
                                    box(width = 12,
                                        includeMarkdown("text/map_about.Rmd")
@@ -266,7 +204,7 @@ body <- dashboardBody(
                                  headerPanel(""),
                                  headerPanel(""),
                                  
-                                 # Start summary fluid row ----
+                                 # Start summary box fluid row ----
                                  fluidRow(
 
                                    column(
@@ -282,21 +220,22 @@ body <- dashboardBody(
 
                                  ),
 
-                                  headerPanel(""),
+                                 # Extra space 
+                                 headerPanel(""),
 
                                  # Start fluidRow inputs ----
                                  fluidRow(
                                    
                                    # Start picker column ----
+                                   # Species selection
                                    column( 
                                      width = 4,
-                                     # Drop down input: select species
                                      selectInput(
                                        inputId = "species_input",
                                        label = "Indicator taxa:",
                                        choices = NULL )),
                                      
-                                     # Dropdown to select date 
+                                     # Season selection
                                    column(
                                      width = 4,
                                      pickerInput(
@@ -307,7 +246,7 @@ body <- dashboardBody(
                                        options = pickerOptions(actionsBox = TRUE)
                                      )), 
                                      
-                                     # Select depth range
+                                     # Depth selection
                                     column(
                                       width = 4,
                                    pickerInput(
@@ -318,18 +257,16 @@ body <- dashboardBody(
                                      ))
                                    ), # End fluid row inputs
                                      
-                                
 
-                                   
                                    # Map output ----
                                  fluidRow(
                                    column(8,
-                                         # withSpinner(
                                           plotlyOutput("indicator_sp_map", height = "600px"),
                                           type = 4, 
                                           color = "#3da48c"
-                                          #)
                                    ),
+                                   
+                                   # Barplot output ----
                                    column(4,
                                           wellPanel(
                                             h4(strong("Taxonomic composition")),
@@ -357,17 +294,18 @@ body <- dashboardBody(
                                  
                                  headerPanel(""),
                                  headerPanel(""),
-                                 # 
-                                 # # START - fluid row depth about
+
+                                 # START - fluid row depth about
                                  fluidRow(
                                    box(width = 12,
                                        includeMarkdown("text/depth_about.Rmd")
                                    )
                                    ), # End fluid row depth about
-                                 # 
+                                 
+                                 
                                  headerPanel(""),
                                  
-                                 # START - depth graph (all taxa) fluid row
+                                 # START - depth plot fluid row
                                  fluidRow(
                                    
                                 
@@ -381,7 +319,7 @@ body <- dashboardBody(
                                    )
                                    
                                    
-                                 ), # End - depth graph (all taxa) fluid row
+                                 ), # End - depth plot fluid row
                                  
                                  headerPanel(""),
                                  headerPanel(""),
@@ -401,9 +339,7 @@ body <- dashboardBody(
                                  
                         ) # End map tabPanel
             ) # End map tabsetPanel
-            
-            
-            
+
     ) # END map tabItem
     
     
