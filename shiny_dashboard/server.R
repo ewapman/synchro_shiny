@@ -221,7 +221,6 @@ server <- function(input, output, session) {
     if(!is.null(click) && !is.null(click$customdata)) {
       clicked_station <- click$customdata  # ← Get station name
       
-      cat("Clicked station:", clicked_station, "\n")
       
       clicked_point(list(station = clicked_station))  # ← Store station
     }
