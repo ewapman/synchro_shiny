@@ -3,38 +3,19 @@ barchart <- function(data_fn, species_fn, season_fn, clicked_station){
   
   if(species_fn == "All taxa") { 
     
-    # Filter data:
-    # bar_plot_data <- data_fn |> 
-    #   filter(Season %in% season_fn,
-    #          near(Latitude, clicked_lat),
-    #          near(Longitude, clicked_lon)) |>
-    #   group_by(map_label) |> 
-    #   summarize(
-    #     sp_count = n(), # of sp detections at that lat/long
-    #     .groups = "drop") |> 
-    #   arrange(sp_count) |> # reorder 
-    #   mutate(percent = (sp_count / sum(sp_count)) * 100) |> 
-    #   mutate(
-    #     percent_bin = cut(percent,
-    #                       breaks = c(0, 1, 2, 5, 10, 20, 50, 100),
-    #                       labels = c("<1%", "1-2%", "2-5%", "5-10%", "10-20%", "20-50%", ">50%"))
-    #   )
-    
     bar_plot_data <- map_data |> 
       # Filter season and selected lat/lon
       filter(Season %in% season_fn,
              Station == clicked_station) |> 
-             #near(Latitude, clicked_lat),
-             #near(Longitude, clicked_lon)) |>
       # Get total number of samples with each species 
-      distinct(map_label, sample_id) |> # one row per sample per species
+      distinct(map_label, sample_id) |> # one row per sample per species (remove multiple asv id's)
       group_by(map_label) |> 
       summarize(
         sp_count = n(), # of sp detections at that lat/long
         .groups = "drop") |> 
-      arrange(sp_count) |> # reorder 
+      arrange(sp_count) |> # reorder from high to low
       mutate(percent = (sp_count / sum(sp_count)) * 100) |> 
-      mutate(
+      mutate( # make bins for colors
         percent_bin = cut(percent,
                           breaks = c(0, 1, 2, 5, 10, 20, 50, 100),
                           labels = c("<1%", "1-2%", "2-5%", "5-10%", "10-20%", "20-50%", ">50%"))
@@ -53,11 +34,10 @@ barchart <- function(data_fn, species_fn, season_fn, clicked_station){
     
     # Render plot:
     plot_ly(bar_plot_data,
-            x = 1, # makes it so it can be stacked
+            x = 1, 
             y = ~percent,
             type = 'bar',
-            #barnorm = 'percent',
-            color = ~percent_bin,  # Color by count
+            color = ~percent_bin,  # Color by percent bin
             colors = bar_palette,
             text = ~map_label,           # Species names
             textposition = 'inside',      # Put text inside bars
@@ -65,12 +45,12 @@ barchart <- function(data_fn, species_fn, season_fn, clicked_station){
               color = 'white',            # White text
               size = 10                   # Font size
             ),
-            customdata = ~map_label, 
+            customdata = ~map_label, # use in hovertemplate
             marker = list(
               line = list(color = 'white', width = 1)
             ),
             hovertemplate = paste0(
-              "<b>%{customdata}</b><br>",  # <-- USE customdata instead of text
+              "<b>%{customdata}</b><br>",  
               "Percent: %{y:.2f}%<br>",
               "<extra></extra>"
             )) %>%
@@ -101,8 +81,6 @@ barchart <- function(data_fn, species_fn, season_fn, clicked_station){
     bar_plot_data_sp <- map_data |> 
       filter(Season %in% season_fn, 
              Station == clicked_station) |> 
-             #near(Latitude, clicked_lat),
-             #near(Longitude, clicked_lon)) |>
       distinct(map_label, sample_id) |> 
       group_by(map_label) |> 
       summarize(
@@ -134,7 +112,7 @@ barchart <- function(data_fn, species_fn, season_fn, clicked_station){
             x = 1, # makes it so it can be stacked
             y = ~percent,
             type = 'bar',
-            color = ~map_label,  # color by label not count
+            color = ~map_label,  # color by label not percent
             colors = bar_palette_sp,
             text = ~map_label,           # Species names
             textposition = 'inside',      # Put text inside bars
@@ -147,7 +125,7 @@ barchart <- function(data_fn, species_fn, season_fn, clicked_station){
               line = list(color = 'white', width = 1)
             ),
             hovertemplate = paste0(
-              "<b>%{customdata}</b><br>",  # <-- USE customdata instead of text
+              "<b>%{customdata}</b><br>",  
               "Percent: %{y:.2f}%<br>",
               "<extra></extra>"
             )) %>%
