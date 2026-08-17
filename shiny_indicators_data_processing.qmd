@@ -852,25 +852,29 @@ saveRDS(shiny_data, here("shiny_dashboard", "data", "processed", "shiny_data.rds
 # Bathymetry ----------------- MOVE TO GLOBAL ----------------------
 
 # Get start and end points for bathymetry 
-start_lon <- shiny_data |> 
-  filter(Station == "Elkhorn Slough") |> 
-  pull(Longitude) |> 
-  mean()
-
-start_lat <- shiny_data |> 
-  filter(Station == "Elkhorn Slough") |> 
-  pull(Latitude) |> 
-  mean()
-
-end_lon <- shiny_data |>
-  filter(grepl("OSWS", sample_id)) |>
-  pull(Longitude) |>
-  first()
-
-end_lat <- shiny_data |>
-  filter(grepl("OSWS", sample_id)) |>
-  pull(Latitude) |>
-  first()
+start_lon <- -121.7796
+start_lat <- 36.8117
+end_lon <- -122.5352
+end_lat <- 36.6775
+# start_lon <- shiny_data |> 
+#   filter(Station == "Elkhorn Slough") |> 
+#   pull(Longitude) |> 
+#   mean()
+# 
+# start_lat <- shiny_data |> 
+#   filter(Station == "Elkhorn Slough") |> 
+#   pull(Latitude) |> 
+#   mean()
+# 
+# end_lon <- shiny_data |>
+#   filter(grepl("OSWS", sample_id)) |>
+#   pull(Longitude) |>
+#   first()
+# 
+# end_lat <- shiny_data |>
+#   filter(grepl("OSWS", sample_id)) |>
+#   pull(Latitude) |>
+#   first()
 
 library(marmap)
 # Add a small buffer so the points aren't on the edge
