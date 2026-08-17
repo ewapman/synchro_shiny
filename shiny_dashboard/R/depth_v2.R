@@ -123,7 +123,6 @@ depth_plot <- function(data_fn, season_fn, species_fn) {
              fill = "lightgreen", 
              alpha = 0.2) +
     
-    
     geom_point_interactive(shape = 21,
                            alpha = 0.7, 
                            color = "black",
