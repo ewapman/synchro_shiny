@@ -1,6 +1,6 @@
 total_detections <- function(full_data) {
   
-  # Count number of unique species for summary ----
+  # Count number of unique species for value boxes ----
   # Full dataset:
   total_detections <- full_data |> 
     mutate(lowest_taxa = case_when(
@@ -17,7 +17,7 @@ total_detections <- function(full_data) {
   
 }
 
-# Indicators
+# Indicators only
 n_unique_indicators <- function(indicator_data) {
   
   indicators <- n_distinct(indicator_data$map_label)
