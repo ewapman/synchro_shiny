@@ -32,7 +32,7 @@ server <- function(input, output, session) {
    
     
     # Determine which dates to disable
-    seasons_to_disable <- !all_seasons %in% seasons_with_data # extract the dates in all dates that don't have data
+    seasons_to_disable <- !all_seasons %in% seasons_with_data # extract the seasons that don't have data
     
     
     # Update the picker
@@ -40,7 +40,7 @@ server <- function(input, output, session) {
       session,
       "season_input",
       choices = all_seasons,
-      selected = if(length(seasons_with_data) > 0) seasons_with_data else NULL, # took out seasons_with_data[1]
+      selected = if(length(seasons_with_data) > 0) seasons_with_data else NULL, 
       choicesOpt = list(
         disabled = seasons_to_disable,
         style = ifelse(seasons_to_disable,
@@ -58,27 +58,26 @@ server <- function(input, output, session) {
     # Get all possible depth values from the data
     all_depths <- c("0", "DCM", "150", "300")
     
-    # FOR "ALL TAXA": Disable all depth options
+    # FOR "ALL TAXA": 
     if(species_selection == "All taxa") {
       updatePickerInput(
         session,
         "depth_input",
         choices = all_depths,
         selected = all_depths,  # Select all by default
-        # choicesOpt = list(
-        #   disabled = rep(TRUE, length(all_depths)),  # Disable all
-        #   style = rep("color: #ccc;", length(all_depths))
-        # )
       )
       return()  # Exit early
     }
     
     # FOR SINGLE SPECIES: Grey out depths without data for that species + season
+    
+    # Filter for that sp. selection
     filtered_data <- map_data |>
       filter(
         map_label == species_selection,
         Season %in% season_selection
       ) |>
+      # Combine DCM depths + convert to character to match selection options
       mutate(
         depth_cat = case_when(
           depth == 0 ~ "0",
@@ -96,7 +95,7 @@ server <- function(input, output, session) {
       unique()
     
     
-    # Determine which depths to disable
+    # Determine which depths to disable (no data)
     depths_to_disable <- !all_depths %in% depths_with_data
     
     # Update the picker
@@ -111,52 +110,7 @@ server <- function(input, output, session) {
       )
     )
   }
-  # update_depth_picker <- function(species_selection, season_selection) {
-  #   
-  #   # All possible depth options
-  #   all_depths <- c("Surface (0-20m)", "Subsurface (>20m)")
-  #   
-  #   # Filter data based on species and season
-  #   if(species_selection == "All taxa") {
-  #     filtered_data <- map_data |>
-  #       filter(Season %in% season_selection)
-  #   } else {
-  #     filtered_data <- map_data |>
-  #       filter(map_label == species_selection,
-  #              Season %in% season_selection)
-  #   }
-  #   
-  #   # Check which depths have data
-  #   filtered_data <- filtered_data |>
-  #     mutate(depth = as.numeric(as.character(depth))) |>
-  #     filter(!is.na(depth))
-  #   
-  #   has_shallow <- any(filtered_data$depth <= 20, na.rm = TRUE)
-  #   has_deep <- any(filtered_data$depth > 20, na.rm = TRUE)
-  #   
-  #   depths_with_data <- c()
-  #   if(has_shallow) depths_with_data <- c(depths_with_data, "Surface (0-20m)")
-  #   if(has_deep) depths_with_data <- c(depths_with_data, "Subsurface (>20m)")
-  #   
-  #   # Determine which depths to disable
-  #   depths_to_disable <- !all_depths %in% depths_with_data
-  #   
-  #   # Update the picker
-  #   updatePickerInput(
-  #     session,
-  #     "depth_input",
-  #     choices = all_depths,
-  #     selected = if(length(depths_with_data) > 0) depths_with_data[1] else "Surface (0-20m)",
-  #     choicesOpt = list(
-  #       disabled = depths_to_disable,
-  #       style = ifelse(depths_to_disable,
-  #                      "color: #ccc;",
-  #                      "")
-  #     )
-  #   )
-  # }
-  # 
-  # ------------------------------------------------------------------------------
+  
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ##                           Initial UI updates
@@ -170,24 +124,10 @@ server <- function(input, output, session) {
   )
   
   
-  # Season selection options -- depth plot
-  # updateSelectInput(
-  #   session,
-  #   "season_depth_input",
-  #   choices = unique(map_data$Season))
-  
-  
-  # Species selection options -- species line graph plot
-  # updateSelectInput(
-  #   session,
-  #   "species_season_line_input",
-  #   choices = unique(map_data$map_label))
-  
-  
   # Date selection options: call function originally for All taxa option
   update_season_picker("All taxa")
   
-  # Depth selection: call function originally for All taxa option
+  # Depth selection: call function originally for All taxa option and spring 2025
   update_depth_picker("All taxa", "Spring 2025")
   
   ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -208,44 +148,19 @@ server <- function(input, output, session) {
   # Store clicked location separately
   clicked_point <- reactiveVal(NULL)
   
-  # When map marker is clicked, save it -- leaflet version
-  # observeEvent(input$indicator_sp_map_marker_click, {
-  #   clicked_point(input$indicator_sp_map_marker_click)
-  # })
   
   # When map marker is clicked, save it -- plotly version
-  # In server, update the click event handler:
   observeEvent(event_data("plotly_click", source = "indicator_map"), {
     click <- event_data("plotly_click", source = "indicator_map")
     
     if(!is.null(click) && !is.null(click$customdata)) {
-      clicked_station <- click$customdata  # ← Get station name
+      clicked_station <- click$customdata  # Get station name
       
       
-      clicked_point(list(station = clicked_station))  # ← Store station
+      clicked_point(list(station = clicked_station))  # Store station
     }
   })
-  # observeEvent(event_data("plotly_click", source = "indicator_map"), {
-  # 
-  #   click <- event_data("plotly_click", source = "indicator_map")
-  # 
-  #   if(!is.null(click) && !is.null(click$customdata)) {
-  # 
-  #     # Split the customdata
-  #     coords <- strsplit(click$customdata, "\\|")[[1]]
-  #     clicked_lat <- as.numeric(coords[1])
-  #     clicked_lon <- as.numeric(coords[2])
-  # 
-  #     cat("Clicked lat:", clicked_lat, "\n")
-  #     cat("Clicked lon:", clicked_lon, "\n")
-  # 
-  #     clicked_point(list(
-  #       lat = clicked_lat,
-  #       lng = clicked_lon
-  #     ))
-  #   }
-  # })
-  
+ 
   # When species changes, clear the clicked point
   observeEvent(input$species_input, {
     clicked_point(NULL)  # Reset click when species changes
@@ -283,7 +198,8 @@ server <- function(input, output, session) {
   
   output$species_bar_plot <- renderPlotly({
     
-    clicked <- clicked_point()  # Use reactiveVal instead of input
+    # clicked point to trigger barchart
+    clicked <- clicked_point()  
     
     
     if(is.null(clicked)) {
@@ -310,8 +226,6 @@ server <- function(input, output, session) {
       species_fn = input$species_input,
       season_fn = input$season_input,
       clicked_station = clicked$station
-      # clicked_lat = clicked$lat,
-      # clicked_lon = clicked$lng
     )
   })
   
