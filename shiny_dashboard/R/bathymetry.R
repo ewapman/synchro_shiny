@@ -3,7 +3,7 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
   
   bath <- data_fn |>
     select(map_label, Station, depth, Season, sample_id, Latitude, Longitude) |>
-    mutate( # Do this to combine all chlorophyll max obs
+    mutate( # Do this to combine all chlorophyll max observations
       depth = as.numeric(as.character(depth)))
   
   # Get min, max value and median Chla
@@ -18,29 +18,10 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
         depth > 0 & depth <= max_depth_below_150, chl_max_median, depth) ) 
   
   
-  # Two options: All taxa or unique taxa
-  # if(species_fn == "All taxa"){
-  #   bath_summary <- bath |>
-  #     filter(Season %in% season_fn ) |> # REACTIVE: This will be reactive + loop through the different season selections
-  #     #distinct(sample_id, Station, depth_plot) |> 
-  #     group_by(Station, depth_plot) |>  # For all taxa, want # of unique species
-  #     summarize(samples = n_distinct(map_label), .groups = "drop") |>
-  #     mutate(
-  #       depth_label = if_else(
-  #         depth_plot == chl_max_median, "Deep Chlorophyll Max", as.character(depth_plot)
-  #       )
-  #     )
-  #   
-  #   bath_plot <- bath_summary |> 
-  #     select(Station, samples, depth_plot, depth_label) |> 
-  #     left_join(station_distances, by = c("Station" = "station")) |> 
-  #     mutate(depth = as.numeric(as.character(depth_plot)),
-  #            distance = if_else(Station == "Elkhorn Slough", 0, distance)) 
-  #   
-  # } else {
+
     bath_summary <- bath |>
-      filter(Season %in% season_fn ) |> # REACTIVE: This will be reactive + loop through the different season selections
-      filter(map_label == species_fn) |> # REACTIVE: This will be reactive and depend on species input
+      filter(Season %in% season_fn ) |> # REACTIVE: This is reactive depending on season selection
+      filter(map_label == species_fn) |> # REACTIVE: This is reactive and depends on species input
       distinct(sample_id, Station, depth_plot) |> # Avoid duplicate ASVID's
       group_by(Station, depth_plot) |>  # Want number at each station and at each depth
       summarize(samples = n(), .groups = "drop") |>
@@ -57,7 +38,7 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
       group_by(Station, depth_plot) |>
       summarize(total_samples = n(), .groups = "drop")
     
-    # Join distances and calculate relative abundance
+    # Join distances (from station_distances RDS) and calculate relative abundance
     bath_plot <- bath_summary |> 
       select(Station, samples, depth_plot, depth_label) |> 
       left_join(station_distances, by = c("Station" = "station")) |> 
@@ -65,24 +46,9 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
       mutate(depth = as.numeric(as.character(depth_plot)),
              distance = if_else(Station == "Elkhorn Slough", 0, distance)) |> 
       mutate(relative_abundance = (samples / total_samples) * 100)
-  #}
-
-  
-  # Get station coords: average because some have 2
-  stations <- bath |> 
-    group_by(Station) |> 
-    summarize(
-      Latitude = mean(Latitude, na.rm = TRUE),
-      Longitude = mean(Longitude, na.rm = TRUE)
-    ) |> 
-    # add_row(Station = "ES", Latitude = start_lat, Longitude = start_lon) |> 
-    arrange(Longitude) |>  # Order from west to east
-    mutate(
-      Station = if_else(Station == "Elkhorn Slough", "ES", Station)
-    )
 
 
-  # Create annotations
+  # Create annotations (station names above figure)
   annotations_list <- lapply(1:nrow(station_distances), function(i) {
     
     label <- station_distances$station[i]
@@ -108,7 +74,9 @@ bath_graph <- function(data_fn, season_fn, species_fn) {
 p <- plot_ly() |> 
     # Bathymetry fill (tan area)
     add_polygons(
+      # go from 0 across map and reverse
       x = c(transect_df$dist.km, rev(transect_df$dist.km)),
+      # Get each of the depth values for one direction and then a constant deeper value to form the bottom
       y = c(transect_df$depth, rep(min(transect_df$depth) - 100, nrow(transect_df))),
       fillcolor = toRGB("burlywood", alpha = 0.9),
       
@@ -118,7 +86,9 @@ p <- plot_ly() |>
     ) |>
     # Water layer (light blue - from surface to bathymetry)
     add_polygons(
-      x = c(transect_df$dist.km, rev(transect_df$dist.km)),
+      # across the transect and reverse
+      x = c(transect_df$dist.km, rev(transect_df$dist.km)), 
+      # depth values one way and then constant surface line at 0 
       y = c(transect_df$depth, rep(0, nrow(transect_df))),
       fillcolor = "lightblue",
       line = list(width = 0),
@@ -235,7 +205,6 @@ p <- p |>
       dragmode = 'zoom',
       hovermode = 'closest'
     ) |> 
-    # Subtle horizontal lines at depth intervals
     config(scrollZoom = TRUE,
            displayModeBar = TRUE)
   

@@ -849,34 +849,16 @@ saveRDS(shiny_data, here("shiny_dashboard", "data", "processed", "shiny_data.rds
 # Preprocess bathymetry data
 
 ```{r}
-# Bathymetry ----------------- MOVE TO GLOBAL ----------------------
+# Bathymetry preprocessing
+library(marmap)
 
 # Get start and end points for bathymetry 
 start_lon <- -121.7796
 start_lat <- 36.8117
 end_lon <- -122.5352
 end_lat <- 36.6775
-# start_lon <- shiny_data |> 
-#   filter(Station == "Elkhorn Slough") |> 
-#   pull(Longitude) |> 
-#   mean()
-# 
-# start_lat <- shiny_data |> 
-#   filter(Station == "Elkhorn Slough") |> 
-#   pull(Latitude) |> 
-#   mean()
-# 
-# end_lon <- shiny_data |>
-#   filter(grepl("OSWS", sample_id)) |>
-#   pull(Longitude) |>
-#   first()
-# 
-# end_lat <- shiny_data |>
-#   filter(grepl("OSWS", sample_id)) |>
-#   pull(Latitude) |>
-#   first()
 
-library(marmap)
+
 # Add a small buffer so the points aren't on the edge
 lon_min <- min(c(start_lon, end_lon)) - 0.1
 lon_max <- max(c(start_lon, end_lon)) + 0.1
@@ -903,20 +885,27 @@ saveRDS(monterey_map, here("shiny_dashboard", "data", "processed", "monterey_map
 saveRDS(transect_data, here("shiny_dashboard", "data", "processed", "transect_data.rds"))
 
 
-
  # Calculate distance along transect for each station
 
-stations_temp <- shiny_data |> 
-    group_by(Station) |> 
-    summarize(
-      Latitude = mean(Latitude, na.rm = TRUE),
-      Longitude = mean(Longitude, na.rm = TRUE)
-    ) |> 
-    # add_row(Station = "ES", Latitude = start_lat, Longitude = start_lon) |> 
-    arrange(Longitude) |>  # Order from west to east
-    mutate(
-      Station = if_else(Station == "Elkhorn Slough", "ES", Station)
-    )
+stations_temp <- tibble(
+  Station = c("ES", "C1", "M1", "MARS", "M2", "OSWS"),
+  Latitude = c(36.8117, 36.8045, 36.7502, 36.721, 36.7015, 36.6775),
+  Longitude = c(-121.7796, -121.858, -122.0495, -122.1903, -122.3743, -122.5352)
+) |> 
+  arrange(Longitude) # Order west to east
+  
+
+# stations_temp <- shiny_data |> 
+#     group_by(Station) |> 
+#     summarize(
+#       Latitude = mean(Latitude, na.rm = TRUE),
+#       Longitude = mean(Longitude, na.rm = TRUE)
+#     ) |> 
+#     # add_row(Station = "ES", Latitude = start_lat, Longitude = start_lon) |> 
+#     arrange(Longitude) |>  # Order from west to east
+#     mutate(
+#       Station = if_else(Station == "Elkhorn Slough", "ES", Station)
+#     )
 
   station_distances <- data.frame(
     station = character(),
