@@ -100,15 +100,12 @@ body <- dashboardBody(
             headerPanel(""),
             headerPanel(""),
             
-            # Start fluidRow with Synchro methods box ----
             fluidRow(
+            box(
               
-              box(width = 12,
+              width = 12,
                   title = tagList(icon("vial"), strong("Synchro Methods")),
-                  includeMarkdown("text/synchro_about_2.Rmd")
-                  ) # End box
-
-            ), # End fluid row
+                  includeMarkdown("text/synchro_about_2.Rmd"),
             
             
             # Image of sampling diagram ----
@@ -118,7 +115,7 @@ body <- dashboardBody(
                      style = "float: none; margin: 0 auto;",  # this centers the column
                      tags$div(
                        style = "text-align: center;",
-                       tags$img(class = "banner", src = "media/methods.png",
+                       tags$img(class = "banner", src = "media/methods_2.png",
                                 style = "max-width: 100%; height: auto; display: block; margin: 0 auto;"),
                        tags$div(
                          style = "width: 100%; text-align: center; margin-top: 10px;",
@@ -133,7 +130,7 @@ body <- dashboardBody(
             
             # Add images ----
             fluidRow(
-              column(4, align = "center",
+             column(4, align = "center",
                      tags$img(src = "media/station.jpg", width = "100%"),
                      tags$br(),
                      tags$em("An offshore sampling station")
@@ -159,8 +156,7 @@ body <- dashboardBody(
             
             # Add last Synchro methods box ----
             fluidRow(
-              box(width = 12, 
-                  title = tagList(icon("vial"), strong("Synchro Methods Cont.")),
+              column(width = 12, 
                   includeMarkdown("text/synchro_about_3.Rmd")),
             ), # End fluid row
             
@@ -180,6 +176,8 @@ body <- dashboardBody(
               )
   
             ) # End fluid row
+            )
+            )
 
     ), # END welcome tabItem
     
