@@ -5,7 +5,7 @@ date: "2026-07-28"
 output: html_document
 ---
 
-The goal of the Synchro project is to assess how eDNA can be used to monitor marine biodiversity and the impacts of offshore wind farms.
+The goal of the [Synchro Pilot Study](https://oceansynchro.io/offshore-wind-pilot-study/) is to test methods and technologies that can help characterize the biology and ecology of offshore environments, particularly in spaces that are slated for offshore energy (e.g., wind farm leases). This project aims is  to assess how eDNA can be used to monitor marine biodiversity and the impacts of offshore wind farms.
 
 Samples were collected at 6 stations along a transect ranging from Elkhorn Slough (ES) to an offshore wind station (OSWS) for three dates each in April, July, and October 2025. For these visualizations, all April dates are grouped as Spring 2025, the July dates as Summer 2025, and the October dates as Autumn 2025.
 
@@ -13,10 +13,12 @@ Samples were collected at 6 stations along a transect ranging from Elkhorn Sloug
 
 **ES:** Elkhorn Slough
 
+**C1:** Coastal Station 1
+
 **M1:** Mooring 1 (Long-term monitoring buoy)
 
-**M2:** Mooring 2 (Long-term monitoring site)
+**M2:** Mooring 2 (Long-term monitoring station)
 
-**MARS:** Monterey Accelerated Research System (underwater monitoring site)
+**MARS:** Monterey Accelerated Research System (underwater monitoring station)
 
 **OSWS:** Offshore Wind Station

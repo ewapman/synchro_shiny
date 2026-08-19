@@ -63,7 +63,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
     # Create hover table
     depth_hover_table_all <- depth_envtl_table_all |>
       mutate(
-        depth = factor(depth, levels = c("0", "DCM", "150", "300"))  # Set order
+        depth = factor(depth, levels = c("0", "DCM", "150", "300"))  # Set order so DCM isn't last
       ) |>
       arrange(Station, depth) |>
       group_by(Station) |>
@@ -72,9 +72,9 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
           "<b>By Depth (m):</b><br>",
           paste0(
             "<b>", depth, ":</b> ", 
-            "Temp: ", ifelse(is.na(temperature), "NA", paste0(temperature, "°C")), " | ",  # ← Fixed
-            "Salinity: ", ifelse(is.na(salinity), "NA", salinity), " | ",  # ← Fixed
-            "O₂: ", ifelse(is.na(oxygen), "NA", oxygen),  # ← Fixed
+            "Temp: ", ifelse(is.na(temperature), "NA", paste0(temperature, "°C")), " | ",  
+            "Salinity: ", ifelse(is.na(salinity), "NA", salinity), " | ",  
+            "O₂: ", ifelse(is.na(oxygen), "NA", oxygen),  
             collapse = "<br>"
           )
         ),
@@ -151,7 +151,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
         ),
         margin = list(l = 0, r = 0, t = 0, b = 0),
         hoverlabel = list(
-          align = "left",           # Push it to the side on hover
+          align = "left",           # Push hoverbox to the side on hover
           bgcolor = "rgba(255,255,255,0.9)",  # Slightly transparent
           bordercolor = "black",
           font = list(size = 13, family = "Arial, sans-serif", color = "black")
@@ -189,12 +189,12 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
     
     # Number of sample with that species at that location
     leaflet_data_subset <- data_dcm |> 
-      filter(Season %in% season_fn, #MAKE REACTIVE
+      filter(Season %in% season_fn, # Make reactive
              depth %in% depth_fn, 
              map_label == species_fn) |> 
-      group_by(Station) |> # CHANGED TO GROUP BY STATION ONLY
+      group_by(Station) |> # Group by station only to have one point per station
       summarize(
-        sample_count = n_distinct(sample_id), # number of samles with that organism
+        sample_count = n_distinct(sample_id), # number of samples with that organism
         depths_detected = paste(sort(unique(depth)), collapse = ", "),
         seasons = paste(sort(unique(Season)), collapse = ", "),
         .groups = "drop"
@@ -333,18 +333,18 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
       
       layout(
         mapbox = list(
-          style = "white-bg",
+          style = "white-bg", # white background
           zoom = 8,
           center = list(lon = -122.16, lat = 36.74),
           layers = list(list(
-            below = 'traces',
-            sourcetype = "raster",
+            below = 'traces', # tiles below points
+            sourcetype = "raster", # ocean basemap
             source = list("https://services.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}")
           ))
         ),
         margin = list(l = 0, r = 0, t = 0, b = 0),
         hoverlabel = list(
-          align = "left",           # Push it to the side on hover
+          align = "left",  # Push it to the side on hover
           bgcolor = "rgba(255,255,255,0.9)",  # Slightly transparent
           bordercolor = "black",
           font = list(size = 13, family = "Arial, sans-serif", color = "black")

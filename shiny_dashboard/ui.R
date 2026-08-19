@@ -195,7 +195,7 @@ body <- dashboardBody(
                                  # Start background fluid row ----
                                  fluidRow(
                                    box(width = 12,
-                                       includeMarkdown("text/map_about.Rmd")
+                                       includeMarkdown("text/dashboard_about.Rmd")
                                    )
                                    
                                  ),
@@ -222,6 +222,15 @@ body <- dashboardBody(
 
                                  # Extra space 
                                  headerPanel(""),
+                                 headerPanel(""),
+                                 
+                                 # Start map about fluid row ----
+                                 fluidRow(
+                                   box(width = 12,
+                                       includeMarkdown("text/map_about.Rmd")
+                                   )
+                                   
+                                 ),
 
                                  # Start fluidRow inputs ----
                                  fluidRow(
@@ -331,7 +340,7 @@ body <- dashboardBody(
                                    ), # End fluid row bathymetry_about.rmd
                                  fluidRow(
                                    box(width = 12,
-                                       h4(strong("Number of detections at each depth and station")),
+                                       h4(strong("Number of samples with indicator taxa detected")),
                                        plotlyOutput(outputId = "bathymetry_plot", height = "500px"))
                                    
                                  ) # End fluid row bathymetry plot

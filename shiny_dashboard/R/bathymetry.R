@@ -125,19 +125,14 @@ if(species_fn == "All taxa") {
     bath_plot <- bind_rows(bath_plot, dummy_points)
   }
   
-  # Set variables for specific species
-  color_var <- bath_plot$relative_abundance
-  color_title <- "% of samples"
-  cmin_val <- 0
-  cmax_val <- 100
-  tick_vals <- pretty(c(0, 100), n = 5)
-  tick_text <- paste0(as.character(tick_vals), "%")
-  opacity_val <- ~ifelse(is.na(bath_plot$samples), 0, 0.8)
-  colorscale_choice <- "Viridis"
-  hover_text <- ifelse(is.na(bath_plot$samples), "",
-                       paste0("Depth: ", bath_plot$depth_label, "<br>",
-                              "Samples: ", bath_plot$samples, " of ", bath_plot$total_samples, 
-                              " (", round(bath_plot$relative_abundance, 2), "%)"))
+  # Set variables 
+ 
+ 
+  tick_vals <- 
+  tick_text <- 
+  opacity_val <- 
+  colorscale_choice <- 
+  hover_text <- 
   
   # Add markers
   p <- p |> 
@@ -145,26 +140,29 @@ if(species_fn == "All taxa") {
       x = jitter(as.numeric(bath_plot$distance), amount = 0.5),
       y = -as.numeric(bath_plot$depth_plot),  
       marker = list(
-        color = color_var,
+        color = bath_plot$relative_abundance,
         reversescale = TRUE,
-        colorscale = colorscale_choice,
+        colorscale = "Viridis",
         cauto = FALSE,
         showscale = TRUE,
         size = 10, 
-        opacity = opacity_val,
+        opacity = ~ifelse(is.na(bath_plot$samples), 0, 0.8), # Make dummy points invisible
         line = list(color = "black", width = 1), 
-        cmin = cmin_val,
-        cmax = cmax_val,
+        cmin = 0, # colorscale min
+        cmax = 100,# colorscale max
         colorbar = list(
-          title = color_title,
+          title = "% of samples",
           tickmode = "array",
-          tickvals = tick_vals,
-          ticktext = tick_text,
+          tickvals = pretty(c(0, 100), n = 5),
+          ticktext = paste0(as.character(pretty(c(0, 100), n = 5)), "%"),
           len = 0.5,
           thickness = 15
         )
       ),
-      hovertemplate = paste0(hover_text, "<extra></extra>")
+      hovertemplate = paste0(ifelse(is.na(bath_plot$samples), "",
+                                    paste0("Depth: ", bath_plot$depth_label, "<br>",
+                                           "Samples: ", bath_plot$samples, " of ", bath_plot$total_samples, 
+                                           " (", round(bath_plot$relative_abundance, 2), "%)")), "<extra></extra>")
     )
   
 } else {
