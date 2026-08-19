@@ -142,7 +142,7 @@ if(species_fn == "All taxa") {
       marker = list(
         color = bath_plot$relative_abundance,
         reversescale = TRUE,
-        colorscale = "Viridis",
+        colorscale = "Greens",
         cauto = FALSE,
         showscale = TRUE,
         size = 10, 
