@@ -19,7 +19,9 @@ library(marmap)
 
 sample_data_raw <- read_csv(here("shiny_dashboard/data/raw", "Synchro_fish_mammals_full.csv"), skip = 1)
 
-metadata_raw <- read_csv(here("shiny_dashboard/data/raw", "CTD_metadata_joined_for_R_10082026.csv"))
+#metadata_raw <- read_csv(here("shiny_dashboard/data/raw", "CTD_metadata_joined_for_R_10082026.csv"))
+
+metadata_raw <- read_csv(here("shiny_dashboard/data/raw", "CTD_metadata_joined_for_R_18082026.csv"))
 
 ```
 
@@ -417,8 +419,8 @@ tax_df <- as.data.frame(tax_table(ps_decontam)) |>
   rownames_to_column("ASV_ID")
 
 # Indicator table has two habitat types for some species. Collapse to avoid duplicate ASV's
-indicators_collapsed <- indicators %>%
-  group_by(scientific_name) %>%
+indicators_collapsed <- indicators |> 
+  group_by(scientific_name) |> 
   summarise(
     habitat = paste(unique(habitat), collapse = "; "),  # Combine unique habitats
     across(-habitat, first)  # Keep other columns
