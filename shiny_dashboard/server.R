@@ -145,7 +145,7 @@ server <- function(input, output, session) {
     update_depth_picker(input$species_input, input$season_input)
   })
   
-  # Store clicked location separately
+  # Store clicked location separately for barchart
   clicked_point <- reactiveVal(NULL)
   
   

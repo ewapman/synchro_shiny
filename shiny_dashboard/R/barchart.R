@@ -118,7 +118,7 @@ barchart <- function(data_fn, species_fn, season_fn, clicked_station){
             textposition = 'inside',      # Put text inside bars
             textfont = list(
               color = 'white',            # White text
-              size = 10                   # Font size
+              size = 10        # Font size
             ),
             customdata = ~map_label, 
             marker = list(

@@ -574,7 +574,6 @@ shiny_data <- shiny_data |>
 
 ```
 
-
 Add common names - using indicator list and filling in NA's manually
 
 ```{r}

@@ -160,7 +160,7 @@ plotly_map_new <- function(data_fn, season_fn, species_fn, depth_fn) {
     p
     # Register the click event
     event_register(p, "plotly_click")
-    
+
     return(p)
     
     

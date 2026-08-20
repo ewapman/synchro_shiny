@@ -125,14 +125,7 @@ if(species_fn == "All taxa") {
     bath_plot <- bind_rows(bath_plot, dummy_points)
   }
   
-  # Set variables 
- 
- 
-  tick_vals <- 
-  tick_text <- 
-  opacity_val <- 
-  colorscale_choice <- 
-  hover_text <- 
+
   
   # Add markers
   p <- p |> 

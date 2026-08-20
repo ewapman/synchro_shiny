@@ -100,6 +100,7 @@ body <- dashboardBody(
             headerPanel(""),
             headerPanel(""),
             
+            # Start Synchro Methods box ----
             fluidRow(
             box(
               
@@ -176,9 +177,8 @@ body <- dashboardBody(
               )
   
             ) # End fluid row
-            )
-            )
-
+          ) # End box
+        ) # End methods fluid row
     ), # END welcome tabItem
     
     # ......................Start dashboard tabItem ............................
