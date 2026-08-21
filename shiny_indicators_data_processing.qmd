@@ -691,7 +691,8 @@ saveRDS(shiny_data, here("shiny_dashboard", "data", "processed", "shiny_data.rds
 ```{r}
 # Bathymetry preprocessing
 
-# Get start and end points for bathymetry 
+# Get start and end points for bathymetry
+# These are the same points I used for the station groupings in map.R
 start_lon <- -121.7796
 start_lat <- 36.8117
 end_lon <- -122.5352
