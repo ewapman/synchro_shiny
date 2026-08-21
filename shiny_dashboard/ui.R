@@ -373,8 +373,8 @@ body <- dashboardBody(
                                             # YouTube embed example
                                             tags$iframe(
                                               src = "https://www.youtube.com/embed/b0gn-SBQV4g",
-                                              width = "800",
-                                              height = "450",
+                                              width = "100%",
+                                              height = "600",
                                               frameborder = "0",
                                               allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                                             )
