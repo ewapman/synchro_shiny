@@ -368,18 +368,15 @@ body <- dashboardBody(
                                    column(width = 10, offset = 1,
                                           tags$div(
                                             style = "text-align: center; margin-top: 30px;",
-                                            
                                             tags$h3("Dashboard Demo"),
-                                            
                                             headerPanel(""),
-                                            
-                                            tags$video(
-                                              src = "demo2.mp4",  # Filename
-                                              type = "video/mp4",
-                                              width = "100%",
-                                              controls = TRUE,
-                                              preload = "metadata",
-                                              style = "max-width: 900px;"
+                                            # YouTube embed example
+                                            tags$iframe(
+                                              src = "https://www.youtube.com/embed/0OoonXcB114",
+                                              width = "800",
+                                              height = "450",
+                                              frameborder = "0",
+                                              allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                                             )
                                           )
                                    )
