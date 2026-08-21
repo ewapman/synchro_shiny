@@ -53,6 +53,20 @@ body <- dashboardBody(
         border-left-color: #4a90e2;  /* Sky blue accent */
       }
       
+       /* White border around ALL tabs */
+      .nav-tabs > li > a {
+        border: 2px solid white !important;
+        margin-right: 2px;
+        background-color: transparent !important;  /* No fill for inactive */
+        color: black !important;  /* Black text for inactive */
+      }
+      
+      /* Active tab styling */
+      .nav-tabs > li.active > a {
+        background-color: white !important;  /* White fill for active */
+        color: black !important;  /* Black text for active */
+      }
+      
     '))),
   
   # START tabItems ----
@@ -344,7 +358,34 @@ body <- dashboardBody(
                                  ) # End fluid row bathymetry plot
                                  
                                  
-                        ) # End map tabPanel
+                        ), # End dashboard tabPanel
+                        
+                        # Video tab panel
+                        tabPanel(title = strong("Demo video"),
+                                 
+                                 # Center the video
+                                 fluidRow(
+                                   column(width = 10, offset = 1,
+                                          tags$div(
+                                            style = "text-align: center; margin-top: 30px;",
+                                            
+                                            tags$h3("Dashboard Demo"),
+                                            
+                                            headerPanel(""),
+                                            
+                                            tags$video(
+                                              src = "demo2.mp4",  # Filename
+                                              type = "video/mp4",
+                                              width = "100%",
+                                              controls = TRUE,
+                                              preload = "metadata",
+                                              style = "max-width: 900px;"
+                                            )
+                                          )
+                                   )
+                                 )
+                          
+                        )
             ) # End map tabsetPanel
 
     ) # END map tabItem

@@ -8,3 +8,4 @@ install.R
 *.rds
 *.RDS
 data/*.rds
+*.mp4
