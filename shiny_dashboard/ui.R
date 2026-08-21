@@ -372,7 +372,7 @@ body <- dashboardBody(
                                             headerPanel(""),
                                             # YouTube embed example
                                             tags$iframe(
-                                              src = "https://www.youtube.com/embed/0OoonXcB114",
+                                              src = "https://www.youtube.com/embed/b0gn-SBQV4g",
                                               width = "800",
                                               height = "450",
                                               frameborder = "0",
